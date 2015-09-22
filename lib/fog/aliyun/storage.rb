@@ -1,4 +1,4 @@
-require 'fog/dtdream/core'
+require 'fog/aliyun/core'
 require 'xmlsimple'
 
 module Fog

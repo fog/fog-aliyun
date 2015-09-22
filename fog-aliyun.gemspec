@@ -9,9 +9,9 @@ Gem::Specification.new do |spec|
   spec.authors       = ["dengqinsi"]
   spec.email         = ["dengqs@dtdream.com"]
 
-  spec.summary       = %q{Use 'fog' gem to support Aliyun Web Services.}
-  spec.description   = %q{As a FOG provider, fog-aliyun support aliyun OSS. Maybe it will support more aliyun services later.}
-  spec.homepage      = "https://github.com/fog/fog-aliyun.git"
+  spec.summary       = %q{Fog provider for Aliyun Web Services.}
+  spec.description   = %q{As a FOG provider, fog-aliyun support aliyun OSS. It will support more aliyun services later.}
+  spec.homepage      = "https://github.com/dtdream/fog-aliyun.git"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
@@ -27,5 +27,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'fog-json',  '~> 1.0'
   spec.add_dependency 'fog-xml',   '~> 0.1'
   spec.add_dependency 'ipaddress', '~> 0.8'
-  spec.add_dependency 'activesupport', '~> 4.2'
+  spec.add_dependency 'xml-simple', '~> 1.1'
 end
