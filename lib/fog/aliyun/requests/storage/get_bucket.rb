@@ -1,6 +1,6 @@
 module Fog
   module Storage
-    class Alilyun
+    class Aliyun
       class Real
         def get_bucket(bucket)
           location = get_bucket_location(bucket)
@@ -129,14 +129,18 @@ module Fog
           attribute = '?website'
           resource = bucket+'/'+attribute
           ret = request(
-                  :expects  => [200, 203],
+                  :expects  => [200, 203, 404],
                   :method   => 'GET',
                   :path     => attribute,
                   :bucket   => bucket,
                   :resource => resource,
                   :endpoint => endpoint
           )
-          website = XmlSimple.xml_in(ret.data[:body])
+	  if 404 != ret.data[:status]
+            website = XmlSimple.xml_in(ret.data[:body])
+          else
+            nil
+          end
         end
         
       end

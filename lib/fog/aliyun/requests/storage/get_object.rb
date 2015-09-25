@@ -1,6 +1,6 @@
 module Fog
   module Storage
-    class Alilyun
+    class Aliyun
       class Real
         # Get details for object
         #
@@ -19,7 +19,7 @@ module Fog
           end
           resource = bucket+'/'+object
           para = {
-            :expects  => [200, 206],
+            :expects  => [200, 206, 404],
             :method   => 'GET',
             :path     => object,
             :bucket   => bucket,

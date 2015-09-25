@@ -1,6 +1,6 @@
 module Fog
   module Storage
-    class Alilyun
+    class Aliyun
       class Real
         # Create a new container
         #

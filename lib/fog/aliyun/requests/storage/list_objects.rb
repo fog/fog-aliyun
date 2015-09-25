@@ -1,6 +1,6 @@
 module Fog
   module Storage
-    class Alilyun
+    class Aliyun
       class Real
         def list_objects(options={})
           bucket = options[:bucket]

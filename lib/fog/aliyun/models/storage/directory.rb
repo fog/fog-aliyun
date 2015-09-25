@@ -3,7 +3,7 @@ require 'fog/aliyun/models/storage/files'
 
 module Fog
   module Storage
-    class Alilyun
+    class Aliyun
       class Directory < Fog::Model
         identity  :key
 
@@ -27,7 +27,7 @@ module Fog
 
         def files
           @files ||= begin
-            Fog::Storage::Alilyun::Files.new(
+            Fog::Storage::Aliyun::Files.new(
               :directory    => self,
               :service   => service
             )

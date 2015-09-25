@@ -3,12 +3,15 @@ require 'fog/aliyun/models/storage/directory'
 
 module Fog
   module Storage
-    class Alilyun
+    class Aliyun
       class Directories < Fog::Collection
-        model Fog::Storage::Alilyun::Directory
+        model Fog::Storage::Aliyun::Directory
 
         def all
           containers = service.get_containers()
+	  if nil == containers
+	    return nil
+	  end
           data = Array.new
           i = 0
           containers.each do |entry|
@@ -31,12 +34,9 @@ module Fog
               nil
             end
           else
-            ret = service.get_container("")
-            if ret
-              new(:key => "")
-            end
+            new(:key => "")
           end
-        rescue Fog::Storage::Alilyun::NotFound
+        rescue Fog::Storage::Aliyun::NotFound
           nil
         end
       end

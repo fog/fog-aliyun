@@ -11,7 +11,7 @@ module Fog
         attribute :path
         attribute :prefix
 
-        model Fog::Storage::Alilyun::File
+        model Fog::Storage::Aliyun::File
 
         def all(options = {})
           requires :directory
@@ -19,21 +19,25 @@ module Fog
             prefix = directory.key+"/"
           end
           files = service.list_objects({:prefix => prefix})["Contents"]
+          if nil == files
+            return
+          end
           data = Array.new
           i = 0
           files.each do |file|
             if file["Key"][0][-1] != "/"
 	      content_length = file["Size"][0].to_i
               key = file["Key"][0]
-          lastModified = file["LastModified"][0]
-          if lastModified != nil && lastModified != ""
-            last_modified = (Time.parse(lastModified)).localtime
-          else
-            last_modified = nil
-          end
-              data[i] = {:content_length=>content_length,
-	                 :key=>key,
-			 :last_modified=>last_modified}
+              lastModified = file["LastModified"][0]
+              if lastModified != nil && lastModified != ""
+                last_modified = (Time.parse(lastModified)).localtime
+              else
+                last_modified = nil
+              end
+              data[i] = {:content_length => content_length,
+                         :key            => key,
+                         :last_modified  => last_modified,
+                         :etag           => file["ETag"][0]}
               i = i + 1
             end
           end
@@ -83,7 +87,9 @@ module Fog
           file_data = {
               :content_length => contentLen,
               :key            => key,
-              :last_modified  => last_modified
+              :last_modified  => last_modified,
+              :content_type   => data[:headers]["Content-Type"],
+              :etag           => data[:headers]["ETag"]	
           }
           
           if block_given?
@@ -153,10 +159,12 @@ module Fog
           file_data = {
               :content_length => data[:headers]["Content-Length"].to_i,
               :key            => key,
-              :last_modified  => last_modified
+              :last_modified  => last_modified,
+              :content_type   => data[:headers]["Content-Type"],
+              :etag           => data[:headers]["ETag"]	
           }
           new(file_data)
-        rescue Fog::Storage::Alilyun::NotFound
+        rescue Fog::Storage::Aliyun::NotFound
           nil
         end
 

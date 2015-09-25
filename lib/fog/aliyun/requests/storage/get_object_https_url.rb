@@ -1,6 +1,6 @@
 module Fog
   module Storage
-    class Alilyun
+    class Aliyun
       class Real
         # Get an expiring object https url from Cloud Files
         #

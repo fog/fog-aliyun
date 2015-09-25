@@ -2,7 +2,7 @@ require 'fog/core/model'
 
 module Fog
   module Storage
-    class Alilyun
+    class Aliyun
       class File < Fog::Model
         identity  :key,             :aliases => 'name'
 
@@ -33,10 +33,17 @@ module Fog
 
         def copy(target_directory_key, target_file_key, options={})
           requires :directory, :key
-          options['Content-Type'] ||= content_type if content_type
-          options['Access-Control-Allow-Origin'] ||= access_control_allow_origin if access_control_allow_origin
-          options['Origin'] ||= origin if origin
-          service.copy_object(directory.key, key, target_directory_key, target_file_key, options)
+          if directory.key == ""
+            source_object = key
+          else
+            source_object = directory.key+"/"+key
+          end
+          if target_directory_key == ""
+            target_object = target_file_key
+          else
+            target_object = target_directory_key+"/"+target_file_key
+          end
+          service.copy_object(nil, source_object, nil, target_object, options)
           target_directory = service.directories.new(:key => target_directory_key)
           target_directory.files.get(target_file_key)
         end
@@ -105,7 +112,13 @@ module Fog
           else
             object = directory.key+"/"+key
           end
-          data = service.put_object_with_body(object, body, options)
+          if body.is_a?(::File)
+            data = service.put_object(object, body, options).data
+          elsif body.is_a?(String)
+            data = service.put_object_with_body(object, body, options).data
+          else
+            raise Fog::Storage::Aliyun::Error, " Forbidden: Invalid body type: #{body.class}!"
+          end
           update_attributes_from(data)
           refresh_metadata
 
@@ -176,7 +189,7 @@ module Fog
         end
 
         def update_attributes_from(data)
-          merge_attributes(data.headers.reject {|key, value| ['Content-Length', 'Content-Type'].include?(key)})
+          merge_attributes(data[:headers].reject {|key, value| ['Content-Length', 'Content-Type'].include?(key)})
         end
       end
     end

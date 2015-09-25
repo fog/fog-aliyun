@@ -2,7 +2,7 @@ require 'fog/core'
 require 'fog/json'
 
 module Fog
-  module Alilyun
+  module Aliyun
     extend Fog::Provider
 
     module Errors

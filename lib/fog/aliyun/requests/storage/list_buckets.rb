@@ -1,6 +1,6 @@
 module Fog
   module Storage
-    class Alilyun
+    class Aliyun
       class Real
         def list_buckets(options={})
           prefix = options[:prefix]
@@ -34,7 +34,7 @@ module Fog
                   :path     => path
           )
           xml = ret.data[:body]
-          result = XmlSimple.xml_in(xml)["Buckets"][0]["Bucket"]
+          result = XmlSimple.xml_in(xml)["Buckets"][0]
         end
         
       end

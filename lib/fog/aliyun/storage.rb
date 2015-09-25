@@ -3,7 +3,7 @@ require 'xmlsimple'
 
 module Fog
   module Storage
-    class Alilyun < Fog::Service
+    class Aliyun < Fog::Service
       recognizes :aliyun_oss_endpoint, 
                  :aliyun_oss_location,
                  :aliyun_oss_bucket,

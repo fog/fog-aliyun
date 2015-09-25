@@ -1,6 +1,6 @@
 module Fog
   module Storage
-    class Alilyun
+    class Aliyun
       class Real
         def get_container(container, options = {})
           options = options.reject {|key, value| value.nil?}

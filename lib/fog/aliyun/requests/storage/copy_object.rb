@@ -1,6 +1,6 @@
 module Fog
   module Storage
-    class Alilyun
+    class Aliyun
       class Real
         # Copy object
         #
@@ -10,8 +10,12 @@ module Fog
         # * target_container_name<~String> - Name of bucket to create copy in
         # * target_object_name<~String> - Name for new copy of object
         # * options<~Hash> - Additional headers options={}
-        def copy_object(source_bucket, source_object, target_bucket, target_object)
-          #headers = { 'X-Copy-From' => "/#{source_container_name}/#{source_object_name}" }.merge(options)
+        def copy_object(source_bucket, source_object, target_bucket, target_object, options = {})
+          options = options.reject {|key, value| value.nil?}
+          bucket = options[:bucket]
+          bucket ||= @aliyun_oss_bucket
+          source_bucket ||= bucket
+          target_bucket ||= bucket
           headers = { 'x-oss-copy-source' => "/#{source_bucket}/#{source_object}" }
           location = get_bucket_location(target_bucket)
           endpoint = "http://"+location+".aliyuncs.com"

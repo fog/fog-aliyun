@@ -1,6 +1,6 @@
 module Fog
   module Storage
-    class Alilyun
+    class Aliyun
       class Real
         # Put details for object
         #
@@ -20,8 +20,7 @@ module Fog
           
           #object size 超过100M，走分片上传，支持断点续传
           if file.size >104857600
-            put_multipart_object(bucket, object, file)
-            return
+            return put_multipart_object(bucket, object, file)
           end
           
           body = file.read
