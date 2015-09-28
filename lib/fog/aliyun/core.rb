@@ -42,6 +42,7 @@ module Fog
       end
     end
 
+    service(:compute ,    'Compute')
     service(:storage ,    'Storage')
 
   end

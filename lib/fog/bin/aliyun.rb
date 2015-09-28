@@ -4,6 +4,8 @@ class Aliyun < Fog::Bin
       case key
       when :storage
         Fog::Storage::Aliyun
+      when :compute
+        Fog::Compute::Aliyun
       else
         raise ArgumentError, "Unrecognized service: #{key}"
       end

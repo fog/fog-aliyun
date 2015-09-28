@@ -1,0 +1,85 @@
+module Fog
+  module Compute
+    class Aliyun
+      class Real
+        def list_snapshoots(options={})
+          
+          action = 'DescribeSnapshots'
+          sigNonce = randonStr()
+          time = Time.new.utc
+
+          parameters = defalutParameters(action, sigNonce, time)
+          pathUrl    = defaultAliyunUri(action, sigNonce, time)
+
+          pageNumber = options[:pageNumber]
+          pageSize = options[:pageSize]
+          instanceId = options[:instanceId]
+          diskId = options[:diskId]
+          snapshotId = options[:snapshotIds]
+          sourceDiskType = options[:sourceDiskType]
+          
+          if instanceId
+            parameters["InstanceId"] = instanceId
+            pathUrl += '&InstanceId='
+            pathUrl += instanceId
+          end
+
+          if diskId
+            parameters["DiskId"] = diskId
+            pathUrl += '&DiskId='
+            pathUrl += diskId
+          end          
+
+          if snapshotId
+            parameters["SnapshotIds"] = Fog::JSON.encode(snapshotId)
+            pathUrl += '&SnapshotIds='
+            pathUrl += Fog::JSON.encode(snapshotId)
+          end
+          
+          if sourceDiskType
+            parameters["SourceDiskType"] = sourceDiskType
+            pathUrl += '&SourceDiskType='
+            pathUrl += sourceDiskType
+          end
+          
+          if pageNumber
+            parameters["PageNumber"] = pageNumber
+            pathUrl += '&PageNumber='
+            pathUrl += pageNumber
+          end
+
+          unless pageSize
+            pageSize = '50'   #缺省每页显示50条
+          end
+          parameters["PageSize"] = pageSize
+          pathUrl += '&PageSize='
+          pathUrl += pageSize	
+
+          signature = sign(@aliyun_accesskey_secret, parameters)
+          pathUrl += '&Signature='
+          pathUrl += signature
+
+          request(
+            :expects  => [200, 203],
+            :method   => 'GET',
+            :path     => pathUrl
+          )
+        end
+      end
+
+      class Mock
+        def list_images
+          response = Excon::Response.new
+          data = list_images_detail.body['images']
+          images = []
+          for image in data
+            images << image.reject { |key, value| !['id', 'name', 'links'].include?(key) }
+          end
+          response.status = [200, 203][rand(1)]
+          response.body = { 'images' => images }
+          response
+        end
+      end
+    end
+  end
+end

@@ -1,5 +1,6 @@
 require "fog/aliyun/core"
 require "fog/aliyun/storage"
+require "fog/aliyun/compute"
 require "fog/aliyun/version"
 
 module Fog
