@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["dengqs@dtdream.com"]
 
   spec.summary       = %q{Fog provider for Aliyun Web Services.}
-  spec.description   = %q{As a FOG provider, fog-aliyun support aliyun OSS. It will support more aliyun services later.}
+  spec.description   = %q{As a FOG provider, fog-aliyun support aliyun OSS/ECS. It will support more aliyun services later.}
   spec.homepage      = "https://github.com/dtdream/fog-aliyun.git"
   spec.license       = "MIT"
 
