@@ -8,7 +8,6 @@ module Fog
         identity  :key
 
         def destroy
-          #安全检查，如果目录非空不允许删除
           requires :key
           prefix = key+'/'
           ret = service.list_objects(:prefix=>prefix)["Contents"]

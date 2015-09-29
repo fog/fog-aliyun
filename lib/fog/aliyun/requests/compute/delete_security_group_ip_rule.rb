@@ -3,7 +3,7 @@ module Fog
     class Aliyun
       class Real
         def delete_security_group_ip_rule(securyitgroup_id,sourceCidrIp, nicType, option={})
-
+          # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/securitygroup&revokesecuritygroup]
           action   = 'RevokeSecurityGroup'
           sigNonce = randonStr()
           time     = Time.new.utc

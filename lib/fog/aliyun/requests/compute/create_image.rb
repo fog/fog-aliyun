@@ -2,6 +2,7 @@ module Fog
   module Compute
     class Aliyun
       class Real
+        # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.201.106.DGkmH7#/pub/ecs/open-api/image&createimage]
         def create_image(snapshotId, options={})
           action = 'CreateImage'
           sigNonce = randonStr()

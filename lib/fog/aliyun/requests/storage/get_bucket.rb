@@ -46,7 +46,6 @@ module Fog
           acl = XmlSimple.xml_in(ret.data[:body])["AccessControlList"][0]["Grant"][0]
         end
         
-        #{"AllowedOrigin"=>["1"], "AllowedMethod"=>["DELETE"], "AllowedHeader"=>["1"], "ExposeHeader"=>["1"], "MaxAgeSeconds"=>["1"]}
         def get_bucket_CORSRules(bucket)
           location = get_bucket_location(bucket)
           endpoint = "http://"+location+".aliyuncs.com"
@@ -67,7 +66,6 @@ module Fog
           end
         end
 
-        #{"ID"=>["651a67ed-5b4f-4d9b-87ae-49dbaaa4b0ad"], "Prefix"=>["1"], "Status"=>["Enabled"], "Expiration"=>[{"Days"=>["30"]}]}
         def get_bucket_lifecycle(bucket)
           location = get_bucket_location(bucket)
           endpoint = "http://"+location+".aliyuncs.com"
@@ -88,7 +86,6 @@ module Fog
           end	    
         end
         
-        #返回log的prefix，如果没有设置log开关，返回nil
         def get_bucket_logging(bucket)
           location = get_bucket_location(bucket)
           endpoint = "http://"+location+".aliyuncs.com"
@@ -105,7 +102,6 @@ module Fog
           logging = XmlSimple.xml_in(ret.data[:body])["LoggingEnabled"][0]["TargetPrefix"]
         end
 
-        #{"AllowEmptyReferer"=>["true"], "RefererList"=>[{}]}
         def get_bucket_referer(bucket)
           location = get_bucket_location(bucket)
           endpoint = "http://"+location+".aliyuncs.com"
@@ -122,7 +118,6 @@ module Fog
           referer = XmlSimple.xml_in(ret.data[:body])
         end
         
-        #{"IndexDocument"=>[{"Suffix"=>["abc.html"]}], "ErrorDocument"=>[{"Key"=>["error.html"]}]}
         def get_bucket_website(bucket)
           location = get_bucket_location(bucket)
           endpoint = "http://"+location+".aliyuncs.com"
@@ -145,9 +140,7 @@ module Fog
         
       end
       class Mock
-        
         def get_bucket(bucket)
-
         end
       end
     end

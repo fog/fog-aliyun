@@ -2,6 +2,23 @@ module Fog
   module Compute
     class Aliyun
       class Real
+        # Allocate an eip IP address.
+        #
+        # ==== Notes
+        # The new eip Ip address would be avalable
+        # The allocated eip Ip address can only associate to the instance of the vpc in the same region
+        # Now the eip can support ICMP,TCP,UDP
+        # ==== Parameters
+        # * server_id<~String> - id of the instance
+        # * allocationId<~String> - id of the EIP
+        # ==== Returns
+        # * response<~Excon::Response>:
+        #   * body<~Hash>:
+        #     * 'EipAddress'<~String> - the allocated eip address
+        #     * 'AllocationId'<~String> - the instance id on the public ip
+        #     * 'RequestId'<~String> - Id of the request
+        #
+        # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.201.106.DGkmH7#/pub/ecs/open-api/network&allocateeipaddress]
         def allocate_eip_address(options={})
           
           _action = 'AllocateEipAddress'
@@ -11,7 +28,7 @@ module Fog
           _parameters = defalutParameters(_action, _sigNonce, _time)
           _pathURL  = defaultAliyunUri(_action, _sigNonce, _time)
           
-          #可选参数
+          #optional parameters
           _Bandwidth = options[:aliyun_Bandwidth]
           if _Bandwidth
             _parameters['Bandwidth']=_Bandwidth

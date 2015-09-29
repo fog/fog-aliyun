@@ -3,7 +3,7 @@ module Fog
     class Aliyun
       class Real
         def create_vswitch(vpcId, cidrBlock, options={})
-
+          # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/vswitch&createvswitch]
           action = 'CreateVSwitch'
           sigNonce = randonStr()
           time = Time.new.utc

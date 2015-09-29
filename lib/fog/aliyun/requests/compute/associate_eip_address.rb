@@ -2,6 +2,17 @@ module Fog
   module Compute
     class Aliyun
       class Real
+        # Associate an avalable eip IP address to the given instance.
+        #
+        # ==== Parameters
+        # * server_id<~String> - id of the instance
+        # * allocationId<~String> - id of the EIP
+        # ==== Returns
+        # * response<~Excon::Response>:
+        #   * body<~Hash>:
+        #     * 'RequestId'<~String> - Id of the request
+        #
+        # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.201.106.DGkmH7#/pub/ecs/open-api/network&associateeipaddresss]
         def associate_eip_address(server_id, allocationId)
           
           _action = 'AssociateEipAddress'

@@ -5,7 +5,7 @@ module Fog
         # Create a new container
         #
         # ==== Parameters
-        # * name<~String> - Name for container, 绝对路径，结尾不能携带'/'
+        # * name<~String> - Name for container
         #
         def put_container(name, options={})
           bucket = options[:bucket]
@@ -28,7 +28,6 @@ module Fog
       
       class Mock
         def put_container(name, options={})
-
         end
       end
     end

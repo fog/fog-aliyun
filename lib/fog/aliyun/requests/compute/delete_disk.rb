@@ -3,7 +3,7 @@ module Fog
     class Aliyun
       class Real
         def delete_disk(diskId)
-
+          # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.201.106.DGkmH7#/pub/ecs/open-api/disk&deletedisk]
           action   = 'DeleteDisk'
           sigNonce = randonStr()
           time     = Time.new.utc

@@ -9,9 +9,9 @@ module Fog
 
         def all
           containers = service.get_containers()
-	  if nil == containers
-	    return nil
-	  end
+          if nil == containers
+            return nil
+          end
           data = Array.new
           i = 0
           containers.each do |entry|

@@ -3,7 +3,7 @@ module Fog
     class Aliyun
       class Real
         def delete_security_group(security_group_id)
-          
+          # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/securitygroup&deletesecuritygroup]
           action = 'DeleteSecurityGroup'
           sigNonce = randonStr()
           time = Time.new.utc

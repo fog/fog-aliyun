@@ -5,7 +5,6 @@ module Fog
         # Get headers for object
         #
         # ==== Parameters
-        # * container<~String> - Name of container to look in
         # * object<~String> - Name of object to look for
         #
         def head_object(object, options={})
@@ -28,7 +27,6 @@ module Fog
 
       class Mock
         def head_object(object, options={})
-          
         end
       end
     end

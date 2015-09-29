@@ -2,6 +2,20 @@ module Fog
   module Compute
     class Aliyun
       class Real
+        # Mount a disk.
+        #
+        # ==== Parameters
+        # * instanceId<~String> - id of the instance
+        # * diskId<~String> - id of the disk
+        # * options<~hash>
+        #     * :deleteWithInstance - if 'true',the disk will be relese with the instance.else, won't
+        #     * :device - if nil, the system will default allocate from /dev/xvdb to /dev/xvdz. default nil
+        # ==== Returns
+        # * response<~Excon::Response>:
+        #   * body<~Hash>:
+        #     * 'RequestId'<~String> - Id of the request
+        #
+        # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.201.106.DGkmH7#/pub/ecs/open-api/disk&attachdisk]
         def attach_disk(instanceId, diskId, options={})
           action   = 'AttachDisk'
           sigNonce = randonStr()
@@ -22,7 +36,7 @@ module Fog
           device             = options[:device]
           
           unless deleteWithInstance
-            deleteWithInstance = 'true' #aliyun云磁盘缺省不跟随虚拟机删除，这里改为缺省删除
+            deleteWithInstance = 'true' 
           end
 
           parameters["DeleteWithInstance"] = deleteWithInstance

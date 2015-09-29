@@ -8,7 +8,6 @@ module Fog
           maxKeys = options[:maxKeys]
           
           path = ""
-          
           if prefix
             path+="?prefix="+prefix
             if marker
@@ -41,7 +40,6 @@ module Fog
 
       class Mock
         def list_buckets(options={})
-          
         end
       end
     end

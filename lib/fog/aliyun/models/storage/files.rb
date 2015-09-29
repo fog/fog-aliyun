@@ -149,7 +149,7 @@ module Fog
             object = directory.key+"/"+key
           end
           data = service.head_object(object).data
-	  lastModified = data[:headers]["Last-Modified"]
+          lastModified = data[:headers]["Last-Modified"]
           if lastModified != nil && lastModified != ""
             last_modified = (Time.parse(lastModified)).localtime
           else

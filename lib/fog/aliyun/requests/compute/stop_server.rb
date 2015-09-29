@@ -8,6 +8,7 @@ module Fog
         # * server_id <~String> - The ID of the server to be stopped.
         # === Returns
         # * success <~Boolean>
+        # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/instance&stopinstance]
         def stop_server(server_id)
 
           _action = 'StopInstance'

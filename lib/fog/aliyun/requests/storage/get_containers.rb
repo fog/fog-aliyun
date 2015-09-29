@@ -6,14 +6,13 @@ module Fog
         #
         # ==== Parameters
         # * options<~Hash>:
-        #   * 'limit'<~Integer> - Upper limit to number of results returned
+        #   * 'maxKeys'<~Integer> - Upper limit to number of results returned
         #   * 'marker'<~String> - Only return objects with name greater than this value
         #
         # ==== Returns
         #
         def get_containers(options = {})
           options = options.reject {|key, value| value.nil?}
-
           bucket = options[:bucket]
           bucket ||= @aliyun_oss_bucket
           prefix = options[:prefix]
@@ -22,7 +21,6 @@ module Fog
           delimiter = '/'
 
           path = ""
-
           if prefix
             path+="?prefix="+prefix
             if marker
@@ -49,6 +47,7 @@ module Fog
             if delimiter
               path+="&delimiter="+delimiter
             end
+
           elsif delimiter
             path+="?delimiter="+delimiter
           end
@@ -70,7 +69,6 @@ module Fog
 
       class Mock
         def get_containers(options = {})
-          
         end
       end
     end

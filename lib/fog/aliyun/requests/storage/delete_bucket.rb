@@ -5,8 +5,7 @@ module Fog
         # Delete an existing bucket
         #
         # ==== Parameters
-        # * container<~String> - Name of container to delete
-        # * object<~String> - Name of object to delete
+        # * bucket<~String> - Name of bucket to delete
         #
         def delete_bucket(bucket)
           location = get_bucket_location(bucket)

@@ -65,7 +65,6 @@ module Fog
       
       class Mock
         def get_container(container, options = {})
-          
         end
       end
     end

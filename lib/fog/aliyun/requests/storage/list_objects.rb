@@ -11,7 +11,6 @@ module Fog
           delimiter = options[:delimiter]
           
           path = ""
-          
           if prefix
             path+="?prefix="+prefix
             if marker
@@ -73,7 +72,6 @@ module Fog
                   :endpoint => endpoint
           )
           uploadid = XmlSimple.xml_in(ret.data[:body])["Upload"]
-
         end
 
         def list_parts(bucket, object, endpoint, uploadid, options = {})
@@ -99,7 +97,6 @@ module Fog
       
       class Mock
         def list_objects(options={})
-          
         end
       end
     end

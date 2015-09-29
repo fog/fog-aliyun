@@ -2,6 +2,7 @@ module Fog
   module Compute
     class Aliyun
       class Real
+        # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/securitygroup&authorizesecuritygroup]
         def create_security_group_ip_rule(securitygroup_id,sourceCidrIp, nicType, option={})
 
           action   = 'AuthorizeSecurityGroup'

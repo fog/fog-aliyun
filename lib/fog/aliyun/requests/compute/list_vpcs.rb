@@ -2,6 +2,7 @@ module Fog
   module Compute
     class Aliyun
       class Real
+        # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/vpc&describevpcs]
         def list_vpcs(options={})
           
           action = 'DescribeVpcs'

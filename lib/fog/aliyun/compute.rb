@@ -202,6 +202,25 @@ module Fog
       end
 
       class Real
+
+        # Initialize connection to ECS
+        #
+        # ==== Notes
+        # options parameter must include values for :aliyun_url, :aliyun_accesskey_id,
+        # :aliyun_secret_access_key, :aliyun_region_id and :aliyun_zone_id in order to create a connection.
+        # if you haven't set these values in the configuration file.
+        #
+        # ==== Examples
+        #   sdb = Fog::Compute.new(:provider=>'aliyun',
+        #    :aliyun_accesskey_id => your_:aliyun_accesskey_id,
+        #    :aliyun_secret_access_key => your_aliyun_secret_access_key
+        #   )
+        #
+        # ==== Parameters
+        # * options<~Hash> - config arguments for connection.  Defaults to {}.
+        #
+        # ==== Returns
+        # * ECS object with connection to aliyun.
         attr_reader :aliyun_accesskey_id
         attr_reader :aliyun_accesskey_secret
         attr_reader :aliyun_region_id
@@ -210,14 +229,14 @@ module Fog
 
         def initialize(options={})
 
-          #初始化入参获取
+          #initialize the parameters
           @aliyun_url              = options[:aliyun_url]
           @aliyun_accesskey_id     = options[:aliyun_accesskey_id]
           @aliyun_accesskey_secret = options[:aliyun_accesskey_secret]
           @aliyun_region_id        = options[:aliyun_region_id]
           @aliyun_zone_id          = options[:aliyun_zone_id]
 
-          #入参检查，关键参数不可缺少
+          #check for the parameters
           missing_credentials = Array.new
           missing_credentials << :aliyun_accesskey_id  unless @aliyun_accesskey_id
           missing_credentials << :aliyun_accesskey_secret unless @aliyun_accesskey_secret
@@ -270,14 +289,14 @@ module Fog
           response
         end
         
-        #compute操作的缺省URL串
+        #operation compute-- default URL
         def defaultAliyunUri(action, sigNonce, time)
           parTimeFormat = time.strftime("%Y-%m-%dT%H:%M:%SZ")
           urlTimeFormat = URI.encode(parTimeFormat,':')
           return '?Format=JSON&AccessKeyId='+@aliyun_accesskey_id+'&Action='+action+'&SignatureMethod=HMAC-SHA1&RegionId='+@aliyun_region_id+'&SignatureNonce='+sigNonce+'&SignatureVersion=1.0&Version=2014-05-26&Timestamp='+urlTimeFormat
         end
 
-        #生成随机数
+        #generate random num
         def randonStr ()
           numStr = rand(100000).to_s
           timeStr = Time.now.to_f.to_s
@@ -285,7 +304,7 @@ module Fog
           return ranStr
         end
 
-        #compute操作的缺省parameter集合
+        #operation compute--collection of default parameters
         def defalutParameters(action, sigNonce, time)
           parTimeFormat = time.strftime("%Y-%m-%dT%H:%M:%SZ")
           para = {
@@ -301,7 +320,7 @@ module Fog
           return para
         end
 
-        #计算signature
+        #compute signature
         def sign (accessKeySecret,parameters)
           sortedParameters = parameters.sort
           canonicalizedQueryString = ''

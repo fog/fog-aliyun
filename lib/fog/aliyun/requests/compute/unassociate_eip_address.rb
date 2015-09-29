@@ -2,6 +2,7 @@ module Fog
   module Compute
     class Aliyun
       class Real
+         # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/network&unassociateeipaddress]
         def unassociate_eip_address(server_id, allocationId)
           
           _action = 'UnassociateEipAddress'

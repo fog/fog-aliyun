@@ -36,7 +36,6 @@ module Fog
 
       class Mock
         def get_object_https_url_public(object, expires, options = {})
-          
         end
       end
     end

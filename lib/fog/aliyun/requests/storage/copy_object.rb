@@ -5,10 +5,10 @@ module Fog
         # Copy object
         #
         # ==== Parameters
-        # * source_container_name<~String> - Name of source bucket
-        # * source_object_name<~String> - Name of source object
-        # * target_container_name<~String> - Name of bucket to create copy in
-        # * target_object_name<~String> - Name for new copy of object
+        # * source_bucket<~String> - Name of source bucket
+        # * source_object<~String> - Name of source object
+        # * target_bucket<~String> - Name of bucket to create copy in
+        # * target_object<~String> - Name for new copy of object
         # * options<~Hash> - Additional headers options={}
         def copy_object(source_bucket, source_object, target_bucket, target_object, options = {})
           options = options.reject {|key, value| value.nil?}

@@ -5,7 +5,6 @@ module Fog
         # Put details for object
         #
         # ==== Parameters
-        # * container<~String> - Name of container to look in
         # * object<~String> - Name of object to look for
         #
         def put_object(object, file=nil, options={})
@@ -18,7 +17,7 @@ module Fog
             return put_folder(bucket, object, endpoint)
           end
           
-          #object size 超过100M，走分片上传，支持断点续传
+          #put multiparts if object's size is over 100m
           if file.size >104857600
             return put_multipart_object(bucket, object, file)
           end
@@ -44,13 +43,7 @@ module Fog
           bucket ||= @aliyun_oss_bucket
           location = get_bucket_location(bucket)
           endpoint = "http://"+location+".aliyuncs.com"
-          
-          #object size 超过100M，走分片上传，支持断点续传
-#          if body.size >104857600
-#            put_multipart_object_with_body(bucket, object, body)
-#            return
-#          end
-                    
+
           resource = bucket+'/'+object
           ret = request(
                   :expects  => [200, 203],
@@ -86,7 +79,7 @@ module Fog
           location = get_bucket_location(bucket)
           endpoint = "http://"+location+".aliyuncs.com"
           
-          #遍历bucket下uploads事件，找到对应upload，则继续，否则创建upload事件
+          # find the right uploadid
           uploads = list_multipart_uploads(bucket, endpoint)
           if nil != uploads
 	    upload = uploads.find do |tmpupload| tmpupload["Key"][0] == object end
@@ -102,7 +95,7 @@ module Fog
             parts = list_parts(bucket, object, endpoint, uploadId)
             if ((nil != parts) &&(0 != parts.size))
               if (parts[-1]["Size"][0].to_i != 5242880)
-                #上传最后一片不是正常的5M,说明已经上传完毕，结束上传
+                # the part is the last one, if its size is over 5m, then finish this upload 
                 complete_multipart_upload(bucket, object, endpoint, uploadId)
                 return
               end
@@ -110,12 +103,11 @@ module Fog
               start_partNumber = parts[-1]["PartNumber"][0].to_i + 1
             end
           else
-            #InitiateMultipartUpload获取Upload ID
+            #create upload ID
             uploadId = initiate_multipart_upload(bucket, object, endpoint)
           end
           
           if (file.size <= uploadedSize)
-            #文件大小小于或等于已上传量,说明已经上传完毕，结束上传
             complete_multipart_upload(bucket, object, endpoint, uploadId)
             return
           end
@@ -200,7 +192,6 @@ module Fog
       
       class Mock
         def put_object(object, file=nil, options={})
-
         end
       end
     end

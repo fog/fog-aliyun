@@ -34,6 +34,24 @@ module Fog
       request :put_container
 
       class Real
+        # Initialize connection to OSS
+        #
+        # ==== Notes
+        # options parameter must include values for :aliyun_oss_endpoint, :aliyun_accesskey_id,
+        # :aliyun_secret_access_key, :aliyun_oss_location and :aliyun_oss_bucket in order to create a connection.
+        # if you haven't set these values in the configuration file.
+        #
+        # ==== Examples
+        #   sdb = Fog::Storage.new(:provider=>'aliyun',
+        #    :aliyun_accesskey_id => your_:aliyun_accesskey_id,
+        #    :aliyun_secret_access_key => your_aliyun_secret_access_key
+        #   )
+        #
+        # ==== Parameters
+        # * options<~Hash> - config arguments for connection.  Defaults to {}.
+        #
+        # ==== Returns
+        # * OSS object with connection to aliyun.
         attr_reader :aliyun_accesskey_id
         attr_reader :aliyun_accesskey_secret
         attr_reader :aliyun_oss_endpoint
@@ -41,14 +59,14 @@ module Fog
         attr_reader :aliyun_oss_bucket
 
         def initialize(options={})
-          #初始化入参获取
+          #initialize the parameters
           @aliyun_oss_endpoint     = options[:aliyun_oss_endpoint]
           @aliyun_oss_location     = options[:aliyun_oss_location]
           @aliyun_accesskey_id     = options[:aliyun_accesskey_id]
           @aliyun_accesskey_secret = options[:aliyun_accesskey_secret]
           @aliyun_oss_bucket       = options[:aliyun_oss_bucket]
 
-          #入参检查，关键参数不可缺少
+          #check for the parameters
           missing_credentials = Array.new
           missing_credentials << :aliyun_oss_endpoint unless @aliyun_oss_endpoint
           missing_credentials << :aliyun_oss_location unless @aliyun_oss_location
@@ -132,7 +150,7 @@ module Fog
           response
         end
 
-        #计算signature
+        #copmute signature
         def sign (method, date, contentType, resource=nil, headers = nil)
           contentmd5 = ""
 
@@ -167,14 +185,12 @@ module Fog
 
       class Mock
         def initialize(options={})
-          #初始化入参获取
           @aliyun_oss_endpoint     = options[:aliyun_oss_endpoint]
           @aliyun_oss_location     = options[:aliyun_oss_location]
           @aliyun_accesskey_id     = options[:aliyun_accesskey_id]
           @aliyun_accesskey_secret = options[:aliyun_accesskey_secret]
           @aliyun_oss_bucket       = options[:aliyun_oss_bucket]
 
-          #入参检查，关键参数不可缺少
           #missing_credentials = Array.new
           #missing_credentials << :aliyun_oss_endpoint unless @aliyun_oss_endpoint
           #missing_credentials << :aliyun_oss_location unless @aliyun_oss_location

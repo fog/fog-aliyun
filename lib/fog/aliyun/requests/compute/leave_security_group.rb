@@ -2,6 +2,7 @@ module Fog
   module Compute
     class Aliyun
       class Real
+        # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/instance&leavesecuritygroup]
         def leave_security_group(server_id, group_id)
 
           _action = 'LeaveSecurityGroup'

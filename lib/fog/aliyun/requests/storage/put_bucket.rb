@@ -3,7 +3,6 @@ module Fog
     class Aliyun
       class Real
         def put_bucket(bucketName)
-          
           resource = bucketName+'/'
           ret = request(
                   :expects  => [200, 203],
@@ -16,7 +15,6 @@ module Fog
       
       class Mock
         def put_bucket(bucketName)
-          
         end
       end
 

@@ -15,10 +15,6 @@ module Fog
         attribute :creation_time,    :aliases => 'CreationTime'
         def initialize(attributes={})
           super
-        #   self.dhcp_options_id ||= "default"
-        #   self.tenancy ||= "default"
-        #   super{"CreationTime"=>"2015-08-10T03:45:40Z", "CidrBlock"=>"172.16.0.0/24", "Status"=>"Available", "Description"=>"",
-        # "AvailableIpAddressCount"=>252, "VSwitchName"=>"CF_bck", "ZoneId"=>"cn-beijing-a", "VSwitchId"=>"vsw-25lws9k8e", "VpcId"=>"vpc-25mj6mguq"}
         end
 
         def ready?
@@ -55,12 +51,8 @@ module Fog
 
         def save(options={})
           requires :vpc,:cidr_block
-          # options[:name]=name if name
-          # options[:description]=description if description
           data = Fog::JSON.decode(service.create_vswitch(vpc.id, cidr_block,options).body)
-          # new_attributes = data.reject {|key,value| key == 'RequestId'}
-          # new_attributes = data.reject {|key,value| key == 'RequestId' || key == 'RouteTableId' }
-          # merge_attributes(new_attributes)
+
           true
         end
 

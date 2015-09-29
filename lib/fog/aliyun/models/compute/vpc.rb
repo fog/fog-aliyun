@@ -13,11 +13,7 @@ module Fog
         attribute :region_id,        :aliases => 'RegionId'
         attribute :v_router_id,      :aliases => 'VRouterId'
         attribute :creation_time,    :aliases => 'CreationTime'
-        # def initialize(attributes={})
-        #   self.dhcp_options_id ||= "default"
-        #   self.tenancy ||= "default"
-        #   super
-        # end
+
 
         def ready?
           requires :state
@@ -65,9 +61,6 @@ module Fog
           options[:name]=vpc_name if vpc_name
           options[:description]=description if description
           data = Fog::JSON.decode(service.create_vpc(cidr_block,options).body)
-          # new_attributes = data.reject {|key,value| key == 'RequestId'}
-          # new_attributes = data.reject {|key,value| key == 'RequestId' || key == 'RouteTableId' }
-          # merge_attributes(new_attributes)
           true
         end
       end

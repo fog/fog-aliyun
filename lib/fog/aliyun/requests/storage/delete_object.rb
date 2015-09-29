@@ -5,7 +5,6 @@ module Fog
         # Delete an existing object
         #
         # ==== Parameters
-        # * container<~String> - Name of container to delete
         # * object<~String> - Name of object to delete
         #
         def delete_object(object, options={})

@@ -33,9 +33,9 @@ module Fog
           end
         end
       end
+
       class Mock
         def get_object_http_url_public(object, expires, options = {})
-          
         end
       end
     end

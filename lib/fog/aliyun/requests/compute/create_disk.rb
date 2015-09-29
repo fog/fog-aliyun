@@ -2,6 +2,20 @@ module Fog
   module Compute
     class Aliyun
       class Real
+        # Create a disk.
+        #
+        # ==== Parameters
+        # * size<~String> - the size of the disk (GB).
+        # * options<~hash>
+        #     * :name - The name of the disk,default nil. If not nil, it must start with english or chinise character. 
+        #          The length should be within [2,128]. It can contain digits,'.','_'or'-'.It shouldn't start with 'http://' or 'https://'
+        #     * :description - The name of the disk,default nil. If not nil, the length should be within [2,255].It shouldn't start with 'http://' or 'https://'
+        # ==== Returns
+        # * response<~Excon::Response>:
+        #   * body<~Hash>:
+        #     * 'RequestId'<~String> - Id of the request
+        #
+        # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.201.106.DGkmH7#/pub/ecs/open-api/disk&createdisk]
         def create_disk(size, options={})
 
           action   = 'CreateDisk'
