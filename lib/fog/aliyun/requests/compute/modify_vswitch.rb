@@ -2,7 +2,7 @@ module Fog
   module Compute
     class Aliyun
       class Real
-         # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/vswitch&modifyvswitchattribute]
+        # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/vswitch&modifyvswitchattribute]
         def modify_vpc(vSwitchId,options={})
 
           action = 'ModifyVSwitchAttribute'
@@ -68,6 +68,6 @@ module Fog
           response
         end
       end # mock
-    end # openstack
+    end # Aliyun
   end # compute
 end # fog

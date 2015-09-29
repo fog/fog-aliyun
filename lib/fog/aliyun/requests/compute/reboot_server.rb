@@ -2,7 +2,7 @@ module Fog
   module Compute
     class Aliyun
       class Real
-         # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/instance&rebootinstance]
+        # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/instance&rebootinstance]
         def reboot_server(server_id, options = {})
 
           _action = 'RebootInstance'
@@ -15,7 +15,6 @@ module Fog
           _parameters['InstanceId']=server_id
           _pathURL += '&InstanceId='+server_id
             
-          #可选参数
           _ForceStop = options[:aliyun_ForceStop]
           if _ForceStop
             _parameters['ForceStop']=_ForceStop

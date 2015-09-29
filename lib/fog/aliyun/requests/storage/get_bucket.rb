@@ -79,7 +79,7 @@ module Fog
                   :resource => resource,
                   :endpoint => endpoint
           )
-	  if 404 != ret.data[:status]
+	        if 404 != ret.data[:status]
             lifecycle = XmlSimple.xml_in(ret.data[:body])["Rule"][0]
           else
             nil
@@ -131,7 +131,7 @@ module Fog
                   :resource => resource,
                   :endpoint => endpoint
           )
-	  if 404 != ret.data[:status]
+          if 404 != ret.data[:status]
             website = XmlSimple.xml_in(ret.data[:body])
           else
             nil

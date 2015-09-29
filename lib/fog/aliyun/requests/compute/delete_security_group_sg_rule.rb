@@ -19,12 +19,11 @@ module Fog
           pathUrl += '&SourceGroupId='
           pathUrl += source_securyitgroup_id
 
-          nicType = 'intranet'  #安全组互相授权固定是内网授权模式
+          nicType = 'intranet'
           parameters["NicType"] = nicType
           pathUrl += '&NicType='
           pathUrl += nicType
           
-          #端口范围可选，缺省为所有端口
           portRange = option[:portRange]
           unless portRange
             portRange = '-1/-1'
@@ -33,7 +32,6 @@ module Fog
           pathUrl += '&PortRange='
           pathUrl += URI.encode(portRange,'/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
           
-          #协议类型(tcp/udp等)可选，缺省为所有协议
           protocol = option[:protocol]
           unless protocol
             protocol = 'all'
@@ -83,6 +81,6 @@ module Fog
           response
         end
       end # mock
-    end # openstack
+    end # aliyun
   end # compute
 end # fog

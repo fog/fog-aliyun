@@ -12,7 +12,6 @@ module Fog
           _parameters = defalutParameters(_action, _sigNonce, _time)
           _pathURL  = defaultAliyunUri(_action, _sigNonce, _time)
           
-          #可选参数
           _Status = options[:aliyun_Status]
           if _Status
             _parameters['Status']=_Status
@@ -39,7 +38,7 @@ module Fog
 
           _PageSize   = options[:pageSize]
           unless _PageSize
-            _PageSize = '50'   #缺省每页显示50条
+            _PageSize = '50'
           end
           _parameters['PageSize']=_PageSize
           _pathURL += '&PageSize='+_PageSize
@@ -77,6 +76,6 @@ module Fog
           response
         end
       end # mock
-    end # openstack
+    end # Aliyun
   end #compute
 end

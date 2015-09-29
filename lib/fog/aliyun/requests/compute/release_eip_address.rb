@@ -48,6 +48,6 @@ module Fog
           response
         end
       end # mock
-    end # openstack
+    end # Aliyun
   end #compute
 end

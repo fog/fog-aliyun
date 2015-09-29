@@ -1,7 +1,3 @@
-
-
-
-
 module Fog
   module Compute
     class Aliyun
@@ -35,7 +31,7 @@ module Fog
           end
 
           unless pageSize
-            pageSize = '50'   #缺省每页显示50条
+            pageSize = '50'
           end
           parameters["PageSize"] = pageSize
           pathUrl += '&PageSize='

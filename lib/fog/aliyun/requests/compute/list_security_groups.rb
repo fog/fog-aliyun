@@ -30,7 +30,7 @@ module Fog
 
           pageSize   = options[:pageSize]
           unless pageSize
-            pageSize = '50'   #缺省每页显示50条
+            pageSize = '50'
           end
           parameters["PageSize"] = pageSize  
           pathUrl += '&PageSize='
@@ -76,6 +76,6 @@ module Fog
           )
         end
       end # mock
-    end # openstack
+    end # aliyun
   end # compute
 end # fog

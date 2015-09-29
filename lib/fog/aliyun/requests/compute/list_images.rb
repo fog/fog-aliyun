@@ -21,7 +21,7 @@ module Fog
 
           pageSize   = options[:pageSize]
           unless pageSize
-            pageSize = '50'   #缺省每页显示50条
+            pageSize = '50'
           end
           parameters["PageSize"] = pageSize  
           pathUrl += '&PageSize='
@@ -48,7 +48,6 @@ module Fog
             pathUrl += snapshotId
           end
           
-          #'system'-alyun,  'self'-userdef, 'others'-, 'marketplace'-imagemarket
           ownerAlias = options[:ownerAlias]
           if ownerAlias
             parameters["ImageOwnerAlias"] = ownerAlias

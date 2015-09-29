@@ -40,7 +40,7 @@ module Fog
           end
           
           unless _PageSize
-            _PageSize = '50'   #缺省每页显示50条
+            _PageSize = '50'
           end
           _parameters['PageSize']=_PageSize
           _pathURL += '&PageSize='+_PageSize

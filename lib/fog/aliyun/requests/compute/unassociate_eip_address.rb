@@ -51,6 +51,6 @@ module Fog
           response
         end
       end # mock
-    end # openstack
+    end # aliyun
   end #compute
 end

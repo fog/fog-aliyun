@@ -15,22 +15,18 @@ module Fog
           _parameters['ImageId'] = imageId
           _pathURL += '&ImageId='+imageId
 
-          # instanceType改为直接传入id，由外部调用者通过get接口获取type
-          # instanceType = get_instance_type(cpuNum, memory)
-          # puts "instanceType:"+instanceType
           _parameters['InstanceType'] = instanceType
           _pathURL += '&InstanceType='+instanceType
           
           _parameters['SecurityGroupId'] = securityGroupId
           _pathURL += '&SecurityGroupId='+securityGroupId
           
-          #可选参数
           _ZoneId = options[:ZoneId]
           if _ZoneId
             _parameters['ZoneId']=_ZoneId
             _pathURL += '&ZoneId='+_ZoneId
           end
-          
+
           _InstanceName = options[:InstanceName]
           if _InstanceName
             _parameters['InstanceName']=_InstanceName
@@ -72,7 +68,7 @@ module Fog
               _pathURL += '&PrivateIpAddress='+_PrivateIpAddress
             end
           else
-            #VPC方式不需要设置带宽属性，非VPC方式才能设置入出带宽
+
             _InternetMaxBandwidthIn = options[:InternetMaxBandwidthIn]
             if _InternetMaxBandwidthIn
               _parameters['InternetMaxBandwidthIn']=_InternetMaxBandwidthIn
