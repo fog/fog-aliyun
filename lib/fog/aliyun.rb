@@ -1,10 +1,19 @@
-require "fog/aliyun/core"
-require "fog/aliyun/storage"
-require "fog/aliyun/compute"
+require "fog/core"
+require "fog/json"
 require "fog/aliyun/version"
 
 module Fog
+  module Compute
+    ret = autoload :Aliyun, "fog/aliyun/compute"
+  end
+
+  module Storage
+    ret = autoload :Aliyun, "fog/aliyun/storage"
+  end
+  
   module Aliyun
-    # Your code goes here...
+    extend Fog::Provider
+    service(:compute, "Compute")
+    service(:storage, "Storage")
   end
 end

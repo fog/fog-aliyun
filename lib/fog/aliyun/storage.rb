@@ -1,4 +1,3 @@
-require 'fog/aliyun/core'
 require 'xmlsimple'
 
 module Fog

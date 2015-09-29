@@ -1,5 +1,3 @@
-require 'fog/aliyun/core'
-
 module Fog
   module Compute
     class Aliyun < Fog::Service
@@ -12,26 +10,6 @@ module Fog
       ## MODELS
       #
       model_path 'fog/aliyun/models/compute'
-      #model       :server
-      #collection  :servers
-      #model       :service
-      #collection  :services
-      #model       :image
-      #collection  :images
-      #model       :flavor
-      #collection  :flavors
-      #model       :address
-      #collection  :addresses
-      #model       :security_group
-      #collection  :security_groups
-      #model       :security_group_rule
-      #collection  :security_group_rules
-      #model       :volume
-      #collection  :volumes
-      #model       :network
-      #collection  :networks
-      #model       :snapshot
-      #collection  :snapshots
       model       :vpc
       collection  :vpcs
       model       :vswitch
