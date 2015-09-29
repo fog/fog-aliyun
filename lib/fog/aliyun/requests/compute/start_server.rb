@@ -37,6 +37,6 @@ module Fog
           true
         end # def start_server
       end # class Mock
-    end # class Aliyun
+    end # class aliyun
   end # module Compute
 end # module Fog

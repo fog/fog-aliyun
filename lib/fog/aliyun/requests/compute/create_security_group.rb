@@ -72,6 +72,6 @@ module Fog
           response
         end
       end # mock
-    end # Aliyun
+    end # aliyun
   end # compute
 end # fog
