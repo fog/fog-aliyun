@@ -5,7 +5,6 @@ module Fog
   module Compute
     class Aliyun
       class Vpcs < Fog::Collection
-        attribute :filters
 
         model Fog::Compute::Aliyun::VPC
 
@@ -28,11 +27,6 @@ module Fog
         # >
         #
 
-        def initialize(attributes)
-          self.filters ||= {}
-          super
-        end
-
         # Returns an array of all VPCs that have been created
         #
         # Aliyun.vpcs.all
@@ -43,7 +37,6 @@ module Fog
         #
         #>> Aliyun.vpcs.all
         # <Fog::Aliyun::VPC::VPCs
-        # filters={}
         # [
         # <Fog::Aliyun::VPC::VPC
         # id="vpc-12345678",
@@ -53,13 +46,12 @@ module Fog
         # >
         #
 
-        def all(filters_arg = filters)
+        def all(filters_arg = {})
           unless filters_arg.is_a?(Hash)
             Fog::Logger.warning("all with #{filters_arg.class} param is deprecated, use all('vpcId' => []) instead [light_black](#{caller.first})[/]")
             filters_arg = {'vpcId' => [*filters_arg]}
           end
-          filters = filters_arg
-          data = Fog::JSON.decode(service.list_vpcs(filters).body)['Vpcs']['Vpc']
+          data = Fog::JSON.decode(service.list_vpcs(filters_arg).body)['Vpcs']['Vpc']
           load(data)
         end
 

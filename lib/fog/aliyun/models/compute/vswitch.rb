@@ -12,7 +12,7 @@ module Fog
         attribute :cidr_block,          :aliases => 'CidrBlock'
         attribute :description,      :aliases => 'Description'
         attribute :region_id,        :aliases => 'RegionId'
-        attribute :creation_time,    :aliases => 'CreationTime'
+        attribute :create_at,    :aliases => 'CreationTime'
         def initialize(attributes={})
           super
         end
@@ -51,6 +51,8 @@ module Fog
 
         def save(options={})
           requires :vpc,:cidr_block
+          options[:name] = name if name
+          options[:description]=description if description
           data = Fog::JSON.decode(service.create_vswitch(vpc.id, cidr_block,options).body)
 
           true

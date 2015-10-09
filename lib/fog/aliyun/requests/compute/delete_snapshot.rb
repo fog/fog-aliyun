@@ -2,7 +2,7 @@ module Fog
   module Compute
     class Aliyun
       class Real
-        def delete_snapshoot(snapshotId)
+        def delete_snapshot(snapshotId)
           # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/snapshot&deletesnapshot]
           action = 'DeleteSnapshot'
           sigNonce = randonStr()

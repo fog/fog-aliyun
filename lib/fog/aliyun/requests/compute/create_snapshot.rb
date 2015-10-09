@@ -2,7 +2,7 @@ module Fog
   module Compute
     class Aliyun
       class Real
-        def create_snapshoot(diskId, options={})
+        def create_snapshot(diskId, options={})
         # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/snapshot&createsnapshot]          
           action = 'CreateSnapshot'
           sigNonce = randonStr()

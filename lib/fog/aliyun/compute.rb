@@ -10,6 +10,12 @@ module Fog
       ## MODELS
       #
       model_path 'fog/aliyun/models/compute'
+      model       :image
+      collection  :images
+      model       :volume
+      collection  :volumes
+      model       :snapshot
+      collection  :snapshots
       model       :vpc
       collection  :vpcs
       model       :vswitch
@@ -78,6 +84,7 @@ module Fog
       request :delete_vswitch
       request :list_vswitchs
       request :modify_vpc
+      request :modify_vswitch
 
       
       #clouddisk

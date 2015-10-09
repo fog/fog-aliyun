@@ -2,8 +2,18 @@ module Fog
   module Compute
     class Aliyun
       class Real
+        # Delete a disk By the given id.
+        #
+        # ==== Parameters
+        # * diskId<~String> - the disk_id
+        # 
+        # ==== Returns
+        # * response<~Excon::Response>:
+        #   * body<~Hash>:
+        #     * 'RequestId'<~String> - Id of the request
+        #
+        # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.201.106.DGkmH7#/pub/ecs/open-api/disk&deletedisk]
         def delete_disk(diskId)
-          # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.201.106.DGkmH7#/pub/ecs/open-api/disk&deletedisk]
           action   = 'DeleteDisk'
           sigNonce = randonStr()
           time     = Time.new.utc

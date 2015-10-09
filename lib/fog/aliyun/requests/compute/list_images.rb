@@ -27,7 +27,7 @@ module Fog
           pathUrl += '&PageSize='
           pathUrl += pageSize	
           
-          imageId = options[:imangeId]
+          imageId = options[:imageId]
           if imageId
             parameters["ImageId"] = imageId
             pathUrl += '&ImageId='

@@ -3,16 +3,16 @@ module Fog
   module Compute
     class Aliyun
       class VPC < Fog::Model
-        identity  :id,               :aliases => 'VpcId'
-        attribute :vpc_name,         :aliases => 'VpcName'
-        attribute :state,            :aliases => 'Status'
-        attribute :cidr_block,       :aliases => 'CidrBlock'
-        attribute :v_switch_ids,     :aliases => 'VSwitchIds'
-        attribute :description,      :aliases => 'Description'
-        attribute :user_cidrs,       :aliases => 'UserCidrs'
-        attribute :region_id,        :aliases => 'RegionId'
-        attribute :v_router_id,      :aliases => 'VRouterId'
-        attribute :creation_time,    :aliases => 'CreationTime'
+        identity  :id,                :aliases => 'VpcId'
+        attribute :name,              :aliases => 'VpcName'
+        attribute :state,             :aliases => 'Status'
+        attribute :cidr_block,        :aliases => 'CidrBlock'
+        attribute :v_switch_ids,      :aliases => 'VSwitchIds'
+        attribute :description,       :aliases => 'Description'
+        attribute :user_cidrs,        :aliases => 'UserCidrs'
+        attribute :region_id,         :aliases => 'RegionId'
+        attribute :v_router_id,       :aliases => 'VRouterId'
+        attribute :create_at,         :aliases => 'CreationTime'
 
 
         def ready?
@@ -58,7 +58,7 @@ module Fog
 
         def save(options={})
           requires :cidr_block
-          options[:name]=vpc_name if vpc_name
+          options[:name]=name if name
           options[:description]=description if description
           data = Fog::JSON.decode(service.create_vpc(cidr_block,options).body)
           true

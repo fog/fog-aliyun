@@ -3,7 +3,7 @@ module Fog
     class Aliyun
       class Real
         # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/snapshot&describesnapshots]
-        def list_snapshoots(options={})
+        def list_snapshots(options={})
           
           action = 'DescribeSnapshots'
           sigNonce = randonStr()
@@ -18,7 +18,35 @@ module Fog
           diskId = options[:diskId]
           snapshotId = options[:snapshotIds]
           sourceDiskType = options[:sourceDiskType]
-          
+          name = options[:snapshotName]
+          state = options[:state]
+          type = options[:snapshotType]
+          usage = options[:usage]
+
+          if usage
+            parameters["Usage"] = usage
+            pathUrl += '&Usage='
+            pathUrl += usage
+          end
+
+          if type
+            parameters["SnapshotType"] = type
+            pathUrl += '&SnapshotType='
+            pathUrl += type
+          end
+
+          if state
+            parameters["Status"] = state
+            pathUrl += '&Status='
+            pathUrl += state
+          end
+
+          if name
+            parameters["SnapshotName"] = name
+            pathUrl += '&SnapshotName='
+            pathUrl += name
+          end
+
           if instanceId
             parameters["InstanceId"] = instanceId
             pathUrl += '&InstanceId='
