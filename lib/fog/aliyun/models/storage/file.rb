@@ -4,16 +4,17 @@ module Fog
   module Storage
     class Aliyun
       class File < Fog::Model
-        identity  :key,             :aliases => 'name'
-
-        attribute :access_control_allow_origin, :aliases => ['Access-Control-Allow-Origin']
-        attribute :content_length,  :aliases => ['bytes', 'Content-Length'], :type => :integer
-        attribute :content_type,    :aliases => ['content_type', 'Content-Type']
-        attribute :content_disposition, :aliases => ['content_disposition', 'Content-Disposition']
-        attribute :etag,            :aliases => ['hash', 'Etag']
-        attribute :last_modified,   :aliases => ['last_modified', 'Last-Modified'], :type => :time
-        attribute :metadata
-        attribute :origin,          :aliases => ['Origin']
+        identity  :key,                 :aliases => 'name'
+        attribute :date,                :aliases => 'Date'
+        attribute :content_length,      :aliases => 'Content-Length', :type => :integer
+        attribute :content_type,        :aliases => 'Content-Type'
+        attribute :connection,          :aliases => 'Connection'
+        attribute :content_disposition, :aliases => 'Content-Disposition'
+        attribute :etag,                :aliases => 'Etag'
+        attribute :last_modified,       :aliases => 'Last-Modified', :type => :time
+        attribute :accept_ranges,       :aliases => 'Accept-Ranges'
+        attribute :server,              :aliases => 'Server'
+        attribute :object_type,         :aliases => 'x-oss-object-type'
 
         def body
           attributes[:body] ||= if last_modified

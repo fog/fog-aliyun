@@ -26,7 +26,7 @@ module Fog
           i = 0
           files.each do |file|
             if file["Key"][0][-1] != "/"
-	      content_length = file["Size"][0].to_i
+              content_length = file["Size"][0].to_i
               key = file["Key"][0]
               lastModified = file["LastModified"][0]
               if lastModified != nil && lastModified != ""
@@ -34,10 +34,12 @@ module Fog
               else
                 last_modified = nil
               end
+              type = file["Type"][0]
               data[i] = {:content_length => content_length,
                          :key            => key,
                          :last_modified  => last_modified,
-                         :etag           => file["ETag"][0]}
+                         :etag           => file["ETag"][0],
+                         :object_type    => type}
               i = i + 1
             end
           end
@@ -71,7 +73,23 @@ module Fog
             object = directory.key+"/"+key
           end
           
-          data = service.head_object(object).data
+          if block_given?
+            pagesNum = (contentLen + Excon::CHUNK_SIZE - 1)/Excon::CHUNK_SIZE
+            
+            for i in 1..pagesNum
+              _start = (i-1)*(Excon::CHUNK_SIZE)
+              _end = i*(Excon::CHUNK_SIZE) - 1
+              range = "#{_start}-#{_end}"
+              data = service.get_object(object, range)
+              chunk = data[:body]
+              yield(chunk)
+              body = nil
+            end
+          else
+            data = service.get_object(object)
+            body = data[:body]
+          end
+          
           contentLen = data[:headers]["Content-Length"].to_i
           if data[:status] != 200
             return nil
@@ -83,32 +101,28 @@ module Fog
             last_modified = nil
           end
 
-          
+          date = data[:headers]["Date"]
+          if date != nil && date != ""
+            date = (Time.parse(date)).localtime
+          else
+            date = nil
+          end
           file_data = {
+              :body           => body,
               :content_length => contentLen,
               :key            => key,
               :last_modified  => last_modified,
               :content_type   => data[:headers]["Content-Type"],
-              :etag           => data[:headers]["ETag"]	
+              :etag           => data[:headers]["ETag"],
+              :date           => date,
+              :connection     => data[:headers]["Connection"],
+              :accept_ranges  => data[:headers]["Accept-Ranges"],
+              :server         => data[:headers]["Server"],
+              :object_type    => data[:headers]["x-oss-object-type"],
+              :content_disposition => data[:headers]["Content-Disposition"]
           }
-          
-          if block_given?
-            pagesNum = (contentLen + Excon::CHUNK_SIZE - 1)/Excon::CHUNK_SIZE
-            
-            for i in 1..pagesNum
-              _start = (i-1)*(Excon::CHUNK_SIZE)
-              _end = i*(Excon::CHUNK_SIZE) - 1
-              range = "#{_start}-#{_end}"
-              chunk = service.get_object(object, range)[:body]
-              yield(chunk)
-            end
-            new(file_data)
-          else
-            data = service.get_object(object)
-            file_data.merge!(:body => data[:body])
-            new(file_data)
-          end
-          
+
+          new(file_data)
         end
 
         def get_url(key)
@@ -156,12 +170,24 @@ module Fog
             last_modified = nil
           end
 
+          date = data[:headers]["Date"]
+          if date != nil && date != ""
+            date = (Time.parse(date)).localtime
+          else
+            date = nil
+          end
+
           file_data = {
               :content_length => data[:headers]["Content-Length"].to_i,
               :key            => key,
               :last_modified  => last_modified,
               :content_type   => data[:headers]["Content-Type"],
-              :etag           => data[:headers]["ETag"]	
+              :etag           => data[:headers]["ETag"],
+              :date           => date,
+              :connection     => data[:headers]["Connection"],
+              :accept_ranges  => data[:headers]["Accept-Ranges"],
+              :server         => data[:headers]["Server"],
+              :object_type    => data[:headers]["x-oss-object-type"]
           }
           new(file_data)
         rescue Fog::Storage::Aliyun::NotFound
