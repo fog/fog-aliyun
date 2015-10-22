@@ -3,7 +3,7 @@ module Fog
     class Aliyun
       class Real
         # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/disk&detachdisk]
-        def detach_disk(instanceId, diskId)
+        def detach_disk(instanceId, diskId,options={})
           action   = 'DetachDisk'
           sigNonce = randonStr()
           time     = Time.new.utc
@@ -19,6 +19,11 @@ module Fog
           pathUrl += '&DiskId='
           pathUrl += diskId
 
+          if device
+            parameters["Device"] = device
+            pathUrl += '&Device='
+            pathUrl += URI.encode(device,'/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
+          end
           signature = sign(@aliyun_accesskey_secret, parameters)
           pathUrl += '&Signature='
           pathUrl += signature

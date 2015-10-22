@@ -29,13 +29,13 @@ module Fog
           _pathURL  = defaultAliyunUri(_action, _sigNonce, _time)
           
           #optional parameters
-          _Bandwidth = options[:aliyun_Bandwidth]
+          _Bandwidth = options[:bandwidth]
           if _Bandwidth
             _parameters['Bandwidth']=_Bandwidth
             _pathURL += '&Bandwidth='+_Bandwidth
           end
           
-          _InternetChargeType = options[:aliyun_InternetChargeType]
+          _InternetChargeType = options[:internet_charge_type]
           if _InternetChargeType
             _parameters['InternetChargeType']=_InternetChargeType
             _pathURL += '&InternetChargeType='+_InternetChargeType

@@ -14,7 +14,7 @@ module Fog
 
           pageNumber = options[:pageNumber]
           pageSize   = options[:pageSize]
-          vpcId      = options[:vpcid]
+          vpcId      = options[:vpcId]
           
           if vpcId
             parameters["VpcId"] = vpcId

@@ -10,8 +10,16 @@ module Fog
       ## MODELS
       #
       model_path 'fog/aliyun/models/compute'
+      model       :server
+      collection  :servers
       model       :image
       collection  :images
+      model       :eip_address
+      collection  :eip_addresses
+      model       :security_group
+      collection  :security_groups
+      model       :security_group_rule
+      collection  :security_group_rules
       model       :volume
       collection  :volumes
       model       :snapshot
@@ -20,6 +28,12 @@ module Fog
       collection  :vpcs
       model       :vswitch
       collection  :vswitches
+      model       :vrouter
+      collection  :vrouters
+      model       :route_table
+      collection  :route_tables
+      model       :route_entry
+      collection  :route_entrys
 
       ## REQUESTS
       #
@@ -85,6 +99,12 @@ module Fog
       request :list_vswitchs
       request :modify_vpc
       request :modify_vswitch
+
+      #VRouter
+      request :list_vrouters
+
+      #RouteTable
+      request :list_route_tables
 
       
       #clouddisk

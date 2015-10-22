@@ -12,11 +12,11 @@ module Fog
           _parameters = defalutParameters(_action, _sigNonce, _time)
           _pathURL  = defaultAliyunUri(_action, _sigNonce, _time)
 
-          _InstanceId = options[:aliyun_InstanceId]
-          _VpcId = options[:aliyun_VpcId]
-          _SecurityGroupId = options[:aliyun_SecurityGroupId]
-          _PageNumber = options[:aliyun_PageNumber]
-          _PageSize = options[:aliyun_PageSize]
+          _InstanceId = options[:instanceId]
+          _VpcId = options[:vpcId]
+          _SecurityGroupId = options[:securityGroupId]
+          _PageNumber = options[:pageNumber]
+          _PageSize = options[:pageSize]
 
           if _InstanceId != nil
             _InstanceStr = "[\"#{_InstanceId}\"]"

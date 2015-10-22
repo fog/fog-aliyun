@@ -12,31 +12,31 @@ module Fog
           _parameters = defalutParameters(_action, _sigNonce, _time)
           _pathURL  = defaultAliyunUri(_action, _sigNonce, _time)
           
-          _Status = options[:aliyun_Status]
+          _Status = options[:state]
           if _Status
             _parameters['Status']=_Status
             _pathURL += '&Status='+_Status
           end
           
-          _EipAddress = options[:aliyun_EipAddress]
+          _EipAddress = options[:ip_address]
           if _EipAddress
             _parameters['EipAddress']=_EipAddress
             _pathURL += '&EipAddress='+_EipAddress
           end
           
-          _AllocationId = options[:aliyun_AllocationId]
+          _AllocationId = options[:allocation_id]
           if _AllocationId
             _parameters['AllocationId']=_AllocationId
             _pathURL += '&AllocationId='+_AllocationId
           end
           
-          _PageNumber = options[:aliyun_PageNumber]
+          _PageNumber = options[:page_number]
           if _PageNumber
             _parameters['PageNumber']=_PageNumber
             _pathURL += '&PageNumber='+_PageNumber
           end
 
-          _PageSize   = options[:pageSize]
+          _PageSize   = options[:page_size]
           unless _PageSize
             _PageSize = '50'
           end

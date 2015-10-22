@@ -45,6 +45,15 @@ module Fog
           end
         end
 
+        def vrouter
+          requires :v_router_id
+          Fog::Compute::Aliyun::Vrouters.new(:service=>service).all('vRouterId'=>v_router_id)[0]
+        end
+
+        def security_groups
+          requires :id
+          Fog::Compute::Aliyun::SecurityGroups.new(:service=>service).all(:vpcId=>id)
+        end
         # Create a vpc
         #
         # >> g = Aliyun.vpcs.new(:cidr_block => "10.1.2.0/24")

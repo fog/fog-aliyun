@@ -14,7 +14,7 @@ module Fog
 
           name  = options[:name]
           desc  = options[:description]
-          vpcid = options[:vpcid]
+          vpcid = options[:vpcId]
 
           if name
             parameters["SecurityGroupName"] = name

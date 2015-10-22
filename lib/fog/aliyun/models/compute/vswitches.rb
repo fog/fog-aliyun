@@ -6,7 +6,6 @@ module Fog
     class Aliyun
       class Vswitches < Fog::Collection
         attribute :vpc
-        attribute :filters
 
         model Fog::Compute::Aliyun::Vswitch
 
@@ -27,13 +26,7 @@ module Fog
         # tags=nil
         # tenancy=nil
         # >
-        #
-
-        def initialize(attributes)
-          self.filters ||={}
-          super
-        end
-
+        
         # Returns an array of all VPCs that have been created
         #
         # Aliyun.vpcs.all
