@@ -38,15 +38,24 @@ module Fog
         end
 
 
-        # def associate(new_server)
-        #   unless persisted?
-        #     @server = new_server
-        #   else
-        #     @server = nil
-        #     self.server_id = new_server.id
-        #     service.associate_address(server_id, public_ip, network_interface_id, allocation_id)
-        #   end
-        # end
+        def associate(new_server,options={})
+          unless persisted?
+            @server = new_server
+          else
+            @server = nil
+            self.server_id = new_server.id
+            service.associate_eip_address(server_id,allocation_id,options)
+          end
+        end
+
+        def disassociate(new_server,options={})
+            @server = nil
+            self.server_id = new_server.id
+          if persisted?
+            service.disassociate_address(server_id,allocation_id,options)
+          end
+          
+        end
 
 			end
 		end
