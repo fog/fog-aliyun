@@ -2,7 +2,7 @@ module Fog
   module Compute
     class Aliyun
       class Real
-        # Associate an avalable eip IP address to the given instance.
+        # Disassociate an avalable eip IP address to the given instance.
         #
         # ==== Parameters
         # * server_id<~String> - id of the instance
@@ -15,7 +15,7 @@ module Fog
         # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.201.106.DGkmH7#/pub/ecs/open-api/network&associateeipaddresss]
         def associate_eip_address(server_id, allocationId,options={})
           
-          _action = 'AssociateEipAddress'
+          _action = 'UnassociateEipAddress'
           _sigNonce = randonStr()
           _time = Time.new.utc
 
@@ -71,3 +71,4 @@ module Fog
     end # aliyun
   end #compute
 end
+
