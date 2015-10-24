@@ -82,7 +82,7 @@ module Fog
           # find the right uploadid
           uploads = list_multipart_uploads(bucket, endpoint)
           if nil != uploads
-	    upload = uploads.find do |tmpupload| tmpupload["Key"][0] == object end
+            upload = uploads.find do |tmpupload| tmpupload["Key"][0] == object end
           else
             upload = nil
           end

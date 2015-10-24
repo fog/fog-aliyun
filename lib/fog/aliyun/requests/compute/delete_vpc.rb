@@ -9,20 +9,20 @@ module Fog
           sigNonce = randonStr()
           time = Time.new.utc
 
-					parameters = defalutParameters(action, sigNonce, time)
-					pathUrl    = defaultAliyunUri(action, sigNonce, time)
+          parameters = defalutParameters(action, sigNonce, time)
+          pathUrl    = defaultAliyunUri(action, sigNonce, time)
 
-					if vpc_id
-					  parameters["VpcId"] = vpc_id
-						pathUrl += '&VpcId='
-						pathUrl += vpc_id	
-				  else
-				    raise ArgumentError, "Missing required vpc_id"
-				  end
+          if vpc_id
+            parameters["VpcId"] = vpc_id
+            pathUrl += '&VpcId='
+            pathUrl += vpc_id	
+          else
+            raise ArgumentError, "Missing required vpc_id"
+          end
 
-					signature = sign(@aliyun_accesskey_secret, parameters)
-					pathUrl += '&Signature='
-					pathUrl += signature
+          signature = sign(@aliyun_accesskey_secret, parameters)
+          pathUrl += '&Signature='
+          pathUrl += signature
           
           request(
             :expects  => [200, 203],

@@ -9,30 +9,30 @@ module Fog
           sigNonce = randonStr()
           time = Time.new.utc
 
-					parameters = defalutParameters(action, sigNonce, time)
-					pathUrl    = defaultAliyunUri(action, sigNonce, time)
-					
+          parameters = defalutParameters(action, sigNonce, time)
+          pathUrl    = defaultAliyunUri(action, sigNonce, time)
+
           parameters["VSwitchId"] = vSwitchId
           pathUrl += '&VSwitchId='
           pathUrl += URI.encode(vpcId,'/[^!*\'()\;?:@#&%=+$,{}[]<>`" ') 
           name = options[:name]
-					desc = options[:description]
+          desc = options[:description]
 
-					if name
+          if name
             parameters["VSwitchName"] = name
             pathUrl += '&VSwitchName='
             pathUrl += name	
-				  end
+          end
 
-					if desc
+          if desc
             parameters["Description"] = desc
             pathUrl += '&Description='
             pathUrl += desc	
-				  end
+          end
 
-					signature = sign(@aliyun_accesskey_secret, parameters)
-					pathUrl += '&Signature='
-					pathUrl += signature
+          signature = sign(@aliyun_accesskey_secret, parameters)
+          pathUrl += '&Signature='
+          pathUrl += signature
 
           request(
             :expects  => [200, 203],

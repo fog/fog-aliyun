@@ -8,20 +8,20 @@ module Fog
           sigNonce = randonStr()
           time = Time.new.utc
 
-					parameters = defalutParameters(action, sigNonce, time)
-					pathUrl    = defaultAliyunUri(action, sigNonce, time)
+          parameters = defalutParameters(action, sigNonce, time)
+          pathUrl    = defaultAliyunUri(action, sigNonce, time)
 
-					if vswitch_id
-					  parameters["VSwitchId"] = vswitch_id
-						pathUrl += '&VSwitchId='
-						pathUrl += vswitch_id	
-				  else
-				    raise ArgumentError, "Missing required vswitch_id"
-				  end
+          if vswitch_id
+            parameters["VSwitchId"] = vswitch_id
+            pathUrl += '&VSwitchId='
+            pathUrl += vswitch_id	
+          else
+            raise ArgumentError, "Missing required vswitch_id"
+          end
 
-					signature = sign(@aliyun_accesskey_secret, parameters)
-					pathUrl += '&Signature='
-					pathUrl += signature
+          signature = sign(@aliyun_accesskey_secret, parameters)
+          pathUrl += '&Signature='
+          pathUrl += signature
           
           request(
             :expects  => [200, 203],

@@ -83,7 +83,7 @@ module Fog
             lifecycle = XmlSimple.xml_in(ret.data[:body])["Rule"][0]
           else
             nil
-          end	    
+          end
         end
         
         def get_bucket_logging(bucket)

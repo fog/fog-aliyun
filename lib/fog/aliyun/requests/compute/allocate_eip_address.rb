@@ -36,10 +36,11 @@ module Fog
           end
           
           _InternetChargeType = options[:internet_charge_type]
-          if _InternetChargeType
-            _parameters['InternetChargeType']=_InternetChargeType
-            _pathURL += '&InternetChargeType='+_InternetChargeType
+          unless _InternetChargeType
+            _InternetChargeType = 'PayByTraffic'
           end
+          _parameters['InternetChargeType']=_InternetChargeType
+          _pathURL += '&InternetChargeType='+_InternetChargeType
           
           _signature = sign(@aliyun_accesskey_secret, _parameters)
           _pathURL += '&Signature='+_signature

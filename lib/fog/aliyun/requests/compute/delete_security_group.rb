@@ -8,20 +8,20 @@ module Fog
           sigNonce = randonStr()
           time = Time.new.utc
 
-					parameters = defalutParameters(action, sigNonce, time)
-					pathUrl    = defaultAliyunUri(action, sigNonce, time)
+          parameters = defalutParameters(action, sigNonce, time)
+          pathUrl    = defaultAliyunUri(action, sigNonce, time)
 
-					if security_group_id
-					  parameters["SecurityGroupId"] = security_group_id
-						pathUrl += '&SecurityGroupId='
-						pathUrl += security_group_id	
-				  else
-				    raise ArgumentError, "Missing required securyti id "
-				  end
+          if security_group_id
+            parameters["SecurityGroupId"] = security_group_id
+            pathUrl += '&SecurityGroupId='
+            pathUrl += security_group_id	
+          else
+            raise ArgumentError, "Missing required securyti id "
+          end
 
-					signature = sign(@aliyun_accesskey_secret, parameters)
-					pathUrl += '&Signature='
-					pathUrl += signature
+          signature = sign(@aliyun_accesskey_secret, parameters)
+          pathUrl += '&Signature='
+          pathUrl += signature
           
           request(
             :expects  => [200, 203],

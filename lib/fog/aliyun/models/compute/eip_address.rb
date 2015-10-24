@@ -1,27 +1,27 @@
 require 'fog/core/model'
 module Fog
-	module Compute
-		class Aliyun
-			class EipAddress < Fog::Model
+  module Compute
+    class Aliyun
+      class EipAddress < Fog::Model
 
-				identity 	:id,						:aliases => 'AllocationId'
+        identity :id,             :aliases => 'AllocationId'
 
-				attribute :allocated_at,	:aliases => 'AllocationTime'
-				attribute :bandwidth,			:aliases => 'Bandwidth'
-				attribute :server_id, 		:aliases => 'InstanceId'
-				attribute :charge_type,		:aliases => 'InternetChargeType'
-				attribute :ip_address,		:aliases => ['IpAddress','EipAddress']
-				attribute :opertion_locks,:aliases => 'OperationLocks'
-				attribute :region_id,			:aliases => 'RegionId'
-				attribute :state,					:aliases => 'Status'
+        attribute :allocated_at,  :aliases => 'AllocationTime'
+        attribute :bandwidth,     :aliases => 'Bandwidth'
+        attribute :server_id,     :aliases => 'InstanceId'
+        attribute :charge_type,   :aliases => 'InternetChargeType'
+        attribute :ip_address,    :aliases => ['IpAddress','EipAddress']
+        attribute :opertion_locks,:aliases => 'OperationLocks'
+        attribute :region_id,     :aliases => 'RegionId'
+        attribute :state,         :aliases => 'Status'
 
-				def destroy
-					requires :id
-					service.release_eip_address(id)
-					true
-				end
+        def destroy
+          requires :id
+          service.release_eip_address(id)
+          true
+        end
 
-				def ready?
+        def ready?
           requires :state
           state == 'Available'
         end
@@ -44,7 +44,7 @@ module Fog
           else
             @server = nil
             self.server_id = new_server.id
-            service.associate_eip_address(server_id,allocation_id,options)
+            service.associate_eip_address(server_id,id,options)
           end
         end
 
@@ -52,12 +52,12 @@ module Fog
             @server = nil
             self.server_id = new_server.id
           if persisted?
-            service.disassociate_address(server_id,allocation_id,options)
+            service.unassociate_eip_address(server_id,id,options)
           end
           
         end
 
-			end
-		end
-	end
+      end
+    end
+  end
 end
