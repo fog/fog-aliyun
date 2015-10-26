@@ -40,6 +40,22 @@ module Fog
           pathUrl += '&IpProtocol='
           pathUrl += protocol
 
+          policy = option[:policy]
+          unless policy
+            policy = 'accept'
+          end
+          parameters["Policy"] = policy
+          pathUrl += '&Policy='
+          pathUrl += policy
+
+          priority = option[:priority]
+          unless priority
+            priority = '1'
+          end
+          parameters["Priority"] = priority
+          pathUrl += '&Priority='
+          pathUrl += priority
+
           signature = sign(@aliyun_accesskey_secret, parameters)
           pathUrl += '&Signature='
           pathUrl += signature

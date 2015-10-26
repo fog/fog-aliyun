@@ -40,34 +40,59 @@ module Fog
             true
         end
 
-        # def security_group_rules
-        #   Fog::Compute::OpenStack::SecurityGroupRules.new(:service => service).load(attributes[:security_group_rules])
-        # end
+        def authorize_seurity_group_sg_rule(group_id,direction="ingress",options={})
+            requires :id
+            if direction=="egress"
+                service.create_security_group_egress_sg_rule(id,group_id,options)
+            else
+                service.create_security_group_sg_rule(id,group_id,options)
+            end
+                    
+            true
+        end
 
-        # def rules
-        #   Fog::Logger.deprecation('#rules is deprecated. Use #security_group_rules instead')
-        #   attributes[:security_group_rules]
-        # end
+        def authorize_security_group_ip_rule(cidr_ip,direction="ingress",options={})
+            requires :id
+            nic_type=options[:nic_type]
+            unless nic_type
+                nic_type="internet"
+            end
 
-        # # no one should be calling this because it doesn't do anything
-        # # useful but we deprecated the rules attribute and need to maintain the API
-        # def rules=(new_rules)
-        #   Fog::Logger.deprecation('#rules= is deprecated. Use the Fog::Compute::Openstack::SecurityGroupRules collection to create new rules.')
-        #   attributes[:security_group_rules] = new_rules
-        # end
+            if direction=="egress"
+                service.create_security_group_egress_ip_rule(id,cidr_ip,nic_type,options)
+            else
+                service.create_security_group_ip_rule(id,cidr_ip,nic_type,options)
+            end
+                    
+            true
+        end
 
-        # def save
-        #   requires :name, :description
-        #   data = service.create_security_group(name, description)
-        #   merge_attributes(data.body['security_group'])
-        #   true
-        # end
+        def revoke_seurity_group_sg_rule(group_id,direction="ingress",options={})
+            requires :id
+            if direction=="egress"
+                service.delete_security_group_egress_sg_rule(id,group_id,options)
+            else
+                service.delete_security_group_sg_rule(id,group_id,options)
+            end
+                    
+            true
+        end
 
-        # def destroy
-        #   requires :id
-        #   service.delete_security_group(id)
-        #   true
-        # end
+        def revoke_security_group_ip_rule(cidr_ip,direction="ingress",options={})
+            requires :id
+            nic_type=options[:nic_type]
+            unless nic_type
+                nic_type="internet"
+            end
+
+            if direction=="egress"
+                service.delete_security_group_egress_ip_rule(id,cidr_ip,nic_type,options)
+            else
+                service.delete_security_group_ip_rule(id,cidr_ip,nic_type,options)
+            end
+                    
+            true
+        end
 
         # def create_security_group_rule(min, max, ip_protocol = "tcp", cidr = "0.0.0.0/0", group_id = nil)
         #   Fog::Logger.deprecation('#create_security_group_rule is deprecated. Use the Fog::Compute::Openstack::SecurityGroupRules collection to create new rules.')

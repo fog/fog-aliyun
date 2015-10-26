@@ -12,6 +12,9 @@ module Fog
           data = Fog::JSON.decode(service.list_security_group_rules(security_group_id, options).body)
           self.security_group_id = data["SecurityGroupId"]
           data = data["Permissions"]["Permission"]
+          for i in data
+            i["SecurityGroupId"] = self.security_group_id
+          end
           load(data)
         end
         
