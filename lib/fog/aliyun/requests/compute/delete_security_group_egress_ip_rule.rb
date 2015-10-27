@@ -19,7 +19,9 @@ module Fog
           parameters["DestCidrIp"] = destCidrIp
           pathUrl += '&DestCidrIp='
           pathUrl += URI.encode(destCidrIp,'/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')	
-
+          unless nicType
+            nicType='intranet'
+          end
           parameters["NicType"] = nicType
           pathUrl += '&NicType='
           pathUrl += nicType

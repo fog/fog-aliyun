@@ -19,21 +19,32 @@ module Fog
         attribute :direction,                 :aliases => 'Direction'
         attribute :priority,                  :aliases => 'Priority'
 
-        # def save
-        #     requires :security_group_id,:ip_protocol,:port_range,:direction
-
-        #     if direction=="egress"
-        #         if dest_cidr_ip
-        #             service.create_security_group_egress_ip_rule(id,cidr_ip,nic_type,options)
-        #         elsif dest_group_id
-        #             service.create_security_group_egress_sg_rule(id,dest_group_id,options)
-        #         end
+        def save
+            requires :security_group_id,:ip_protocol,:port_range,:direction
+            options={}
+            options[:portRange] = port_range if port_range
+            options[:policy] = policy if policy
+            options[:priority] = priority if port_range
+            options[:protocol] = ip_protocol if ip_protocol
+            if direction=="egress"
+                if dest_cidr_ip
+                    service.create_security_group_egress_ip_rule(security_group_id,dest_cidr_ip,nic_type,options)
+                elsif dest_group_id
+                    options[:destGroupOwnerAccount] = dest_owner if dest_owner
+                    service.create_security_group_egress_sg_rule(security_group_id,dest_group_id,options)
+                end
                     
 
-        #     else
+            else
+                if source_cidr_ip
+                    service.create_security_group_ip_rule(security_group_id,source_cidr_ip,nic_type,options)
+                elsif source_group_id
+                    options[:sourceGroupOwnerAccount] = source_owner if source_owner
+                    service.create_security_group_sg_rule(security_group_id,source_group_id,options)
+                end
 
-        #     end
-        # end
+            end
+        end
 
         # def save
         #   requires :ip_protocol, :direction, :to_port, :parent_group_id
