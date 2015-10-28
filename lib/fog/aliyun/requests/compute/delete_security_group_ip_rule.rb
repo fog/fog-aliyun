@@ -2,7 +2,7 @@ module Fog
   module Compute
     class Aliyun
       class Real
-        def delete_security_group_ip_rule(securyitgroup_id,sourceCidrIp, nicType, option={})
+        def delete_security_group_ip_rule(securitygroup_id,sourceCidrIp, nicType, option={})
           # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/securitygroup&revokesecuritygroup]
           action   = 'RevokeSecurityGroup'
           sigNonce = randonStr()
@@ -11,14 +11,16 @@ module Fog
           parameters = defalutParameters(action, sigNonce, time)
           pathUrl    = defaultAliyunUri(action, sigNonce, time)
           
-          parameters["SecurityGroupId"] = securyitgroup_id
+          parameters["SecurityGroupId"] = securitygroup_id
           pathUrl += '&SecurityGroupId='
-          pathUrl += securyitgroup_id
+          pathUrl += securitygroup_id
 
           parameters["SourceCidrIp"] = sourceCidrIp
           pathUrl += '&SourceCidrIp='
           pathUrl += URI.encode(sourceCidrIp,'/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')	
-
+          unless nicType
+            nicType='intranet'
+          end
           parameters["NicType"] = nicType
           pathUrl += '&NicType='
           pathUrl += nicType
@@ -38,6 +40,22 @@ module Fog
           parameters["IpProtocol"] = protocol
           pathUrl += '&IpProtocol='
           pathUrl += protocol
+
+          policy = option[:policy]
+          unless policy
+            policy = 'accept'
+          end
+          parameters["Policy"] = policy
+          pathUrl += '&Policy='
+          pathUrl += policy
+
+          priority = option[:priority]
+          unless priority
+            priority = '1'
+          end
+          parameters["Priority"] = priority
+          pathUrl += '&Priority='
+          pathUrl += priority
 
           signature = sign(@aliyun_accesskey_secret, parameters)
           pathUrl += '&Signature='

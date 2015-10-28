@@ -19,7 +19,9 @@ module Fog
           parameters["SourceCidrIp"] = sourceCidrIp
           pathUrl += '&SourceCidrIp='
           pathUrl += URI.encode(sourceCidrIp,'/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')	
-
+          unless nicType
+            nicType='intranet'
+          end
           parameters["NicType"] = nicType
           pathUrl += '&NicType='
           pathUrl += nicType
@@ -39,6 +41,22 @@ module Fog
           parameters["IpProtocol"] = protocol
           pathUrl += '&IpProtocol='
           pathUrl += protocol
+
+          policy = option[:policy]
+          unless policy
+            policy = 'accept'
+          end
+          parameters["Policy"] = policy
+          pathUrl += '&Policy='
+          pathUrl += policy
+
+          priority = option[:priority]
+          unless priority
+            priority = '1'
+          end
+          parameters["Priority"] = priority
+          pathUrl += '&Priority='
+          pathUrl += priority
 
           signature = sign(@aliyun_accesskey_secret, parameters)
           pathUrl += '&Signature='
