@@ -3,7 +3,7 @@ module Fog
     class Aliyun
       class Real
         # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/securitygroup&authorizesecuritygroup]
-        def create_security_group_sg_rule(securitygroup_id, source_securyitgroup_id, option={})
+        def create_security_group_sg_rule(securitygroup_id, source_securitygroup_id, option={})
           action   = 'AuthorizeSecurityGroup'
           sigNonce = randonStr()
           time     = Time.new.utc
@@ -15,9 +15,9 @@ module Fog
           pathUrl += '&SecurityGroupId='
           pathUrl += securitygroup_id
 
-          parameters["SourceGroupId"] = source_securyitgroup_id
+          parameters["SourceGroupId"] = source_securitygroup_id
           pathUrl += '&SourceGroupId='
-          pathUrl += source_securyitgroup_id
+          pathUrl += source_securitygroup_id
 
           nicType = 'intranet'
           parameters["NicType"] = nicType
@@ -39,6 +39,29 @@ module Fog
           parameters["IpProtocol"] = protocol
           pathUrl += '&IpProtocol='
           pathUrl += protocol
+
+          sourceGOAccount = option[:sourceGroupOwnerAccount]
+          if sourceGOAccount
+           parameters["SourceGroupOwnerAccount"]=sourceGOAccount
+           pathUrl += '&SourceGroupOwnerAccount='
+           pathUrl += sourceGOAccount
+          end
+
+          policy = option[:policy]
+          unless policy
+            policy = 'accept'
+          end
+          parameters["Policy"] = policy
+          pathUrl += '&Policy='
+          pathUrl += policy
+
+          priority = option[:priority]
+          unless priority
+            priority = '1'
+          end
+          parameters["Priority"] = priority
+          pathUrl += '&Priority='
+          pathUrl += priority
 
           signature = sign(@aliyun_accesskey_secret, parameters)
           pathUrl += '&Signature='
