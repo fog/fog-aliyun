@@ -2,9 +2,9 @@ module Fog
   module Compute
     class Aliyun
       class Real
-        def delete_security_group_sg_rule(securitygroup_id, source_securitygroup_id, option={})
-          # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/securitygroup&revokesecuritygroup]
-          action   = 'RevokeSecurityGroup'
+        # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/securitygroup&authorizesecuritygroup]
+        def delete_security_group_egress_sg_rule(securitygroup_id, dest_group_id, option={})
+          action   = 'RevokeSecurityGroupEgress'
           sigNonce = randonStr()
           time     = Time.new.utc
 
@@ -15,9 +15,9 @@ module Fog
           pathUrl += '&SecurityGroupId='
           pathUrl += securitygroup_id
 
-          parameters["SourceGroupId"] = source_securitygroup_id
-          pathUrl += '&SourceGroupId='
-          pathUrl += source_securitygroup_id
+          parameters["DestGroupId"] = dest_group_id
+          pathUrl += '&DestGroupId='
+          pathUrl += dest_group_id
 
           nicType = 'intranet'
           parameters["NicType"] = nicType
@@ -40,11 +40,11 @@ module Fog
           pathUrl += '&IpProtocol='
           pathUrl += protocol
 
-          sourceGOAccount = option[:sourceGroupOwnerAccount]
+          destGOAccount = option[:destGroupOwnerAccount]
           if sourceGOAccount
-           parameters["SourceGroupOwnerAccount"]=sourceGOAccount
-           pathUrl += '&SourceGroupOwnerAccount='
-           pathUrl += sourceGOAccount
+           parameters["DestGroupOwnerAccount"]=destGOAccount
+           pathUrl += '&DestGroupOwnerAccount='
+           pathUrl += destGOAccount
           end
 
           policy = option[:policy]

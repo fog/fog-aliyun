@@ -79,9 +79,13 @@ module Fog
       request :create_security_group
       request :create_security_group_ip_rule
       request :create_security_group_sg_rule
+      request :create_security_group_egress_ip_rule
+      request :create_security_group_egress_sg_rule
       request :delete_security_group
       request :delete_security_group_ip_rule
       request :delete_security_group_sg_rule
+      request :delete_security_group_egress_ip_rule
+      request :delete_security_group_egress_sg_rule
       request :join_security_group
       request :leave_security_group
 
