@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{Fog provider for Aliyun Web Services.}
   spec.description   = %q{As a FOG provider, fog-aliyun support aliyun OSS/ECS. It will support more aliyun services later.}
-  spec.homepage      = "https://github.com/fog/fog-aliyun.git"
+  spec.homepage      = "https://github.com/fog/fog-aliyun"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
