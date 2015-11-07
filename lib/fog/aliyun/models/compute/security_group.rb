@@ -13,7 +13,6 @@ module Fog
         def vpc
           requires :vpc_id
           service.vpcs.get(vpc_id)
-          end
         end
 
         def security_group_rules

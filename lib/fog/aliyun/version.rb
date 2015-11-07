@@ -1,5 +1,5 @@
 module Fog
   module Aliyun
-    VERSION = "0.0.10"
+    VERSION = "0.1.0"
   end
 end
