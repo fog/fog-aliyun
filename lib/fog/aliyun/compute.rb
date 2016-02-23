@@ -72,6 +72,8 @@ module Fog
       request :associate_eip_address
       request :unassociate_eip_address
 
+      # IP
+      request :allocate_public_ip_address
 
       # Security Group
       request :list_security_groups
