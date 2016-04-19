@@ -3,10 +3,10 @@ require 'xmlsimple'
 module Fog
   module Storage
     class Aliyun < Fog::Service
-      recognizes :aliyun_oss_endpoint, 
+      recognizes :aliyun_oss_endpoint,
                  :aliyun_oss_location,
-                 :aliyun_oss_bucket,
-                 :aliyun_accesskey_id, 
+                 :aliyun_oss_bucket
+      requires   :aliyun_accesskey_id,
                  :aliyun_accesskey_secret
 
       model_path 'fog/aliyun/models/storage'
