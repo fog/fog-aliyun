@@ -10,11 +10,11 @@ module Fog
 
           _parameters = defalutParameters(_action, _sigNonce, _time)
           _pathURL  = defaultAliyunUri(_action, _sigNonce, _time)
-          
+
           _signature = sign(@aliyun_accesskey_secret, _parameters)
           _pathURL += '&Signature='+_signature
-          
-          response = request(
+
+          request(
             :expects  => [200, 203],
             :method   => 'GET',
             :path     => _pathURL
@@ -27,7 +27,7 @@ module Fog
           #end
           #_InstanceType
         end #end list_server_types
-        
+
         def get_instance_type(cpuCount, memorySize)
           _action = 'DescribeInstanceTypes'
           _sigNonce = randonStr()

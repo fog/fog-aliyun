@@ -148,22 +148,6 @@ module Fog
         end
       end
 
-      class Mock
-        def list_zones(*args)
-          Excon::Response.new(
-            :body   => { "availabilityZoneInfo" => [
-                  {
-                      "zoneState" => {
-                          "available" => true
-                      },
-                      "hosts" => nil,
-                      "zoneName" => "nova"
-                  }
-              ] },
-            :status => 200
-          )
-        end
-      end
     end
   end
 end

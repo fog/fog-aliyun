@@ -68,7 +68,7 @@ module Fog
       end
 
       class Mock
-        def list_images
+        def list_images(options={})
           response = Excon::Response.new
           data = list_images_detail.body['images']
           images = []

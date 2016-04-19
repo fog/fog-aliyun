@@ -4,7 +4,6 @@ module Fog
       class Real
         # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/instance&createinstance]
         def create_server(imageId, securityGroupId, instanceType, options = {})
-          
           _action = 'CreateInstance'
           _sigNonce = randonStr()
           _time = Time.new.utc
@@ -17,10 +16,10 @@ module Fog
 
           _parameters['InstanceType'] = instanceType
           _pathURL += '&InstanceType='+instanceType
-          
+
           _parameters['SecurityGroupId'] = securityGroupId
           _pathURL += '&SecurityGroupId='+securityGroupId
-          
+
           _ZoneId = options[:ZoneId]
           if _ZoneId
             _parameters['ZoneId']=_ZoneId
@@ -32,31 +31,31 @@ module Fog
             _parameters['InstanceName']=_InstanceName
             _pathURL += '&InstanceName='+_InstanceName
           end
-          
+
           _Description = options[:Description]
           if _Description
             _parameters['Description']=_Description
             _pathURL += '&Description='+_Description
           end
-          
+
           _InternetChargeType = options[:InternetChargeType]
           if _InternetChargeType
             _parameters['InternetChargeType']=_InternetChargeType
             _pathURL += '&InternetChargeType='+_InternetChargeType
           end
-          
+
           _HostName = options[:HostName]
           if _HostName
             _parameters['HostName']=_HostName
             _pathURL += '&HostName='+_HostName
           end
-          
+
           _Password = options[:Password]
           if _Password
             _parameters['Password']=_Password
             _pathURL += '&Password='+_Password
           end
-          
+
           _VSwitchId = options[:VSwitchId]
           _PrivateIpAddress= options[:PrivateIpAddress]
           if _VSwitchId
@@ -74,7 +73,7 @@ module Fog
               _parameters['InternetMaxBandwidthIn']=_InternetMaxBandwidthIn
               _pathURL += '&InternetMaxBandwidthIn='+_InternetMaxBandwidthIn
             end
-          
+
             _InternetMaxBandwidthOut = options[:InternetMaxBandwidthOut]
             if _InternetMaxBandwidthOut
               _parameters['InternetMaxBandwidthOut']=_InternetMaxBandwidthOut
@@ -90,7 +89,7 @@ module Fog
             :method   => 'GET',
             :path     => _pathURL
           )
-          
+
         end
       end
 
@@ -106,13 +105,13 @@ module Fog
           }
 
           user_id = if user then
-                      user.id
-                    else
-                       response = identity.create_user(@openstack_username,
-                         'password',
-                         "#{@openstack_username}@example.com")
-                       response.body["user"]["id"]
-                    end
+            user.id
+          else
+             response = identity.create_user(@openstack_username,
+               'password',
+               "#{@openstack_username}@example.com")
+             response.body["user"]["id"]
+          end
 
           mock_data = {
             'addresses'    => {"Private" => [{"addr" => Fog::Mock.random_ip }]},
@@ -129,7 +128,7 @@ module Fog
             'status'       => 'BUILD',
             'created'      => '2012-09-27T00:04:18Z',
             'updated'      => '2012-09-27T00:04:27Z',
-            'user_id'      => @openstack_username,
+            'user_id'      => user_id,
             'config_drive' => options['config_drive'] || '',
           }
 
@@ -160,7 +159,7 @@ module Fog
 
           self.data[:last_modified][:servers][server_id] = Time.now
           self.data[:servers][server_id] = mock_data
-          if security_groups = options['security_groups'] then
+          if options['security_groups'] then
             groups = Array(options['security_groups']).map do |sg|
               if sg.is_a?(Fog::Compute::OpenStack::SecurityGroup) then
                 sg.name

@@ -69,7 +69,7 @@ module Fog
           requires :cidr_block
           options[:name]=name if name
           options[:description]=description if description
-          data = Fog::JSON.decode(service.create_vpc(cidr_block,options).body)
+          Fog::JSON.decode(service.create_vpc(cidr_block,options).body)
           true
         end
       end
