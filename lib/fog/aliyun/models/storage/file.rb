@@ -104,8 +104,6 @@ module Fog
           requires :body, :directory, :key
           options['Content-Type'] = content_type if content_type
           options['Content-Disposition'] = content_disposition if content_disposition
-          options['Access-Control-Allow-Origin'] = access_control_allow_origin if access_control_allow_origin
-          options['Origin'] = origin if origin
           options.merge!(metadata_to_headers)
 
           if directory.key == ""
