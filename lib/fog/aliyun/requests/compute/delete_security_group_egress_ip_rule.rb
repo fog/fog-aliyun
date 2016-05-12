@@ -3,58 +3,47 @@ module Fog
     class Aliyun
       class Real
         # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/securitygroup&authorizesecuritygroup]
-        def delete_security_group_egress_ip_rule(securitygroup_id,destCidrIp, nicType, option={})
-
+        def delete_security_group_egress_ip_rule(securitygroup_id, destCidrIp, nicType, option = {})
           action   = 'RevokeSecurityGroupEgress'
-          sigNonce = randonStr()
+          sigNonce = randonStr
           time     = Time.new.utc
 
           parameters = defalutParameters(action, sigNonce, time)
           pathUrl    = defaultAliyunUri(action, sigNonce, time)
-          
-          parameters["SecurityGroupId"] = securitygroup_id
+
+          parameters['SecurityGroupId'] = securitygroup_id
           pathUrl += '&SecurityGroupId='
           pathUrl += securitygroup_id
 
-          parameters["DestCidrIp"] = destCidrIp
+          parameters['DestCidrIp'] = destCidrIp
           pathUrl += '&DestCidrIp='
-          pathUrl += URI.encode(destCidrIp,'/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')	
-          unless nicType
-            nicType='intranet'
-          end
-          parameters["NicType"] = nicType
+          pathUrl += URI.encode(destCidrIp, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
+          nicType = 'intranet' unless nicType
+          parameters['NicType'] = nicType
           pathUrl += '&NicType='
           pathUrl += nicType
-          
+
           portRange = option[:portRange]
-          unless portRange
-            portRange = '-1/-1'
-          end
-          parameters["PortRange"] = portRange
+          portRange = '-1/-1' unless portRange
+          parameters['PortRange'] = portRange
           pathUrl += '&PortRange='
-          pathUrl += URI.encode(portRange,'/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
-          
+          pathUrl += URI.encode(portRange, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
+
           protocol = option[:protocol]
-          unless protocol
-            protocol = 'all'
-          end
-          parameters["IpProtocol"] = protocol
+          protocol = 'all' unless protocol
+          parameters['IpProtocol'] = protocol
           pathUrl += '&IpProtocol='
           pathUrl += protocol
 
           policy = option[:policy]
-          unless policy
-            policy = 'accept'
-          end
-          parameters["Policy"] = policy
+          policy = 'accept' unless policy
+          parameters['Policy'] = policy
           pathUrl += '&Policy='
           pathUrl += policy
 
           priority = option[:priority]
-          unless priority
-            priority = '1'
-          end
-          parameters["Priority"] = priority
+          priority = '1' unless priority
+          parameters['Priority'] = priority
           pathUrl += '&Priority='
           pathUrl += priority
 
@@ -63,13 +52,12 @@ module Fog
           pathUrl += signature
 
           request(
-            :expects  => [200, 203],
-            :method   => 'GET',
-            :path     => pathUrl
+            expects: [200, 203],
+            method: 'GET',
+            path: pathUrl
           )
         end
       end
-
     end # aliyun
   end # compute
 end # fog

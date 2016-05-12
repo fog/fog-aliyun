@@ -5,7 +5,6 @@ module Fog
   module Compute
     class Aliyun
       class Vpcs < Fog::Collection
-
         model Fog::Compute::Aliyun::VPC
 
         # Creates a new VPC
@@ -16,7 +15,7 @@ module Fog
         #
         # Returns the details of the new VPC
         #
-        #>> Aliyun.vpcs.new
+        # >> Aliyun.vpcs.new
         # <Fog::Aliyun::VPC::VPC
         # id=nil,
         # state=nil,
@@ -35,7 +34,7 @@ module Fog
         #
         # Returns an array of all VPCs
         #
-        #>> Aliyun.vpcs.all
+        # >> Aliyun.vpcs.all
         # <Fog::Aliyun::VPC::VPCs
         # [
         # <Fog::Aliyun::VPC::VPC
@@ -49,7 +48,7 @@ module Fog
         def all(filters_arg = {})
           unless filters_arg.is_a?(Hash)
             Fog::Logger.warning("all with #{filters_arg.class} param is deprecated, use all('vpcId' => []) instead [light_black](#{caller.first})[/]")
-            filters_arg = {'vpcId' => [*filters_arg]}
+            filters_arg = { 'vpcId' => [*filters_arg] }
           end
           data = Fog::JSON.decode(service.list_vpcs(filters_arg).body)['Vpcs']['Vpc']
           load(data)
@@ -63,7 +62,7 @@ module Fog
         #
         # ==== Returns
         #
-        #>> Aliyun.vpcs.get("vpc-12345678")
+        # >> Aliyun.vpcs.get("vpc-12345678")
         # <Fog::Aliyun::Compute::VPC
         # id="vpc-12345678",
         # TODO
@@ -72,7 +71,7 @@ module Fog
 
         def get(vpcId)
           if vpcId
-            $vpc=self.class.new(:service => service).all('vpcId' => vpcId)[0]
+            $vpc = self.class.new(service: service).all('vpcId' => vpcId)[0]
           end
         end
       end

@@ -3,10 +3,9 @@ module Fog
     class Aliyun
       class Real
         # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/snapshot&describesnapshots]
-        def list_snapshots(options={})
-          
+        def list_snapshots(options = {})
           action = 'DescribeSnapshots'
-          sigNonce = randonStr()
+          sigNonce = randonStr
           time = Time.new.utc
 
           parameters = defalutParameters(action, sigNonce, time)
@@ -24,78 +23,75 @@ module Fog
           usage = options[:usage]
 
           if usage
-            parameters["Usage"] = usage
+            parameters['Usage'] = usage
             pathUrl += '&Usage='
             pathUrl += usage
           end
 
           if type
-            parameters["SnapshotType"] = type
+            parameters['SnapshotType'] = type
             pathUrl += '&SnapshotType='
             pathUrl += type
           end
 
           if state
-            parameters["Status"] = state
+            parameters['Status'] = state
             pathUrl += '&Status='
             pathUrl += state
           end
 
           if name
-            parameters["SnapshotName"] = name
+            parameters['SnapshotName'] = name
             pathUrl += '&SnapshotName='
             pathUrl += name
           end
 
           if instanceId
-            parameters["InstanceId"] = instanceId
+            parameters['InstanceId'] = instanceId
             pathUrl += '&InstanceId='
             pathUrl += instanceId
           end
 
           if diskId
-            parameters["DiskId"] = diskId
+            parameters['DiskId'] = diskId
             pathUrl += '&DiskId='
             pathUrl += diskId
-          end          
+          end
 
           if snapshotId
-            parameters["SnapshotIds"] = Fog::JSON.encode(snapshotId)
+            parameters['SnapshotIds'] = Fog::JSON.encode(snapshotId)
             pathUrl += '&SnapshotIds='
             pathUrl += Fog::JSON.encode(snapshotId)
           end
-          
+
           if sourceDiskType
-            parameters["SourceDiskType"] = sourceDiskType
+            parameters['SourceDiskType'] = sourceDiskType
             pathUrl += '&SourceDiskType='
             pathUrl += sourceDiskType
           end
-          
+
           if pageNumber
-            parameters["PageNumber"] = pageNumber
+            parameters['PageNumber'] = pageNumber
             pathUrl += '&PageNumber='
             pathUrl += pageNumber
           end
 
-          unless pageSize
-            pageSize = '50'
-          end
-          parameters["PageSize"] = pageSize
+          pageSize = '50' unless pageSize
+          parameters['PageSize'] = pageSize
           pathUrl += '&PageSize='
-          pathUrl += pageSize	
+          pathUrl += pageSize
 
           signature = sign(@aliyun_accesskey_secret, parameters)
           pathUrl += '&Signature='
           pathUrl += signature
 
           request(
-            :expects  => [200, 203],
-            :method   => 'GET',
-            :path     => pathUrl
+            expects: [200, 203],
+            method: 'GET',
+            path: pathUrl
           )
         end
       end
-
     end
   end
 end

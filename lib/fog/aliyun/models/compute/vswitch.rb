@@ -3,17 +3,17 @@ module Fog
   module Compute
     class Aliyun
       class Vswitch < Fog::Model
-        identity  :id,                  :aliases => 'VSwitchId'
-        attribute :vpc_id,              :aliases => 'VpcId'
-        attribute :zone_id,             :aliases => 'ZoneId'
-        attribute :name,                :aliases => 'VSwitchName'
-        attribute :available_ip_count,  :aliases => 'AvailableIpAddressCount'
-        attribute :state,               :aliases => 'Status'
-        attribute :cidr_block,          :aliases => 'CidrBlock'
-        attribute :description,      :aliases => 'Description'
-        attribute :region_id,        :aliases => 'RegionId'
-        attribute :create_at,    :aliases => 'CreationTime'
-        def initialize(attributes={})
+        identity  :id,                  aliases: 'VSwitchId'
+        attribute :vpc_id,              aliases: 'VpcId'
+        attribute :zone_id,             aliases: 'ZoneId'
+        attribute :name,                aliases: 'VSwitchName'
+        attribute :available_ip_count,  aliases: 'AvailableIpAddressCount'
+        attribute :state,               aliases: 'Status'
+        attribute :cidr_block,          aliases: 'CidrBlock'
+        attribute :description,      aliases: 'Description'
+        attribute :region_id,        aliases: 'RegionId'
+        attribute :create_at, aliases: 'CreationTime'
+        def initialize(attributes = {})
           super
         end
 
@@ -49,11 +49,11 @@ module Fog
         # As such, it yields an InvalidGroup.Duplicate exception if you attempt to save an existing vpc.
         #
 
-        def save(options={})
-          requires :vpc,:cidr_block
+        def save(options = {})
+          requires :vpc, :cidr_block
           options[:name] = name if name
-          options[:description]=description if description
-          Fog::JSON.decode(service.create_vswitch(vpc.id, cidr_block,options).body)
+          options[:description] = description if description
+          Fog::JSON.decode(service.create_vswitch(vpc.id, cidr_block, options).body)
           true
         end
 
@@ -61,10 +61,9 @@ module Fog
           $vpc
         end
 
-        def all()
+        def all
           Fog::JSON.decode(service.list_vswitchs(vpc_id).body)['VSwitches']['VSwitch']
         end
-
       end
     end
   end

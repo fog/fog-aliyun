@@ -3,9 +3,9 @@ module Fog
     class Aliyun
       class Real
         # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/region&describezones]
-        def list_zones()
+        def list_zones
           action = 'DescribeZones'
-          sigNonce = randonStr()
+          sigNonce = randonStr
           time = Time.new.utc
 
           parameters = defalutParameters(action, sigNonce, time)
@@ -16,26 +16,26 @@ module Fog
           pathUrl += signature
 
           request(
-            :expects  => [200, 203],
-            :method   => 'GET',
-            :path     => pathUrl
+            expects: [200, 203],
+            method: 'GET',
+            path: pathUrl
           )
         end
       end
 
       class Mock
-        def list_zones(*args)
+        def list_zones(*_args)
           Excon::Response.new(
-            :body   => { "availabilityZoneInfo" => [
-                  {
-                      "zoneState" => {
-                          "available" => true
-                      },
-                      "hosts" => nil,
-                      "zoneName" => "nova"
-                  }
-              ] },
-            :status => 200
+            body: { 'availabilityZoneInfo' => [
+              {
+                'zoneState' => {
+                  'available' => true
+                },
+                'hosts' => nil,
+                'zoneName' => 'nova'
+              }
+            ] },
+            status: 200
           )
         end
       end

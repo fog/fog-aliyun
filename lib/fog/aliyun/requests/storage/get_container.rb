@@ -3,7 +3,7 @@ module Fog
     class Aliyun
       class Real
         def get_container(container, options = {})
-          options = options.reject {|key, value| value.nil?}
+          options = options.reject { |_key, value| value.nil? }
 
           bucket = options[:bucket]
           bucket ||= @aliyun_oss_bucket
@@ -12,57 +12,45 @@ module Fog
           maxKeys = options[:maxKeys]
           delimiter = '/'
 
-          path = ""
+          path = ''
 
-          if container == "" || container == "." || container == nil
-            prefix = nil
-          else
-            prefix = container+'/'
-          end
+          prefix = if container == '' || container == '.' || container.nil?
+                     nil
+                   else
+                     container + '/'
+                   end
 
           if prefix
-            path+="?prefix="+prefix
-            if marker
-              path+="&marker="+marker
-            end
-            if maxKeys
-              path+="&max-keys="+maxKeys
-            end
-            if delimiter
-              path+="&delimiter="+delimiter
-            end
+            path += '?prefix=' + prefix
+            path += '&marker=' + marker if marker
+            path += '&max-keys=' + maxKeys if maxKeys
+            path += '&delimiter=' + delimiter if delimiter
           elsif marker
-            path+="?marker="+marker
-            if maxKeys
-              path+="&max-keys="+maxKeys
-            end
-            if delimiter
-              path+="&delimiter="+delimiter
-            end
+            path += '?marker=' + marker
+            path += '&max-keys=' + maxKeys if maxKeys
+            path += '&delimiter=' + delimiter if delimiter
           elsif maxKeys
-            path+="?max-keys="+maxKeys
-            if delimiter
-              path+="&delimiter="+delimiter
-            end
+            path += '?max-keys=' + maxKeys
+            path += '&delimiter=' + delimiter if delimiter
           elsif delimiter
-            path+="?delimiter="+delimiter
+            path += '?delimiter=' + delimiter
           end
 
           location = get_bucket_location(bucket)
-          endpoint = "http://"+location+".aliyuncs.com"
-          resource = bucket+'/'
+          endpoint = 'http://' + location + '.aliyuncs.com'
+          resource = bucket + '/'
           ret = request(
-              :expects  => [200, 203, 400],
-              :method   => 'GET',
-              :path     => path,
-              :resource => resource,
-              :bucket => bucket
+            expects: [200, 203, 400],
+            method: 'GET',
+            path: path,
+            resource: resource,
+            bucket: bucket
           )
           xml = ret.data[:body]
-          result = XmlSimple.xml_in(xml)["CommonPrefixes"]
+          result = XmlSimple.xml_in(xml)['CommonPrefixes']
         end
       end
-      
+
       class Mock
         def get_container(container, options = {})
         end

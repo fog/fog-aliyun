@@ -4,23 +4,23 @@ module Fog
   module Storage
     class Aliyun
       class File < Fog::Model
-        identity  :key,                 :aliases => 'name'
-        attribute :date,                :aliases => 'Date'
-        attribute :content_length,      :aliases => 'Content-Length', :type => :integer
-        attribute :content_type,        :aliases => 'Content-Type'
-        attribute :connection,          :aliases => 'Connection'
-        attribute :content_disposition, :aliases => 'Content-Disposition'
-        attribute :etag,                :aliases => 'Etag'
-        attribute :last_modified,       :aliases => 'Last-Modified', :type => :time
-        attribute :accept_ranges,       :aliases => 'Accept-Ranges'
-        attribute :server,              :aliases => 'Server'
-        attribute :object_type,         :aliases => 'x-oss-object-type'
+        identity  :key,                 aliases: 'name'
+        attribute :date,                aliases: 'Date'
+        attribute :content_length,      aliases: 'Content-Length', type: :integer
+        attribute :content_type,        aliases: 'Content-Type'
+        attribute :connection,          aliases: 'Connection'
+        attribute :content_disposition, aliases: 'Content-Disposition'
+        attribute :etag,                aliases: 'Etag'
+        attribute :last_modified,       aliases: 'Last-Modified', type: :time
+        attribute :accept_ranges,       aliases: 'Accept-Ranges'
+        attribute :server,              aliases: 'Server'
+        attribute :object_type,         aliases: 'x-oss-object-type'
 
         def body
           attributes[:body] ||= if last_modified
-            collection.get(identity).body
-          else
-            ''
+                                  collection.get(identity).body
+                                else
+                                  ''
           end
         end
 
@@ -28,34 +28,32 @@ module Fog
           attributes[:body] = new_body
         end
 
-        def directory
-          @directory
-        end
+        attr_reader :directory
 
-        def copy(target_directory_key, target_file_key, options={})
+        def copy(target_directory_key, target_file_key, options = {})
           requires :directory, :key
-          if directory.key == ""
-            source_object = key
-          else
-            source_object = directory.key+"/"+key
-          end
-          if target_directory_key == ""
+          source_object = if directory.key == ''
+                            key
+                          else
+                            directory.key + '/' + key
+                          end
+          if target_directory_key == ''
             target_object = target_file_key
           else
-            target_object = target_directory_key+"/"+target_file_key
+            target_object = target_directory_key + '/' + target_file_key
           end
           service.copy_object(nil, source_object, nil, target_object, options)
-          target_directory = service.directories.new(:key => target_directory_key)
+          target_directory = service.directories.new(key: target_directory_key)
           target_directory.files.get(target_file_key)
         end
 
         def destroy
           requires :directory, :key
-          if directory.key == ""
-            object = key
-          else
-            object = directory.key+"/"+key
-          end
+          object = if directory.key == ''
+                     key
+                   else
+                     directory.key + '/' + key
+                   end
           service.delete_object(object)
           true
         end
@@ -67,8 +65,8 @@ module Fog
         def owner=(new_owner)
           if new_owner
             attributes[:owner] = {
-              :display_name => new_owner['DisplayName'],
-              :id           => new_owner['ID']
+              display_name: new_owner['DisplayName'],
+              id: new_owner['ID']
             }
           end
         end
@@ -87,17 +85,17 @@ module Fog
         #
         def url(expires, options = {})
           requires :directory, :key
-          if directory.key == ""
-            object = key
-          else
-            object = directory.key+"/"+key
-          end
-          self.service.get_object_http_url_public(object, expires, options)
+          object = if directory.key == ''
+                     key
+                   else
+                     directory.key + '/' + key
+                   end
+          service.get_object_http_url_public(object, expires, options)
         end
 
         def public_url
           requires :key
-          self.collection.get_url(self.key)
+          collection.get_url(key)
         end
 
         def save(options = {})
@@ -108,11 +106,11 @@ module Fog
           options['Origin'] = origin if origin
           options.merge!(metadata_to_headers)
 
-          if directory.key == ""
-            object = key
-          else
-            object = directory.key+"/"+key
-          end
+          object = if directory.key == ''
+                     key
+                   else
+                     directory.key + '/' + key
+                   end
           if body.is_a?(::File)
             data = service.put_object(object, body, options).data
           elsif body.is_a?(String)
@@ -130,36 +128,34 @@ module Fog
 
         private
 
-        def directory=(new_directory)
-          @directory = new_directory
-        end
+        attr_writer :directory
 
         def refresh_metadata
-          metadata.reject! {|k, v| v.nil? }
+          metadata.reject! { |_k, v| v.nil? }
         end
 
         def headers_to_metadata
           key_map = key_mapping
-          Hash[metadata_attributes.map {|k, v| [key_map[k], v] }]
+          Hash[metadata_attributes.map { |k, v| [key_map[k], v] }]
         end
 
         def key_mapping
           key_map = metadata_attributes
-          key_map.each_pair {|k, v| key_map[k] = header_to_key(k)}
+          key_map.each_pair { |k, _v| key_map[k] = header_to_key(k) }
         end
 
         def header_to_key(opt)
-          opt.gsub(metadata_prefix, '').split('-').map {|k| k[0, 1].downcase + k[1..-1]}.join('_').to_sym
+          opt.gsub(metadata_prefix, '').split('-').map { |k| k[0, 1].downcase + k[1..-1] }.join('_').to_sym
         end
 
         def metadata_to_headers
           header_map = header_mapping
-          Hash[metadata.map {|k, v| [header_map[k], v] }]
+          Hash[metadata.map { |k, v| [header_map[k], v] }]
         end
 
         def header_mapping
           header_map = metadata.dup
-          header_map.each_pair {|k, v| header_map[k] = key_to_header(k)}
+          header_map.each_pair { |k, _v| header_map[k] = key_to_header(k) }
         end
 
         def key_to_header(key)
@@ -168,14 +164,14 @@ module Fog
 
         def metadata_attributes
           if last_modified
-            if directory.key == ""
-              object = key
-            else
-              object = directory.key+"/"+key
-            end
+            object = if directory.key == ''
+                       key
+                     else
+                       directory.key + '/' + key
+                     end
 
             headers = service.head_object(object).data[:headers]
-            headers.reject! {|k, v| !metadata_attribute?(k)}
+            headers.reject! { |k, _v| !metadata_attribute?(k) }
           else
             {}
           end
@@ -186,11 +182,11 @@ module Fog
         end
 
         def metadata_prefix
-          "X-Object-Meta-"
+          'X-Object-Meta-'
         end
 
         def update_attributes_from(data)
-          merge_attributes(data[:headers].reject {|key, value| ['Content-Length', 'Content-Type'].include?(key)})
+          merge_attributes(data[:headers].reject { |key, _value| ['Content-Length', 'Content-Type'].include?(key) })
         end
       end
     end

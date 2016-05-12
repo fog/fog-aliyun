@@ -19,40 +19,36 @@ module Fog
         #     * 'RequestId'<~String> - Id of the request
         #
         # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.201.106.DGkmH7#/pub/ecs/open-api/network&allocateeipaddress]
-        def allocate_eip_address(options={})
-          
+        def allocate_eip_address(options = {})
           _action = 'AllocateEipAddress'
-          _sigNonce = randonStr()
+          _sigNonce = randonStr
           _time = Time.new.utc
 
           _parameters = defalutParameters(_action, _sigNonce, _time)
-          _pathURL  = defaultAliyunUri(_action, _sigNonce, _time)
-          
-          #optional parameters
+          _pathURL = defaultAliyunUri(_action, _sigNonce, _time)
+
+          # optional parameters
           _Bandwidth = options[:bandwidth]
           if _Bandwidth
-            _parameters['Bandwidth']=_Bandwidth
-            _pathURL += '&Bandwidth='+_Bandwidth
+            _parameters['Bandwidth'] = _Bandwidth
+            _pathURL += '&Bandwidth=' + _Bandwidth
           end
-          
+
           _InternetChargeType = options[:internet_charge_type]
-          unless _InternetChargeType
-            _InternetChargeType = 'PayByTraffic'
-          end
-          _parameters['InternetChargeType']=_InternetChargeType
-          _pathURL += '&InternetChargeType='+_InternetChargeType
-          
+          _InternetChargeType = 'PayByTraffic' unless _InternetChargeType
+          _parameters['InternetChargeType'] = _InternetChargeType
+          _pathURL += '&InternetChargeType=' + _InternetChargeType
+
           _signature = sign(@aliyun_accesskey_secret, _parameters)
-          _pathURL += '&Signature='+_signature
-          
+          _pathURL += '&Signature=' + _signature
+
           request(
-            :expects => [200, 204],
-            :method => 'GET',
-            :path   => _pathURL
+            expects: [200, 204],
+            method: 'GET',
+            path: _pathURL
           )
         end
       end
-
     end # aliyun
-  end #compute
+  end # compute
 end

@@ -58,24 +58,24 @@ module Fog
         attr_reader :aliyun_oss_location
         attr_reader :aliyun_oss_bucket
 
-        def initialize(options={})
-          #initialize the parameters
+        def initialize(options = {})
+          # initialize the parameters
           @aliyun_oss_endpoint     = options[:aliyun_oss_endpoint]
           @aliyun_oss_location     = options[:aliyun_oss_location]
           @aliyun_accesskey_id     = options[:aliyun_accesskey_id]
           @aliyun_accesskey_secret = options[:aliyun_accesskey_secret]
           @aliyun_oss_bucket       = options[:aliyun_oss_bucket]
 
-          #check for the parameters
-          missing_credentials = Array.new
+          # check for the parameters
+          missing_credentials = []
           missing_credentials << :aliyun_oss_endpoint unless @aliyun_oss_endpoint
           missing_credentials << :aliyun_oss_location unless @aliyun_oss_location
-          missing_credentials << :aliyun_accesskey_id  unless @aliyun_accesskey_id
+          missing_credentials << :aliyun_accesskey_id unless @aliyun_accesskey_id
           missing_credentials << :aliyun_accesskey_secret unless @aliyun_accesskey_secret
           raise ArgumentError, "Missing required arguments: #{missing_credentials.join(', ')}" unless missing_credentials.empty?
 
           @connection_options = options[:connection_options] || {}
-          
+
           uri = URI.parse(@aliyun_oss_endpoint)
           @host   = uri.host
           @path   = uri.path
@@ -83,7 +83,6 @@ module Fog
           @scheme = uri.scheme
 
           @persistent = options[:persistent] || false
-
         end
 
         def reload
@@ -93,7 +92,7 @@ module Fog
         def request(params)
           method = params[:method]
           time = Time.new.utc
-          date = time.strftime("%a, %d %b %Y %H:%M:%S GMT")
+          date = time.strftime('%a, %d %b %Y %H:%M:%S GMT')
 
           endpoint = params[:endpoint]
           if endpoint
@@ -110,103 +109,99 @@ module Fog
           end
 
           bucket = params[:bucket]
-          if bucket
-            tmpHost = bucket + '.' + host
-          else
-            tmpHost = host
-          end
+          tmpHost = if bucket
+                      bucket + '.' + host
+                    else
+                      host
+                    end
 
           @connection = Fog::Core::Connection.new("#{scheme}://#{tmpHost}", @persistent, @connection_options)
           contentType = params[:contentType]
 
           begin
-            headers = ""
+            headers = ''
             if params[:headers]
-              params[:headers].each do |k,v| 
-                if k != "Range"
-                  headers += "#{k}:#{v}\n"
-                end
+              params[:headers].each do |k, v|
+                headers += "#{k}:#{v}\n" if k != 'Range'
               end
             end
             signature = sign(method, date, contentType, params[:resource], headers)
-            response = @connection.request(params.merge({
-              :headers  => {
-                'Content-Type' => contentType,
-                'Authorization' =>'OSS '+@aliyun_accesskey_id+':'+signature,
-                'Date' => date
-              }.merge!(params[:headers] || {}),
-              :path     => "#{path}/#{params[:path]}",
-              :query    => params[:query]
-            }))
+            response = @connection.request(params.merge(headers: {
+              'Content-Type' => contentType,
+              'Authorization' => 'OSS ' + @aliyun_accesskey_id + ':' + signature,
+              'Date' => date
+            }.merge!(params[:headers] || {}),
+                                                        path: "#{path}/#{params[:path]}",
+                                                        query: params[:query]))
           rescue Excon::Errors::HTTPStatusError => error
             raise case error
-              when Excon::Errors::NotFound
-                Fog::Storage::Aliyun::NotFound.slurp(error)
-              else
-                error
+                  when Excon::Errors::NotFound
+                    Fog::Storage::Aliyun::NotFound.slurp(error)
+                  else
+                    error
               end
           end
 
           response
         end
 
-        #copmute signature
-        def sign (method, date, contentType, resource=nil, headers = nil)
-          contentmd5 = ""
+        # copmute signature
+        def sign(method, date, contentType, resource = nil, headers = nil)
+          contentmd5 = ''
 
-          if resource
-            canonicalizedResource = "/"+resource
-          else
-            canonicalizedResource = "/"
-          end
+          canonicalizedResource = if resource
+                                    '/' + resource
+                                  else
+                                    '/'
+                                  end
 
-          if headers
-            canonicalizedOSSHeaders = headers
-          else
-            canonicalizedOSSHeaders = ""
-          end
-          
-          if contentType
-            contentTypeStr = contentType
-          else
-            contentTypeStr = ""
-          end
+          canonicalizedOSSHeaders = if headers
+                                      headers
+                                    else
+                                      ''
+                                    end
 
-          stringToSign = method+"\n"+contentmd5+"\n"+contentTypeStr+"\n"+date+"\n"+canonicalizedOSSHeaders+canonicalizedResource
+          contentTypeStr = if contentType
+                             contentType
+                           else
+                             ''
+                           end
 
-          digVer =  OpenSSL::Digest.new("sha1")
+          stringToSign = method + "\n" + contentmd5 + "\n" + contentTypeStr + "\n" + date + "\n" + canonicalizedOSSHeaders + canonicalizedResource
+
+          digVer =  OpenSSL::Digest.new('sha1')
           digest =  OpenSSL::HMAC.digest(digVer, @aliyun_accesskey_secret, stringToSign)
           signature = Base64.encode64(digest)
-          signature[-1] = ""
+          signature[-1] = ''
 
-          return signature
+          signature
         end
       end
 
       class Mock
-        def initialize(options={})
+        def initialize(options = {})
           @aliyun_oss_endpoint     = options[:aliyun_oss_endpoint]
           @aliyun_oss_location     = options[:aliyun_oss_location]
           @aliyun_accesskey_id     = options[:aliyun_accesskey_id]
           @aliyun_accesskey_secret = options[:aliyun_accesskey_secret]
           @aliyun_oss_bucket       = options[:aliyun_oss_bucket]
 
-          #missing_credentials = Array.new
-          #missing_credentials << :aliyun_oss_endpoint unless @aliyun_oss_endpoint
-          #missing_credentials << :aliyun_oss_location unless @aliyun_oss_location
-          #missing_credentials << :aliyun_accesskey_id  unless @aliyun_accesskey_id
-          #missing_credentials << :aliyun_accesskey_secret unless @aliyun_accesskey_secret
-          #raise ArgumentError, "Missing required arguments: #{missing_credentials.join(', ')}" unless missing_credentials.empty?
+          # missing_credentials = Array.new
+          # missing_credentials << :aliyun_oss_endpoint unless @aliyun_oss_endpoint
+          # missing_credentials << :aliyun_oss_location unless @aliyun_oss_location
+          # missing_credentials << :aliyun_accesskey_id  unless @aliyun_accesskey_id
+          # missing_credentials << :aliyun_accesskey_secret unless @aliyun_accesskey_secret
+          # raise ArgumentError, "Missing required arguments: #{missing_credentials.join(', ')}" unless missing_credentials.empty?
 
           @connection_options = options[:connection_options] || {}
-          
-          #uri = URI.parse(@aliyun_oss_endpoint)
-          #@host   = uri.host
-          #@path   = uri.path
-          #@port   = uri.port
-          #@scheme = uri.scheme
 
-          #@persistent = options[:persistent] || false
+          # uri = URI.parse(@aliyun_oss_endpoint)
+          # @host   = uri.host
+          # @path   = uri.path
+          # @port   = uri.port
+          # @scheme = uri.scheme
+
+          # @persistent = options[:persistent] || false
         end
       end
     end
