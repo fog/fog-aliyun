@@ -17,7 +17,7 @@ module Fog
         #
         # Returns the details of the new VPC
         #
-        #>> Aliyun.vpcs.new
+        # >> Aliyun.vpcs.new
         # <Fog::Aliyun::VPC::VPC
         # id=nil,
         # state=nil,
@@ -26,7 +26,7 @@ module Fog
         # tags=nil
         # tenancy=nil
         # >
-        
+
         # Returns an array of all VPCs that have been created
         #
         # Aliyun.vpcs.all
@@ -35,7 +35,7 @@ module Fog
         #
         # Returns an array of all VPCs
         #
-        #>> Aliyun.vpcs.all
+        # >> Aliyun.vpcs.all
         # <Fog::Aliyun::VPC::VPCs
         # filters={}
         # [
@@ -47,7 +47,7 @@ module Fog
         # >
         #
 
-        def all(options={})
+        def all(options = {})
           requires :vpc
           data = Fog::JSON.decode(service.list_vswitchs(vpc.id, options).body)['VSwitches']['VSwitch']
           load(data)
@@ -61,7 +61,7 @@ module Fog
         #
         # ==== Returns
         #
-        #>> Aliyun.vpcs.get("vpc-12345678")
+        # >> Aliyun.vpcs.get("vpc-12345678")
         # <Fog::Aliyun::Compute::VPC
         # id="vpc-12345678",
         # TODO
@@ -71,7 +71,7 @@ module Fog
         def get(vswitchId)
           requires :vpc
           if vswitchId
-            self.class.new(:service => service,:vpc=>vpc).all(:vSwitchId=>vswitchId)[0]
+            self.class.new(service: service, vpc: vpc).all(vSwitchId: vswitchId)[0]
           end
         end
       end

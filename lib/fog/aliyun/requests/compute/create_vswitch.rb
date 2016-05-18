@@ -2,24 +2,24 @@ module Fog
   module Compute
     class Aliyun
       class Real
-        def create_vswitch(vpcId, cidrBlock, options={})
+        def create_vswitch(vpcId, cidrBlock, options = {})
           # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/vswitch&createvswitch]
           action = 'CreateVSwitch'
-          sigNonce = randonStr()
+          sigNonce = randonStr
           time = Time.new.utc
 
           parameters = defalutParameters(action, sigNonce, time)
           pathUrl    = defaultAliyunUri(action, sigNonce, time)
 
-          parameters["VpcId"] = vpcId
+          parameters['VpcId'] = vpcId
           pathUrl += '&VpcId='
           pathUrl += vpcId
 
-          parameters["CidrBlock"] = cidrBlock
+          parameters['CidrBlock'] = cidrBlock
           pathUrl += '&CidrBlock='
-          pathUrl += URI.encode(cidrBlock,'/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
+          pathUrl += URI.encode(cidrBlock, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
 
-          parameters["ZoneId"] = @aliyun_zone_id
+          parameters['ZoneId'] = @aliyun_zone_id
           pathUrl += '&ZoneId='
           pathUrl += @aliyun_zone_id
 
@@ -27,15 +27,15 @@ module Fog
           desc = options[:description]
 
           if name
-            parameters["VSwitchName"] = name
+            parameters['VSwitchName'] = name
             pathUrl += '&VSwitchName='
-            pathUrl += name	
+            pathUrl += name
           end
 
           if desc
-            parameters["Description"] = desc
+            parameters['Description'] = desc
             pathUrl += '&Description='
-            pathUrl += desc	
+            pathUrl += desc
           end
 
           signature = sign(@aliyun_accesskey_secret, parameters)
@@ -43,13 +43,12 @@ module Fog
           pathUrl += signature
 
           request(
-            :expects  => [200, 203],
-            :method   => 'GET',
-            :path     => pathUrl
+            expects: [200, 203],
+            method: 'GET',
+            path: pathUrl
           )
         end
       end
-
     end # aliyun
   end # compute
 end # fog

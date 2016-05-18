@@ -5,21 +5,21 @@ module Fog
   module Storage
     class Aliyun
       class Directory < Fog::Model
-        identity  :key
+        identity :key
 
         def destroy
           requires :key
-          prefix = key+'/'
-          ret = service.list_objects(:prefix=>prefix)["Contents"]
-          
+          prefix = key + '/'
+          ret = service.list_objects(prefix: prefix)['Contents']
+
           if ret.nil?
-            puts " Not found: Direction not exist!"
+            puts ' Not found: Direction not exist!'
             false
           elsif ret.size == 1
             service.delete_container(key)
             true
           else
-            raise Fog::Storage::Aliyun::Error, " Forbidden: Direction not empty!"
+            raise Fog::Storage::Aliyun::Error, ' Forbidden: Direction not empty!'
             false
           end
         end
@@ -27,8 +27,8 @@ module Fog
         def files
           @files ||= begin
             Fog::Storage::Aliyun::Files.new(
-              :directory    => self,
-              :service   => service
+              directory: self,
+              service: service
             )
           end
         end

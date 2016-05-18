@@ -8,29 +8,26 @@ module Fog
         # * container<~String> - Name of container to delete
         # * options
         #
-        def delete_container(container, options={})
-
+        def delete_container(container, options = {})
           bucket = options[:bucket]
           bucket ||= @aliyun_oss_bucket
           location = get_bucket_location(bucket)
-          endpoint = "http://"+location+".aliyuncs.com"
-          object = container+'/'
-          resource = bucket+'/'+object
+          endpoint = 'http://' + location + '.aliyuncs.com'
+          object = container + '/'
+          resource = bucket + '/' + object
 
           request(
-              :expects  => 204,
-              :method   => 'DELETE',
-              :path     => object,
-              :bucket   => bucket,
-              :resource => resource,
-              :endpoint => endpoint
+            expects: 204,
+            method: 'DELETE',
+            path: object,
+            bucket: bucket,
+            resource: resource,
+            endpoint: endpoint
           )
         end
       end
       class Mock
-        
-        def delete_container(container, options={})
-
+        def delete_container(container, options = {})
         end
       end
     end

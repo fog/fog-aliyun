@@ -9,7 +9,7 @@ module Fog
 
         model Fog::Compute::Aliyun::RouteTable
 
-        def all(options={})
+        def all(options = {})
           requires :v_router
           data = Fog::JSON.decode(service.list_route_tables(v_router.id, options).body)['RouteTables']['RouteTable']
           load(data)
@@ -18,7 +18,7 @@ module Fog
         def get(routeTableId)
           requires :v_router
           if routeTableId
-            self.class.new(:service => service,:v_router=>v_router).all(:routeTableId=>routeTableId)[0]
+            self.class.new(service: service, v_router: v_router).all(routeTableId: routeTableId)[0]
           end
         end
       end

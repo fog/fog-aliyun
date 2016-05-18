@@ -8,27 +8,27 @@ module Fog
         # * object<~String> - Name of object to look for
         #
         def get_object(object, range = nil, options = {})
-          options = options.reject {|key, value| value.nil?}
+          options = options.reject { |_key, value| value.nil? }
           bucket = options[:bucket]
           bucket ||= @aliyun_oss_bucket
           endpoint = options[:endpoint]
-          if (nil == endpoint)
+          if nil == endpoint
             location = get_bucket_location(bucket)
-            endpoint = "http://"+location+".aliyuncs.com"
+            endpoint = 'http://' + location + '.aliyuncs.com'
           end
-          resource = bucket+'/'+object
+          resource = bucket + '/' + object
           para = {
-            :expects  => [200, 206, 404],
-            :method   => 'GET',
-            :path     => object,
-            :bucket   => bucket,
-            :resource => resource,
-            :endpoint => endpoint
+            expects: [200, 206, 404],
+            method: 'GET',
+            path: object,
+            bucket: bucket,
+            resource: resource,
+            endpoint: endpoint
           }
 
           if range
-            rangeStr = "bytes="+range
-            para[:headers] = {'Range' => rangeStr}
+            rangeStr = 'bytes=' + range
+            para[:headers] = { 'Range' => rangeStr }
           end
 
           response = request(para)

@@ -13,72 +13,66 @@ module Fog
 
         model Fog::Storage::Aliyun::File
 
-        def all(options = {})
+        def all(_options = {})
           requires :directory
-          if directory.key != "" && directory.key != "." && directory.key != nil
-            prefix = directory.key+"/"
+          if directory.key != '' && directory.key != '.' && !directory.key.nil?
+            prefix = directory.key + '/'
           end
-          files = service.list_objects({:prefix => prefix})["Contents"]
-          if nil == files
-            return
-          end
-          data = Array.new
+          files = service.list_objects(prefix: prefix)['Contents']
+          return if nil == files
+          data = []
           i = 0
           files.each do |file|
-            if file["Key"][0][-1] != "/"
-              content_length = file["Size"][0].to_i
-              key = file["Key"][0]
-              lastModified = file["LastModified"][0]
-              if lastModified != nil && lastModified != ""
-                last_modified = (Time.parse(lastModified)).localtime
-              else
-                last_modified = nil
-              end
-              type = file["Type"][0]
-              data[i] = {:content_length => content_length,
-                         :key            => key,
-                         :last_modified  => last_modified,
-                         :etag           => file["ETag"][0],
-                         :object_type    => type}
-              i = i + 1
-            end
+            next unless file['Key'][0][-1] != '/'
+            content_length = file['Size'][0].to_i
+            key = file['Key'][0]
+            lastModified = file['LastModified'][0]
+            last_modified = if !lastModified.nil? && lastModified != ''
+                              Time.parse(lastModified).localtime
+                            end
+            type = file['Type'][0]
+            data[i] = { content_length: content_length,
+                        key: key,
+                        last_modified: last_modified,
+                        etag: file['ETag'][0],
+                        object_type: type }
+            i += 1
           end
 
           load(data)
-          
         end
 
-        alias_method :each_file_this_page, :each
+        alias each_file_this_page each
         def each
           if !block_given?
             self
           else
             subset = dup.all
 
-            subset.each_file_this_page {|f| yield f}
-            while subset.length == (subset.limit || 10000)
-              subset = subset.all(:marker => subset.last.key)
-              subset.each_file_this_page {|f| yield f}
+            subset.each_file_this_page { |f| yield f }
+            while subset.length == (subset.limit || 10_000)
+              subset = subset.all(marker: subset.last.key)
+              subset.each_file_this_page { |f| yield f }
             end
 
             self
           end
         end
 
-        def get(key, &block)
+        def get(key)
           requires :directory
-          if directory.key == ""
-            object = key
-          else
-            object = directory.key+"/"+key
-          end
-          
+          object = if directory.key == ''
+                     key
+                   else
+                     directory.key + '/' + key
+                   end
+
           if block_given?
-            pagesNum = (contentLen + Excon::CHUNK_SIZE - 1)/Excon::CHUNK_SIZE
-            
+            pagesNum = (contentLen + Excon::CHUNK_SIZE - 1) / Excon::CHUNK_SIZE
+
             for i in 1..pagesNum
-              _start = (i-1)*(Excon::CHUNK_SIZE)
-              _end = i*(Excon::CHUNK_SIZE) - 1
+              _start = (i - 1) * Excon::CHUNK_SIZE
+              _end = i * Excon::CHUNK_SIZE - 1
               range = "#{_start}-#{_end}"
               data = service.get_object(object, range)
               chunk = data[:body]
@@ -89,37 +83,29 @@ module Fog
             data = service.get_object(object)
             body = data[:body]
           end
-          
-          contentLen = data[:headers]["Content-Length"].to_i
-          if data[:status] != 200
-            return nil
-          end
-          lastModified = data[:headers]["Last-Modified"]
-          if lastModified != nil && lastModified != ""
-            last_modified = (Time.parse(lastModified)).localtime
-          else
-            last_modified = nil
-          end
 
-          date = data[:headers]["Date"]
-          if date != nil && date != ""
-            date = (Time.parse(date)).localtime
-          else
-            date = nil
-          end
+          contentLen = data[:headers]['Content-Length'].to_i
+          return nil if data[:status] != 200
+          lastModified = data[:headers]['Last-Modified']
+          last_modified = if !lastModified.nil? && lastModified != ''
+                            Time.parse(lastModified).localtime
+                          end
+
+          date = data[:headers]['Date']
+          date = (Time.parse(date).localtime if !date.nil? && date != '')
           file_data = {
-              :body           => body,
-              :content_length => contentLen,
-              :key            => key,
-              :last_modified  => last_modified,
-              :content_type   => data[:headers]["Content-Type"],
-              :etag           => data[:headers]["ETag"],
-              :date           => date,
-              :connection     => data[:headers]["Connection"],
-              :accept_ranges  => data[:headers]["Accept-Ranges"],
-              :server         => data[:headers]["Server"],
-              :object_type    => data[:headers]["x-oss-object-type"],
-              :content_disposition => data[:headers]["Content-Disposition"]
+            body: body,
+            content_length: contentLen,
+            key: key,
+            last_modified: last_modified,
+            content_type: data[:headers]['Content-Type'],
+            etag: data[:headers]['ETag'],
+            date: date,
+            connection: data[:headers]['Connection'],
+            accept_ranges: data[:headers]['Accept-Ranges'],
+            server: data[:headers]['Server'],
+            object_type: data[:headers]['x-oss-object-type'],
+            content_disposition: data[:headers]['Content-Disposition']
           }
 
           new(file_data)
@@ -127,67 +113,61 @@ module Fog
 
         def get_url(key)
           requires :directory
-          if directory.key == ""
-            object = key
-          else
-            object = directory.key+"/"+key
-          end
+          object = if directory.key == ''
+                     key
+                   else
+                     directory.key + '/' + key
+                   end
           service.get_object_http_url_public(object, 3600)
         end
 
         def get_http_url(key, expires, options = {})
           requires :directory
-          if directory.key == ""
-            object = key
-          else
-            object = directory.key+"/"+key
-          end
+          object = if directory.key == ''
+                     key
+                   else
+                     directory.key + '/' + key
+                   end
           service.get_object_http_url_public(object, expires, options)
         end
 
         def get_https_url(key, expires, options = {})
           requires :directory
-          if directory.key == ""
-            object = key
-          else
-            object = directory.key+"/"+key
-          end
+          object = if directory.key == ''
+                     key
+                   else
+                     directory.key + '/' + key
+                   end
           service.get_object_https_url_public(object, expires, options)
         end
 
-        def head(key, options = {})
+        def head(key, _options = {})
           requires :directory
-          if directory.key == ""
-            object = key
-          else
-            object = directory.key+"/"+key
-          end
+          object = if directory.key == ''
+                     key
+                   else
+                     directory.key + '/' + key
+                   end
           data = service.head_object(object).data
-          lastModified = data[:headers]["Last-Modified"]
-          if lastModified != nil && lastModified != ""
-            last_modified = (Time.parse(lastModified)).localtime
-          else
-            last_modified = nil
-          end
+          lastModified = data[:headers]['Last-Modified']
+          last_modified = if !lastModified.nil? && lastModified != ''
+                            Time.parse(lastModified).localtime
+                          end
 
-          date = data[:headers]["Date"]
-          if date != nil && date != ""
-            date = (Time.parse(date)).localtime
-          else
-            date = nil
-          end
+          date = data[:headers]['Date']
+          date = (Time.parse(date).localtime if !date.nil? && date != '')
 
           file_data = {
-              :content_length => data[:headers]["Content-Length"].to_i,
-              :key            => key,
-              :last_modified  => last_modified,
-              :content_type   => data[:headers]["Content-Type"],
-              :etag           => data[:headers]["ETag"],
-              :date           => date,
-              :connection     => data[:headers]["Connection"],
-              :accept_ranges  => data[:headers]["Accept-Ranges"],
-              :server         => data[:headers]["Server"],
-              :object_type    => data[:headers]["x-oss-object-type"]
+            content_length: data[:headers]['Content-Length'].to_i,
+            key: key,
+            last_modified: last_modified,
+            content_type: data[:headers]['Content-Type'],
+            etag: data[:headers]['ETag'],
+            date: date,
+            connection: data[:headers]['Connection'],
+            accept_ranges: data[:headers]['Accept-Ranges'],
+            server: data[:headers]['Server'],
+            object_type: data[:headers]['x-oss-object-type']
           }
           new(file_data)
         rescue Fog::Storage::Aliyun::NotFound
@@ -196,7 +176,7 @@ module Fog
 
         def new(attributes = {})
           requires :directory
-          super({ :directory => directory }.merge!(attributes))
+          super({ directory: directory }.merge!(attributes))
         end
       end
     end

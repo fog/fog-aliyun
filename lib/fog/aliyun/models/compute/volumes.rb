@@ -5,7 +5,6 @@ module Fog
   module Compute
     class Aliyun
       class Volumes < Fog::Collection
-
         model Fog::Compute::Aliyun::Volume
 
         # Used to create a volume.  There are 3 arguments and availability_zone and size are required.  You can generate a new key_pair as follows:
@@ -13,7 +12,7 @@ module Fog
         #
         # ==== Returns
         #
-        #<Fog::AWS::Compute::Volume
+        # <Fog::AWS::Compute::Volume
         #  id="vol-1e2028b9",
         #  attached_at=nil,
         #  availability_zone="us-east-1a",
@@ -25,18 +24,17 @@ module Fog
         #  snapshot_id=nil,
         #  state="creating",
         #  tags=nil
-        #>
+        # >
         #
         # The volume can be retrieved by running Aliyun.volumes.get("d-25ohde62o").  See get method below.
         #
-
 
         # Used to return all volumes.
         # Aliyun.volumes.all
         #
         # ==== Returns
         #
-        #>>Aliyun.volumes.all
+        # >>Aliyun.volumes.all
         # <Fog::Compute::Aliyun::Volumes
         #   [
         #                 <Fog::Compute::Aliyun::Volume
@@ -76,7 +74,7 @@ module Fog
         def all(filters_arg = {})
           unless filters_arg.is_a?(Hash)
             Fog::Logger.deprecation("all with #{filters_arg.class} param is deprecated, use all('diskIds' => []) instead [light_black](#{caller.first})[/]")
-            filters_arg = {'diskIds' => [*filters_arg]}
+            filters_arg = { 'diskIds' => [*filters_arg] }
           end
           data = Fog::JSON.decode(service.list_disks(filters_arg).body)['Disks']['Disk']
           load(data)
@@ -95,7 +93,7 @@ module Fog
         #
         # ==== Returns
         #
-        #>> Aliyun.volumes.get('d-25ohde62o')
+        # >> Aliyun.volumes.get('d-25ohde62o')
         #   <Fog::Compute::Aliyun::Volume
         #       id="d-25ohde62o",
         #       region_id="cn-beijing",
@@ -127,13 +125,11 @@ module Fog
 
         def get(volume_id)
           if volume_id
-            diskIds=Array.new(1,volume_id)
-            self.class.new(:service => service).all(:diskIds => diskIds)[0]
+            diskIds = Array.new(1, volume_id)
+            self.class.new(service: service).all(diskIds: diskIds)[0]
           end
         end
-
       end
     end
   end
 end
-

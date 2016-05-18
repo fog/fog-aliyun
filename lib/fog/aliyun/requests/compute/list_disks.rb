@@ -14,7 +14,7 @@ module Fog
         #     * :snapshotId - id of snapshot which used to create disk.
         #     * :name - name of disk
         #     * :portable - If ture, can exist dependently,which means it can be mount or umont in available zones.
-        #           Else, it must be created or destroyed with a instance. 
+        #           Else, it must be created or destroyed with a instance.
         #           The value for ocal disks and system disks on the cloud and cloud disks paid by month must be false.
         #     * :delWithIns - If ture, the disk will be released when the instance is released.
         #     * :delAutoSna - If ture, the auto created snapshot will be destroyed when the disk is destroyed
@@ -27,9 +27,9 @@ module Fog
         #     * 'Disks'<~Hash> - list of Disk,and the parameter of disk refer to the Volume model
         #
         # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/disk&describedisks]
-        def list_disks(options={})
+        def list_disks(options = {})
           action = 'DescribeDisks'
-          sigNonce = randonStr()
+          sigNonce = randonStr
           time = Time.new.utc
 
           parameters = defalutParameters(action, sigNonce, time)
@@ -51,103 +51,100 @@ module Fog
           diskChargeType = options[:diskChargeType]
 
           if diskChargeType
-            parameters["DiskChargeType"] = diskChargeType
+            parameters['DiskChargeType'] = diskChargeType
             pathUrl += '&DiskChargeType='
             pathUrl += diskChargeType
           end
 
           if enAutoSna
-            parameters["EnableAutoSnapshot"] = enAutoSna
+            parameters['EnableAutoSnapshot'] = enAutoSna
             pathUrl += '&EnableAutoSnapshot='
             pathUrl += enAutoSna
           end
 
           if delAutoSna
-            parameters["DeleteAutoSnapshot"] = delAutoSna
+            parameters['DeleteAutoSnapshot'] = delAutoSna
             pathUrl += '&DeleteAutoSnapshot='
             pathUrl += delAutoSna
           end
 
           if delWithIns
-            parameters["DeleteWithInstance"] = delWithIns
+            parameters['DeleteWithInstance'] = delWithIns
             pathUrl += '&DeleteWithInstance='
             pathUrl += delWithIns
           end
 
           if portable
-            parameters["Portable"] = portable
+            parameters['Portable'] = portable
             pathUrl += '&Portable='
             pathUrl += portable
           end
 
           if name
-            parameters["DiskName"] = name
+            parameters['DiskName'] = name
             pathUrl += '&DiskName='
             pathUrl += name
           end
 
           if snapshotId
-            parameters["SnapshotId"] = snapshotId
+            parameters['SnapshotId'] = snapshotId
             pathUrl += '&SnapshotId='
             pathUrl += snapshotId
           end
 
           if state
-            parameters["Status"] = state
+            parameters['Status'] = state
             pathUrl += '&Status='
             pathUrl += state
           end
 
           if category
-            parameters["DiskType"] = diskType
+            parameters['DiskType'] = diskType
             pathUrl += '&DiskType='
             pathUrl += diskType
           end
 
           if category
-            parameters["Category"] = category
+            parameters['Category'] = category
             pathUrl += '&Category='
             pathUrl += category
           end
 
           if instanceId
-            parameters["InstanceId"] = instanceId
+            parameters['InstanceId'] = instanceId
             pathUrl += '&InstanceId='
             pathUrl += instanceId
           end
 
           if diskIds
-            parameters["DiskIds"] = Fog::JSON.encode(diskIds)
+            parameters['DiskIds'] = Fog::JSON.encode(diskIds)
             pathUrl += '&DiskIds='
             pathUrl += Fog::JSON.encode(diskIds)
           end
-          
+
           if pageNumber
-            parameters["PageNumber"] = pageNumber
+            parameters['PageNumber'] = pageNumber
             pathUrl += '&PageNumber='
             pathUrl += pageNumber
           end
 
-          pageSize   = options[:pageSize]
-          unless pageSize
-            pageSize = '50'   
-          end
-          parameters["PageSize"] = pageSize  
+          pageSize = options[:pageSize]
+          pageSize = '50' unless pageSize
+          parameters['PageSize'] = pageSize
           pathUrl += '&PageSize='
-          pathUrl += pageSize	
+          pathUrl += pageSize
 
           signature = sign(@aliyun_accesskey_secret, parameters)
           pathUrl += '&Signature='
           pathUrl += signature
 
           request(
-            :expects  => [200, 203],
-            :method   => 'GET',
-            :path     => pathUrl
+            expects: [200, 203],
+            method: 'GET',
+            path: pathUrl
           )
         end
       end
-
     end
   end
 end

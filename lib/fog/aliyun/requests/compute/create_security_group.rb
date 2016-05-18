@@ -3,10 +3,9 @@ module Fog
     class Aliyun
       class Real
         # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.201.106.DGkmH7#/pub/ecs/open-api/securitygroup&createsecuritygroup]
-        def create_security_group(options={})
-
+        def create_security_group(options = {})
           action   = 'CreateSecurityGroup'
-          sigNonce = randonStr()
+          sigNonce = randonStr
           time     = Time.new.utc
 
           parameters = defalutParameters(action, sigNonce, time)
@@ -17,21 +16,21 @@ module Fog
           vpcid = options[:vpcId]
 
           if name
-            parameters["SecurityGroupName"] = name
+            parameters['SecurityGroupName'] = name
             pathUrl += '&SecurityGroupName='
-            pathUrl += name	
+            pathUrl += name
           end
 
           if desc
-            parameters["Description"] = desc
+            parameters['Description'] = desc
             pathUrl += '&Description='
-            pathUrl += desc	
+            pathUrl += desc
           end
 
           if vpcid
-            parameters["VpcId"] = vpcid
+            parameters['VpcId'] = vpcid
             pathUrl += '&VpcId='
-            pathUrl += vpcid	
+            pathUrl += vpcid
           end
 
           signature = sign(@aliyun_accesskey_secret, parameters)
@@ -39,19 +38,19 @@ module Fog
           pathUrl += signature
 
           request(
-            :expects  => [200, 203],
-            :method   => 'GET',
-            :path     => pathUrl
+            expects: [200, 203],
+            method: 'GET',
+            path: pathUrl
           )
         end
       end
 
       class Mock
         def create_security_group(name, description)
-          Fog::Identity::OpenStack.new(:openstack_auth_url => credentials[:openstack_auth_url])
+          Fog::Identity::OpenStack.new(openstack_auth_url: credentials[:openstack_auth_url])
           tenant_id = Fog::Identity::OpenStack::V2::Mock.data[current_tenant][:tenants].keys.first
           security_group_id = Fog::Mock.random_numbers(2).to_i + 1
-          self.data[:security_groups][security_group_id.to_s] = {
+          data[:security_groups][security_group_id.to_s] = {
             'tenant_id' => tenant_id,
             'rules'     => [],
             'id'        => security_group_id,
@@ -65,9 +64,10 @@ module Fog
             'X-Compute-Request-Id' => "req-#{Fog::Mock.random_hex(32)}",
             'Content-Type'   => 'application/json',
             'Content-Length' => Fog::Mock.random_numbers(3).to_s,
-            'Date'           => Date.new}
+            'Date'           => Date.new
+          }
           response.body = {
-            'security_group' => self.data[:security_groups][security_group_id.to_s]
+            'security_group' => data[:security_groups][security_group_id.to_s]
           }
           response
         end

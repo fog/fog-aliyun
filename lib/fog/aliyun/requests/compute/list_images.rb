@@ -3,10 +3,9 @@ module Fog
     class Aliyun
       class Real
         # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/image&describeimages]
-        def list_images(options={})
-          
+        def list_images(options = {})
           action = 'DescribeImages'
-          sigNonce = randonStr()
+          sigNonce = randonStr
           time = Time.new.utc
 
           parameters = defalutParameters(action, sigNonce, time)
@@ -14,43 +13,41 @@ module Fog
 
           pageNumber = options[:pageNumber]
           if pageNumber
-            parameters["PageNumber"] = pageNumber
+            parameters['PageNumber'] = pageNumber
             pathUrl += '&PageNumber='
             pathUrl += pageNumber
           end
 
-          pageSize   = options[:pageSize]
-          unless pageSize
-            pageSize = '50'
-          end
-          parameters["PageSize"] = pageSize  
+          pageSize = options[:pageSize]
+          pageSize = '50' unless pageSize
+          parameters['PageSize'] = pageSize
           pathUrl += '&PageSize='
-          pathUrl += pageSize	
-          
+          pathUrl += pageSize
+
           imageId = options[:imageId]
           if imageId
-            parameters["ImageId"] = imageId
+            parameters['ImageId'] = imageId
             pathUrl += '&ImageId='
-            pathUrl += imageId	
+            pathUrl += imageId
           end
-          
+
           imageName = options[:imageName]
           if imageName
-            parameters["ImageName"] = imageName
+            parameters['ImageName'] = imageName
             pathUrl += '&ImageName='
             pathUrl += imageName
           end
-          
+
           snapshotId = options[:snapshotId]
           if snapshotId
-            parameters["SnapshotId"] = snapshotId
+            parameters['SnapshotId'] = snapshotId
             pathUrl += '&SnapshotId='
             pathUrl += snapshotId
           end
-          
+
           ownerAlias = options[:ownerAlias]
           if ownerAlias
-            parameters["ImageOwnerAlias"] = ownerAlias
+            parameters['ImageOwnerAlias'] = ownerAlias
             pathUrl += '&ImageOwnerAlias='
             pathUrl += ownerAlias
           end
@@ -60,20 +57,20 @@ module Fog
           pathUrl += signature
 
           request(
-            :expects  => [200, 203],
-            :method   => 'GET',
-            :path     => pathUrl
+            expects: [200, 203],
+            method: 'GET',
+            path: pathUrl
           )
         end
       end
 
       class Mock
-        def list_images(options={})
+        def list_images(_options = {})
           response = Excon::Response.new
           data = list_images_detail.body['images']
           images = []
           for image in data
-            images << image.reject { |key, value| !['id', 'name', 'links'].include?(key) }
+            images << image.reject { |key, _value| !%w(id name links).include?(key) }
           end
           response.status = [200, 203][rand(1)]
           response.body = { 'images' => images }

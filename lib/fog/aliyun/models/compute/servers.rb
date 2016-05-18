@@ -5,7 +5,6 @@ module Fog
   module Compute
     class Aliyun
       class Servers < Fog::Collection
-
         model Fog::Compute::Aliyun::Server
 
         def all(options = {})
@@ -25,19 +24,18 @@ module Fog
         #                             :public_key_path => '~/.ssh/fog_rsa.pub',
         #                             :private_key_path => '~/.ssh/fog_rsa'
         #
-#        def bootstrap(new_attributes = {})
-#          server = create(new_attributes)
-#          server.wait_for { ready? }
-#          server.setup(:password => server.password)
-#          server
-#        end
+        #        def bootstrap(new_attributes = {})
+        #          server = create(new_attributes)
+        #          server.wait_for { ready? }
+        #          server.setup(:password => server.password)
+        #          server
+        #        end
 
         def get(server_id)
-          if(server_id)
-            self.class.new(:service=>service).all(:instanceId=>server_id)[0]
+          if server_id
+            self.class.new(service: service).all(instanceId: server_id)[0]
           end
         end
-        
       end
     end
   end
