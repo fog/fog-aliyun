@@ -18,7 +18,8 @@ module Fog
           parameters['DiskId'] = diskId
           pathUrl += '&DiskId='
           pathUrl += diskId
-
+          
+          device = _options[:device]
           if device
             parameters['Device'] = device
             pathUrl += '&Device='
