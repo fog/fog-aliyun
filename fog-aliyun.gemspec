@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.name          = 'fog-aliyun'
   spec.version       = Fog::Aliyun::VERSION
   spec.authors       = ['Qinsi Deng, Jianxun Li, Jane Han']
-  spec.email         = ['dengqs@dtdream.com']
+  spec.email         = ['dengqinsi@sina.com']
 
   spec.summary       = 'Fog provider for Aliyun Web Services.'
   spec.description   = 'As a FOG provider, fog-aliyun support aliyun OSS/ECS. It will support more aliyun services later.'
