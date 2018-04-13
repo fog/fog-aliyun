@@ -95,7 +95,13 @@ module Fog
       request :list_vswitchs
       request :modify_vpc
       request :modify_vswitch
-
+      request :list_vpn_gateways
+      request :list_vpn_customergateways
+      request :list_vpn_connections
+      request :create_vpn_customergateway
+      request :create_vpn_connection
+      request :delete_vpn_customergateway
+      request :delete_vpn_connection
       # VRouter
       request :list_vrouters
 
@@ -271,18 +277,51 @@ module Fog
           @path   = uri.path
           @port   = uri.port
           @scheme = uri.scheme
-
+          
+          vpcuri = URI.parse("https://vpc.aliyuncs.com")
+          @vpchost   = vpcuri.host
+          @vpcpath   = vpcuri.path
+          @vpcport   = vpcuri.port
+          @vpcscheme = vpcuri.scheme          
+          
           @persistent = options[:persistent] || false
           @connection = Fog::Core::Connection.new("#{@scheme}://#{@host}:#{@port}", @persistent, @connection_options)
+          @VPCconnection = Fog::Core::Connection.new("#{@vpcscheme}://#{@vpchost}:#{@vpcport}", @persistent, @connection_options)
         end
 
         def reload
           @connection.reset
+          @VPCconnection.reset
         end
 
         def request(params)
           begin
             response = @connection.request(params.merge(headers: {
+              'Content-Type' => 'application/json',
+              'Accept' => 'application/json',
+              'X-Auth-Token' => @auth_token
+            }.merge!(params[:headers] || {}),
+                                                        path: "#{@path}/#{params[:path]}",
+                                                        query: params[:query]))
+          rescue Excon::Errors::HTTPStatusError => error
+            raise case error
+                  when Excon::Errors::NotFound
+                    Fog::Compute::Aliyun::NotFound.slurp(error)
+                  else
+                    error
+              end
+          end
+
+          if !response.body.empty? && response.get_header('Content-Type') == 'application/json'
+            response.body = Fog::JSON.decode(response.body)
+          end
+
+          response
+        end
+
+        def VPCrequest(params)
+          begin
+            response = @VPCconnection.request(params.merge(headers: {
               'Content-Type' => 'application/json',
               'Accept' => 'application/json',
               'X-Auth-Token' => @auth_token
@@ -312,6 +351,12 @@ module Fog
           '?Format=JSON&AccessKeyId=' + @aliyun_accesskey_id + '&Action=' + action + '&SignatureMethod=HMAC-SHA1&RegionId=' + @aliyun_region_id + '&SignatureNonce=' + sigNonce + '&SignatureVersion=1.0&Version=2014-05-26&Timestamp=' + urlTimeFormat
         end
 
+        def defaultAliyunVPCUri(action, sigNonce, time)
+          parTimeFormat = time.strftime('%Y-%m-%dT%H:%M:%SZ')
+          urlTimeFormat = URI.encode(parTimeFormat, ':')
+          '?Format=JSON&AccessKeyId=' + @aliyun_accesskey_id + '&Action=' + action + '&SignatureMethod=HMAC-SHA1&RegionId=' + @aliyun_region_id + '&SignatureNonce=' + sigNonce + '&SignatureVersion=1.0&Version=2016-04-28&Timestamp=' + urlTimeFormat
+        end
+
         # generate random num
         def randonStr
           numStr = rand(100_000).to_s
@@ -326,6 +371,22 @@ module Fog
           para = {
             'Format' => 'JSON',
             'Version' => '2014-05-26',
+            'Action' => action,
+            'AccessKeyId' => @aliyun_accesskey_id,
+            'SignatureVersion' => '1.0',
+            'SignatureMethod' => 'HMAC-SHA1',
+            'SignatureNonce' => sigNonce,
+            'RegionId' => @aliyun_region_id,
+            'Timestamp' => parTimeFormat
+          }
+          para
+        end
+
+        def defalutVPCParameters(action, sigNonce, time)
+          parTimeFormat = time.strftime('%Y-%m-%dT%H:%M:%SZ')
+          para = {
+            'Format' => 'JSON',
+            'Version' => '2016-04-28',
             'Action' => action,
             'AccessKeyId' => @aliyun_accesskey_id,
             'SignatureVersion' => '1.0',
