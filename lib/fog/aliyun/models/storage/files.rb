@@ -66,6 +66,18 @@ module Fog
                    else
                      directory.key + '/' + key
                    end
+          begin
+          data = service.get_object(object)
+          rescue => error
+            case error.response.body
+              when /<Code>NoSuchKey<\/Code>/
+                nil
+              else
+                raise(error)
+            end
+          end
+
+          contentLen = data[:headers]['Content-Length'].to_i
 
           if block_given?
             pagesNum = (contentLen + Excon::CHUNK_SIZE - 1) / Excon::CHUNK_SIZE
@@ -80,12 +92,9 @@ module Fog
               body = nil
             end
           else
-            data = service.get_object(object)
             body = data[:body]
           end
 
-          contentLen = data[:headers]['Content-Length'].to_i
-          return nil if data[:status] != 200
           lastModified = data[:headers]['Last-Modified']
           last_modified = if !lastModified.nil? && lastModified != ''
                             Time.parse(lastModified).localtime
