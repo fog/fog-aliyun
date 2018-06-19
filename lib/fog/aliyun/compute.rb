@@ -190,41 +190,43 @@ module Fog
         end
 
         def initialize(options = {})
-          @openstack_username = options[:openstack_username]
-          @openstack_user_domain = options[:openstack_user_domain] || options[:openstack_domain]
-          @openstack_project_domain = options[:openstack_project_domain] || options[:openstack_domain] || 'Default'
-          @openstack_auth_uri = URI.parse(options[:openstack_auth_url])
+          @aliyun_username = options[:aliyun_username]
+          @aliyun_user_domain = options[:aliyun_user_domain] || options[:aliyun_domain]
+          @aliyun_project_domain = options[:aliyun_project_domain] || options[:aliyun_domain] || 'Default'
 
-          @current_tenant = options[:openstack_tenant]
-          @current_tenant_id = options[:openstack_tenant_id]
+          raise ArgumentError, "Missing required arguments: :aliyun_auth_url" unless options.key?[:aliyun_auth_url]
+          @aliyun_auth_uri = URI.parse(options[:aliyun_auth_url])
+
+          @current_tenant = options[:aliyun_tenant]
+          @current_tenant_id = options[:aliyun_tenant_id]
 
           @auth_token = Fog::Mock.random_base64(64)
           @auth_token_expiration = (Time.now.utc + 86_400).iso8601
 
-          management_url = URI.parse(options[:openstack_auth_url])
+          management_url = URI.parse(@aliyun_auth_url)
           management_url.port = 8774
           management_url.path = '/v1.1/1'
-          @openstack_management_url = management_url.to_s
+          @aliyun_management_url = management_url.to_s
 
-          identity_public_endpoint = URI.parse(options[:openstack_auth_url])
+          identity_public_endpoint = URI.parse(@aliyun_auth_url)
           identity_public_endpoint.port = 5000
-          @openstack_identity_public_endpoint = identity_public_endpoint.to_s
+          @aliyun_identity_public_endpoint = identity_public_endpoint.to_s
         end
 
         def data
-          self.class.data["#{@openstack_username}-#{@current_tenant}"]
+          self.class.data["#{@aliyun_username}-#{@current_tenant}"]
         end
 
         def reset_data
-          self.class.data.delete("#{@openstack_username}-#{@current_tenant}")
+          self.class.data.delete("#{@aliyun_username}-#{@current_tenant}")
         end
 
         def credentials
-          { provider: 'openstack',
-            openstack_auth_url: @openstack_auth_uri.to_s,
-            openstack_auth_token: @auth_token,
-            openstack_management_url: @openstack_management_url,
-            openstack_identity_endpoint: @openstack_identity_public_endpoint }
+          { provider: 'aliyun',
+            aliyun_auth_url: @aliyun_auth_uri.to_s,
+            aliyun_auth_token: @auth_token,
+            aliyun_management_url: @aliyun_management_url,
+            aliyun_identity_endpoint: @aliyun_identity_public_endpoint }
         end
       end
 
