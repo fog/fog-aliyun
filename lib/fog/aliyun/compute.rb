@@ -193,6 +193,8 @@ module Fog
           @aliyun_username = options[:aliyun_username]
           @aliyun_user_domain = options[:aliyun_user_domain] || options[:aliyun_domain]
           @aliyun_project_domain = options[:aliyun_project_domain] || options[:aliyun_domain] || 'Default'
+
+          raise ArgumentError, "Missing required arguments: :aliyun_auth_url" unless options.key?[:aliyun_auth_url]
           @aliyun_auth_uri = URI.parse(options[:aliyun_auth_url])
 
           @current_tenant = options[:aliyun_tenant]
@@ -201,12 +203,12 @@ module Fog
           @auth_token = Fog::Mock.random_base64(64)
           @auth_token_expiration = (Time.now.utc + 86_400).iso8601
 
-          management_url = URI.parse(options[:aliyun_auth_url])
+          management_url = URI.parse(@aliyun_auth_url)
           management_url.port = 8774
           management_url.path = '/v1.1/1'
           @aliyun_management_url = management_url.to_s
 
-          identity_public_endpoint = URI.parse(options[:aliyun_auth_url])
+          identity_public_endpoint = URI.parse(@aliyun_auth_url)
           identity_public_endpoint.port = 5000
           @aliyun_identity_public_endpoint = identity_public_endpoint.to_s
         end
