@@ -16,7 +16,7 @@ module Fog
             endpoint: endpoint
           )
           xml = ret.data[:body]
-          result = XmlSimple.xml_in(xml)
+          XmlSimple.xml_in(xml)
         end
 
         def get_bucket_location(bucket)
@@ -29,7 +29,7 @@ module Fog
             bucket: bucket,
             resource: resource
           )
-          location = XmlSimple.xml_in(ret.data[:body])
+          XmlSimple.xml_in(ret.data[:body])
         end
 
         def get_bucket_acl(bucket)
@@ -45,7 +45,7 @@ module Fog
             resource: resource,
             endpoint: endpoint
           )
-          acl = XmlSimple.xml_in(ret.data[:body])['AccessControlList'][0]['Grant'][0]
+          XmlSimple.xml_in(ret.data[:body])['AccessControlList'][0]['Grant'][0]
         end
 
         def get_bucket_CORSRules(bucket)
@@ -61,7 +61,7 @@ module Fog
             resource: resource,
             endpoint: endpoint
           )
-          cors = XmlSimple.xml_in(ret.data[:body])['CORSRule'][0] if ret.data[:status] != 404
+          XmlSimple.xml_in(ret.data[:body])['CORSRule'][0] if ret.data[:status] != 404
         end
 
         def get_bucket_lifecycle(bucket)
@@ -77,7 +77,7 @@ module Fog
             resource: resource,
             endpoint: endpoint
           )
-          lifecycle = XmlSimple.xml_in(ret.data[:body])['Rule'][0] if ret.data[:status] != 404
+          XmlSimple.xml_in(ret.data[:body])['Rule'][0] if ret.data[:status] != 404
         end
 
         def get_bucket_logging(bucket)
@@ -93,7 +93,7 @@ module Fog
             resource: resource,
             endpoint: endpoint
           )
-          logging = XmlSimple.xml_in(ret.data[:body])['LoggingEnabled'][0]['TargetPrefix']
+          XmlSimple.xml_in(ret.data[:body])['LoggingEnabled'][0]['TargetPrefix']
         end
 
         def get_bucket_referer(bucket)
@@ -109,7 +109,7 @@ module Fog
             resource: resource,
             endpoint: endpoint
           )
-          referer = XmlSimple.xml_in(ret.data[:body])
+          XmlSimple.xml_in(ret.data[:body])
         end
 
         def get_bucket_website(bucket)
@@ -125,11 +125,8 @@ module Fog
             resource: resource,
             endpoint: endpoint
           )
-          website = XmlSimple.xml_in(ret.data[:body]) if ret.data[:status] != 404
+          XmlSimple.xml_in(ret.data[:body]) if ret.data[:status] != 404
         end
-      end
-      class Mock
-        def get_bucket(bucket); end
       end
     end
   end

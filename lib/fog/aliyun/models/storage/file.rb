@@ -19,11 +19,12 @@ module Fog
         attribute :object_type, aliases: 'x-oss-object-type'
 
         def body
-          attributes[:body] ||= if last_modified
-                                  collection.get(identity).body
-                                else
-                                  ''
-          end
+          attributes[:body] ||=
+            if last_modified
+              collection.get(identity).body
+            else
+              ''
+            end
         end
 
         def body=(new_body)

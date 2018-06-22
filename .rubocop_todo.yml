@@ -6,25 +6,6 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyleAlignWith, AutoCorrect, Severity.
-# SupportedStylesAlignWith: start_of_line, def
-Layout/DefEndAlignment:
-  Exclude:
-    - 'lib/fog/aliyun/requests/storage/put_object.rb'
-
-# Offense count: 5
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyleAlignWith, AutoCorrect, Severity.
-# SupportedStylesAlignWith: keyword, variable, start_of_line
-Layout/EndAlignment:
-  Exclude:
-    - 'lib/fog/aliyun/compute.rb'
-    - 'lib/fog/aliyun/models/storage/file.rb'
-    - 'lib/fog/aliyun/requests/compute/create_server.rb'
-    - 'lib/fog/aliyun/storage.rb'
-
 # Offense count: 4
 # Configuration parameters: AllowSafeAssignment.
 Lint/AssignmentInCondition:
@@ -167,11 +148,3 @@ Style/MultipleComparison:
   Exclude:
     - 'lib/fog/aliyun/requests/storage/get_object_http_url.rb'
     - 'lib/fog/aliyun/requests/storage/get_object_https_url.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, AllowInnerSlashes.
-# SupportedStyles: slashes, percent_r, mixed
-Style/RegexpLiteral:
-  Exclude:
-    - 'lib/fog/aliyun/models/storage/files.rb'

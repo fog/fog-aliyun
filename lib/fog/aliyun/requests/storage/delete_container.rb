@@ -28,9 +28,6 @@ module Fog
           )
         end
       end
-      class Mock
-        def delete_container(container, options = {}); end
-      end
     end
   end
 end

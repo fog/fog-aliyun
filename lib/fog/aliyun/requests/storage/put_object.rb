@@ -22,7 +22,7 @@ module Fog
           body = file.read
 
           resource = bucket + '/' + object
-          ret = request(
+          request(
             expects: [200, 203],
             method: 'PUT',
             path: object,
@@ -40,7 +40,7 @@ module Fog
           endpoint = 'http://' + location + '.aliyuncs.com'
 
           resource = bucket + '/' + object
-          ret = request(
+          request(
             expects: [200, 203],
             method: 'PUT',
             path: object,
@@ -49,7 +49,7 @@ module Fog
             body: body,
             endpoint: endpoint
           )
-      end
+        end
 
         def put_folder(bucket, folder, endpoint)
           if endpoint.nil?
@@ -58,7 +58,7 @@ module Fog
           end
           path = folder + '/'
           resource = bucket + '/' + folder + '/'
-          ret = request(
+          request(
             expects: [200, 203],
             method: 'PUT',
             path: path,
@@ -76,7 +76,6 @@ module Fog
           uploads = list_multipart_uploads(bucket, endpoint)
           upload = (uploads&.find { |tmpupload| tmpupload['Key'][0] == object })
 
-          parts = nil
           uploadedSize = 0
           start_partNumber = 1
           if !upload.nil?
@@ -127,7 +126,7 @@ module Fog
             resource: resource,
             endpoint: endpoint
           )
-          uploadid = XmlSimple.xml_in(ret.data[:body])['UploadId'][0]
+          XmlSimple.xml_in(ret.data[:body])['UploadId'][0]
         end
 
         def upload_part(bucket, object, endpoint, partNumber, uploadId, body)
@@ -137,7 +136,7 @@ module Fog
           end
           path = object + '?partNumber=' + partNumber + '&uploadId=' + uploadId
           resource = bucket + '/' + path
-          ret = request(
+          request(
             expects: [200, 203],
             method: 'PUT',
             path: path,
@@ -164,7 +163,7 @@ module Fog
 
           path = object + '?uploadId=' + uploadId
           resource = bucket + '/' + path
-          ret = request(
+          request(
             expects: 200,
             method: 'POST',
             path: path,
@@ -174,10 +173,6 @@ module Fog
             body: body
           )
         end
-      end
-
-      class Mock
-        def put_object(object, file = nil, options = {}); end
       end
     end
   end

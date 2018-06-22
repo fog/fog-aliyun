@@ -21,14 +21,7 @@ module Fog
             method: 'GET',
             path: _pathURL
           )
-
-          # _InstanceType = Hash.new
-          # _InstanceTypeList =  Fog::JSON.decode(response.body)["InstanceTypes"]["InstanceType"]
-          # _InstanceTypeList.each do |instanceType|
-          #  _InstanceType[[instanceType["CpuCoreCount"], instanceType["MemorySize"]]] = instanceType["InstanceTypeId"]
-          # end
-          # _InstanceType
-        end list_server_types
+        end
 
         def get_instance_type(cpuCount, memorySize)
           _action = 'DescribeInstanceTypes'
@@ -49,31 +42,15 @@ module Fog
 
           _InstanceTypeId = nil
           _InstanceTypeList = Fog::JSON.decode(response.body)['InstanceTypes']['InstanceType']
-          _InstanceTypeList.each do |instanceType|
-            next unless (instanceType['CpuCoreCount'] == cpuCount) && (instanceType['MemorySize'] == memorySize)
-            _InstanceTypeId = instanceType['InstanceTypeId']
+          _InstanceTypeList.each do |instance_type|
+            next unless (instance_type['CpuCoreCount'] == cpuCount) && (instance_type['MemorySize'] == memorySize)
+            _InstanceTypeId = instance_type['InstanceTypeId']
             puts '_instanceTypeId: ' + _InstanceTypeId
             break
-            # end if
-          end each
+          end
           _InstanceTypeId
-        end get_instance_type
-      end class Real
-
-      #      class Mock
-      #        def list_servers(options = {})
-      #          response = Excon::Response.new
-      #          data = list_servers_detail.body['servers']
-      #          servers = []
-      #          for server in data
-      #            servers << server.reject { |key, value| !['id', 'name', 'links'].include?(key) }
-      #          end
-      #          response.status = [200, 203][rand(1)]
-      #          response.body = { 'servers' => servers }
-      #          response
-      #        end
-      #      end
-    end class Aliyun
-  end module Compute
-  # end module Fog
+        end
+      end
+    end
+  end
 end

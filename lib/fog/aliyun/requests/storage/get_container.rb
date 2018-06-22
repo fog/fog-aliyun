@@ -39,7 +39,6 @@ module Fog
           end
 
           location = get_bucket_location(bucket)
-          endpoint = 'http://' + location + '.aliyuncs.com'
           resource = bucket + '/'
           ret = request(
             expects: [200, 203, 400],
@@ -49,12 +48,8 @@ module Fog
             bucket: bucket
           )
           xml = ret.data[:body]
-          result = XmlSimple.xml_in(xml)['CommonPrefixes']
+          XmlSimple.xml_in(xml)['CommonPrefixes']
         end
-      end
-
-      class Mock
-        def get_container(container, options = {}); end
       end
     end
   end

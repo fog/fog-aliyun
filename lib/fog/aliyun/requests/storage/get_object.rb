@@ -37,10 +37,6 @@ module Fog
           response.data
         end
       end
-
-      class Mock
-        def get_object(object, range = nil, options = {}); end
-      end
     end
   end
 end

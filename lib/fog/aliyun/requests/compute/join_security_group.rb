@@ -29,14 +29,6 @@ module Fog
           )
         end
       end
-
-      class Mock
-        def join_security_group(_server_id, _group_id)
-          response = Excon::Response.new
-          response.status = 200
-          response
-        end
-      end
     end
   end
 end

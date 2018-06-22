@@ -31,10 +31,6 @@ module Fog
                   endpoint: endpoint)
         end
       end
-
-      class Mock
-        def copy_object(source_bucket, source_object, target_bucket, target_object); end
-      end
     end
   end
 end

@@ -313,12 +313,10 @@ module Fog
                     Fog::Compute::Aliyun::NotFound.slurp(error)
                   else
                     error
-              end
+                  end
           end
 
-          if !response.body.empty? && response.get_header('Content-Type') == 'application/json'
-            response.body = Fog::JSON.decode(response.body)
-          end
+          response.body = Fog::JSON.decode(response.body) if !response.body.empty? && response.get_header('Content-Type') == 'application/json'
 
           response
         end
@@ -338,12 +336,10 @@ module Fog
                     Fog::Compute::Aliyun::NotFound.slurp(error)
                   else
                     error
-              end
+                  end
           end
 
-          if !response.body.empty? && response.get_header('Content-Type') == 'application/json'
-            response.body = Fog::JSON.decode(response.body)
-          end
+          response.body = Fog::JSON.decode(response.body) if !response.body.empty? && response.get_header('Content-Type') == 'application/json'
 
           response
         end

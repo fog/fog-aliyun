@@ -29,12 +29,8 @@ module Fog
             path: path
           )
           xml = ret.data[:body]
-          result = XmlSimple.xml_in(xml)['Buckets'][0]
+          XmlSimple.xml_in(xml)['Buckets'][0]
         end
-      end
-
-      class Mock
-        def list_buckets(options = {}); end
       end
     end
   end

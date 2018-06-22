@@ -27,10 +27,6 @@ module Fog
           )
         end
       end
-
-      class Mock
-        def put_container(name, options = {}); end
-      end
     end
   end
 end

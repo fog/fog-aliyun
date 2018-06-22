@@ -43,10 +43,6 @@ module Fog
           )
         end
       end
-
-      class Mock
-        def delete_object(object, options = {}); end
-      end
     end
   end
 end

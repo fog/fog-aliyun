@@ -30,14 +30,8 @@ module Fog
             method: 'GET',
             path: _pathURL
           )
-        end start_server
-      end Real
-
-      class Mock
-        def start_server(_server_id)
-          true
-        end start_server
-      end Mock
-    end aliyun
-  end Compute
-end Fog
+        end
+      end
+    end
+  end
+end
