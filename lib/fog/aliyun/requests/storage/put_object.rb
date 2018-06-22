@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Fog
   module Storage
     class Aliyun
@@ -12,12 +14,10 @@ module Fog
           bucket ||= @aliyun_oss_bucket
           location = get_bucket_location(bucket)
           endpoint = 'http://' + location + '.aliyuncs.com'
-          return put_folder(bucket, object, endpoint) if nil == file
+          return put_folder(bucket, object, endpoint) if file.nil?
 
           # put multiparts if object's size is over 100m
-          if file.size > 104_857_600
-            return put_multipart_object(bucket, object, file)
-          end
+          return put_multipart_object(bucket, object, file) if file.size > 104_857_600
 
           body = file.read
 
@@ -52,7 +52,7 @@ module Fog
       end
 
         def put_folder(bucket, folder, endpoint)
-          if nil == endpoint
+          if endpoint.nil?
             location = get_bucket_location(bucket)
             endpoint = 'http://' + location + '.aliyuncs.com'
           end
@@ -74,19 +74,15 @@ module Fog
 
           # find the right uploadid
           uploads = list_multipart_uploads(bucket, endpoint)
-          if nil != uploads
-            upload = uploads.find { |tmpupload| tmpupload['Key'][0] == object }
-          else
-            upload = nil
-          end
+          upload = (uploads&.find { |tmpupload| tmpupload['Key'][0] == object })
 
           parts = nil
           uploadedSize = 0
           start_partNumber = 1
-          if nil != upload
+          if !upload.nil?
             uploadId = upload['UploadId'][0]
             parts = list_parts(bucket, object, endpoint, uploadId)
-            if (nil != parts) && !parts.empty?
+            if !parts.nil? && !parts.empty?
               if parts[-1]['Size'][0].to_i != 5_242_880
                 # the part is the last one, if its size is over 5m, then finish this upload
                 complete_multipart_upload(bucket, object, endpoint, uploadId)
@@ -117,7 +113,7 @@ module Fog
         end
 
         def initiate_multipart_upload(bucket, object, endpoint)
-          if nil == endpoint
+          if endpoint.nil?
             location = get_bucket_location(bucket)
             endpoint = 'http://' + location + '.aliyuncs.com'
           end
@@ -135,7 +131,7 @@ module Fog
         end
 
         def upload_part(bucket, object, endpoint, partNumber, uploadId, body)
-          if nil == endpoint
+          if endpoint.nil?
             location = get_bucket_location(bucket)
             endpoint = 'http://' + location + '.aliyuncs.com'
           end
@@ -153,7 +149,7 @@ module Fog
         end
 
         def complete_multipart_upload(bucket, object, endpoint, uploadId)
-          if nil == endpoint
+          if endpoint.nil?
             location = get_bucket_location(bucket)
             endpoint = 'http://' + location + '.aliyuncs.com'
           end
@@ -181,8 +177,7 @@ module Fog
       end
 
       class Mock
-        def put_object(object, file = nil, options = {})
-        end
+        def put_object(object, file = nil, options = {}); end
       end
     end
   end

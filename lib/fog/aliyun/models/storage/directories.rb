@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'fog/core/collection'
 require 'fog/aliyun/models/storage/directory'
 
@@ -9,7 +11,7 @@ module Fog
 
         def all
           containers = service.get_containers
-          return nil if nil == containers
+          return nil if containers.nil?
           data = []
           i = 0
           containers.each do |entry|

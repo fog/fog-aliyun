@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'fog/core/model'
 require 'fog/aliyun/models/storage/files'
 

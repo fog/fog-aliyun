@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'fog/core/collection'
 require 'fog/aliyun/models/compute/vswitch'
 
@@ -70,9 +72,7 @@ module Fog
 
         def get(vswitchId)
           requires :vpc
-          if vswitchId
-            self.class.new(service: service, vpc: vpc).all(vSwitchId: vswitchId)[0]
-          end
+          self.class.new(service: service, vpc: vpc).all(vSwitchId: vswitchId)[0] if vswitchId
         end
       end
     end

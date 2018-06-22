@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Fog
   module Compute
     class Aliyun
@@ -9,18 +11,17 @@ module Fog
           time = Time.new.utc
 
           parameters = defalutVPCParameters(action, sigNonce, time)
-          pathUrl    = defaultAliyunVPCUri(action, sigNonce, time)
-
+          pathUrl = defaultAliyunVPCUri(action, sigNonce, time)
 
           pageNumber = options[:pageNumber]
-          pageSize   = options[:pageSize]
+          pageSize = options[:pageSize]
           if pageNumber
             parameters['PageNumber'] = pageNumber
             pathUrl += '&PageNumber='
             pathUrl += pageNumber
           end
 
-          pageSize = '50' unless pageSize
+          pageSize ||= '50'
           parameters['PageSize'] = pageSize
           pathUrl += '&PageSize='
           pathUrl += pageSize
@@ -36,8 +37,6 @@ module Fog
           )
         end
       end
-
-
     end
   end
 end

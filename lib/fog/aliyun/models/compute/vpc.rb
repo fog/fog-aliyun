@@ -1,18 +1,20 @@
+# frozen_string_literal: true
+
 require 'fog/core/model'
 module Fog
   module Compute
     class Aliyun
       class VPC < Fog::Model
-        identity  :id,                aliases: 'VpcId'
-        attribute :name,              aliases: 'VpcName'
-        attribute :state,             aliases: 'Status'
-        attribute :cidr_block,        aliases: 'CidrBlock'
-        attribute :v_switch_ids,      aliases: 'VSwitchIds'
-        attribute :description,       aliases: 'Description'
-        attribute :user_cidrs,        aliases: 'UserCidrs'
-        attribute :region_id,         aliases: 'RegionId'
-        attribute :v_router_id,       aliases: 'VRouterId'
-        attribute :create_at,         aliases: 'CreationTime'
+        identity :id, aliases: 'VpcId'
+        attribute :name, aliases: 'VpcName'
+        attribute :state, aliases: 'Status'
+        attribute :cidr_block, aliases: 'CidrBlock'
+        attribute :v_switch_ids, aliases: 'VSwitchIds'
+        attribute :description, aliases: 'Description'
+        attribute :user_cidrs, aliases: 'UserCidrs'
+        attribute :region_id, aliases: 'RegionId'
+        attribute :v_router_id, aliases: 'VRouterId'
+        attribute :create_at, aliases: 'CreationTime'
 
         def ready?
           requires :state

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'fog/core/collection'
 require 'fog/aliyun/models/compute/server'
 
@@ -32,9 +34,7 @@ module Fog
         #        end
 
         def get(server_id)
-          if server_id
-            self.class.new(service: service).all(instanceId: server_id)[0]
-          end
+          self.class.new(service: service).all(instanceId: server_id)[0] if server_id
         end
       end
     end

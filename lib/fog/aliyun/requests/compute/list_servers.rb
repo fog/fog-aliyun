@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Fog
   module Compute
     class Aliyun
@@ -38,7 +40,7 @@ module Fog
             _pathURL += '&PageNumber=' + _PageNumber
           end
 
-          _PageSize = '50' unless _PageSize
+          _PageSize ||= '50'
           _parameters['PageSize'] = _PageSize
           _pathURL += '&PageSize=' + _PageSize
 
@@ -59,7 +61,7 @@ module Fog
           data = list_servers_detail.body['servers']
           servers = []
           for server in data
-            servers << server.reject { |key, _value| !%w(id name links).include?(key) }
+            servers << server.select { |key, _value| %w[id name links].include?(key) }
           end
           response.status = [200, 203][rand(1)]
           response.body = { 'servers' => servers }

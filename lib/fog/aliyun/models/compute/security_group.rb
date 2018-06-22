@@ -1,14 +1,16 @@
+# frozen_string_literal: true
+
 require 'fog/core/model'
 
 module Fog
   module Compute
     class Aliyun
       class SecurityGroup < Fog::Model
-        identity  :id,           aliases: 'SecurityGroupId'
-        attribute :name,         aliases: 'SecurityGroupName'
-        attribute :description,  aliases: 'Description'
-        attribute :created_at,   aliases: 'CreationTime'
-        attribute :vpc_id,       aliases: 'VpcId'
+        identity :id, aliases: 'SecurityGroupId'
+        attribute :name, aliases: 'SecurityGroupName'
+        attribute :description, aliases: 'Description'
+        attribute :created_at, aliases: 'CreationTime'
+        attribute :vpc_id, aliases: 'VpcId'
 
         def vpc
           requires :vpc_id

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Fog
   module Storage
     class Aliyun
@@ -32,8 +34,7 @@ module Fog
       end
 
       class Mock
-        def list_buckets(options = {})
-        end
+        def list_buckets(options = {}); end
       end
     end
   end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Fog
   module Compute
     class Aliyun
@@ -9,13 +11,11 @@ module Fog
           time = Time.new.utc
 
           parameters = defalutVPCParameters(action, sigNonce, time)
-          pathUrl    = defaultAliyunVPCUri(action, sigNonce, time)
+          pathUrl = defaultAliyunVPCUri(action, sigNonce, time)
 
           parameters['IpAddress'] = ipaddress
           pathUrl += '&IpAddress='
           pathUrl += ipaddress
-
-
 
           name = options[:name]
           desc = options[:description]
@@ -43,6 +43,6 @@ module Fog
           )
         end
       end
-    end # aliyun
-  end # compute
-end # fog
+    end
+  end
+end

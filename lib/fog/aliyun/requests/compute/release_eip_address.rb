@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Fog
   module Compute
     class Aliyun
@@ -24,6 +26,6 @@ module Fog
           )
         end
       end
-    end # aliyun
-  end # compute
+    end
+  end
 end

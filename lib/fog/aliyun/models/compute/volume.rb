@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'fog/core/model'
 module Fog
   module Compute
@@ -16,31 +18,31 @@ module Fog
         # "Status": "Available",
         # "Type": "data",
 
-        identity  :id,                    aliases: 'DiskId'
-        attribute :region_id,             aliases: 'RegionId'
-        attribute :zone_id,               aliases: 'ZoneId'
-        attribute :name,                  aliases: 'DiskName'
-        attribute :description,           aliases: 'Description'
-        attribute :type,                  aliases: 'Type'
-        attribute :category,              aliases: 'Category'
-        attribute :size,                  aliases: 'Size'
-        attribute :image_id,              aliases: 'ImageId'
-        attribute :snapshot_id,           aliases: 'SourceSnapshotId'
-        attribute :product_code,          aliases: 'ProductCode'
-        attribute :portable,              aliases: 'Portable'
-        attribute :state,                 aliases: 'Status'
-        attribute :operation_locks,       aliases: 'OperationLocks'
-        attribute :server_id,             aliases: 'InstanceId'
-        attribute :device,                aliases: 'Device'
-        attribute :delete_with_instance,  aliases: 'DeleteWithInstance'
-        attribute :delete_auto_snapshot,  aliases: 'DeleteAutoSnapshot'
-        attribute :enable_auto_snapshot,  aliases: 'EnableAutoSnapshot'
-        attribute :created_at,            aliases: 'CreationTime'
-        attribute :attached_at,           aliases: 'AttachedTime'
-        attribute :detached_at,           aliases: 'DetachedTime'
-        attribute :expired_at,            aliases: 'ExpiredTime'
-        attribute :charge_type,           aliases: 'DiskChargeType'
-        attribute :tags,                  aliases: 'Tags'
+        identity :id, aliases: 'DiskId'
+        attribute :region_id, aliases: 'RegionId'
+        attribute :zone_id, aliases: 'ZoneId'
+        attribute :name, aliases: 'DiskName'
+        attribute :description, aliases: 'Description'
+        attribute :type, aliases: 'Type'
+        attribute :category, aliases: 'Category'
+        attribute :size, aliases: 'Size'
+        attribute :image_id, aliases: 'ImageId'
+        attribute :snapshot_id, aliases: 'SourceSnapshotId'
+        attribute :product_code, aliases: 'ProductCode'
+        attribute :portable, aliases: 'Portable'
+        attribute :state, aliases: 'Status'
+        attribute :operation_locks, aliases: 'OperationLocks'
+        attribute :server_id, aliases: 'InstanceId'
+        attribute :device, aliases: 'Device'
+        attribute :delete_with_instance, aliases: 'DeleteWithInstance'
+        attribute :delete_auto_snapshot, aliases: 'DeleteAutoSnapshot'
+        attribute :enable_auto_snapshot, aliases: 'EnableAutoSnapshot'
+        attribute :created_at, aliases: 'CreationTime'
+        attribute :attached_at, aliases: 'AttachedTime'
+        attribute :detached_at, aliases: 'DetachedTime'
+        attribute :expired_at, aliases: 'ExpiredTime'
+        attribute :charge_type, aliases: 'DiskChargeType'
+        attribute :tags, aliases: 'Tags'
 
         def destroy
           requires :id

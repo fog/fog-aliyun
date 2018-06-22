@@ -1,17 +1,19 @@
+# frozen_string_literal: true
+
 require 'fog/core/model'
 module Fog
   module Compute
     class Aliyun
       class Vswitch < Fog::Model
-        identity  :id,                  aliases: 'VSwitchId'
-        attribute :vpc_id,              aliases: 'VpcId'
-        attribute :zone_id,             aliases: 'ZoneId'
-        attribute :name,                aliases: 'VSwitchName'
-        attribute :available_ip_count,  aliases: 'AvailableIpAddressCount'
-        attribute :state,               aliases: 'Status'
-        attribute :cidr_block,          aliases: 'CidrBlock'
-        attribute :description,      aliases: 'Description'
-        attribute :region_id,        aliases: 'RegionId'
+        identity :id, aliases: 'VSwitchId'
+        attribute :vpc_id, aliases: 'VpcId'
+        attribute :zone_id, aliases: 'ZoneId'
+        attribute :name, aliases: 'VSwitchName'
+        attribute :available_ip_count, aliases: 'AvailableIpAddressCount'
+        attribute :state, aliases: 'Status'
+        attribute :cidr_block, aliases: 'CidrBlock'
+        attribute :description, aliases: 'Description'
+        attribute :region_id, aliases: 'RegionId'
         attribute :create_at, aliases: 'CreationTime'
         def initialize(attributes = {})
           super

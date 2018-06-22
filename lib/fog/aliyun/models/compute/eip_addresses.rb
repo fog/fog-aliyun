@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'fog/core/collection'
 require 'fog/aliyun/models/compute/eip_address'
 
@@ -18,9 +20,7 @@ module Fog
         end
 
         def get(allocation_id)
-          if allocation_id
-            self.class.new(service: service).all(allocation_id: allocation_id)[0]
-          end
+          self.class.new(service: service).all(allocation_id: allocation_id)[0] if allocation_id
         end
       end
     end

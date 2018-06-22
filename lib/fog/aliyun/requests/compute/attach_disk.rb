@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Fog
   module Compute
     class Aliyun
@@ -17,12 +19,12 @@ module Fog
         #
         # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.201.106.DGkmH7#/pub/ecs/open-api/disk&attachdisk]
         def attach_disk(instanceId, diskId, options = {})
-          action   = 'AttachDisk'
+          action = 'AttachDisk'
           sigNonce = randonStr
-          time     = Time.new.utc
+          time = Time.new.utc
 
           parameters = defalutParameters(action, sigNonce, time)
-          pathUrl    = defaultAliyunUri(action, sigNonce, time)
+          pathUrl = defaultAliyunUri(action, sigNonce, time)
 
           parameters['InstanceId'] = instanceId
           pathUrl += '&InstanceId='
@@ -33,9 +35,9 @@ module Fog
           pathUrl += diskId
 
           deleteWithInstance = options[:deleteWithInstance]
-          device             = options[:device]
+          device = options[:device]
 
-          deleteWithInstance = 'true' unless deleteWithInstance
+          deleteWithInstance ||= 'true'
 
           parameters['DeleteWithInstance'] = deleteWithInstance
           pathUrl += '&DeleteWithInstance='

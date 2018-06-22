@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Fog
   module Storage
     class Aliyun
@@ -31,8 +33,7 @@ module Fog
       end
 
       class Mock
-        def copy_object(source_bucket, source_object, target_bucket, target_object)
-        end
+        def copy_object(source_bucket, source_object, target_bucket, target_object); end
       end
     end
   end

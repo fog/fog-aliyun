@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Fog
   module Storage
     class Aliyun
@@ -12,7 +14,7 @@ module Fog
           bucket = options[:bucket]
           bucket ||= @aliyun_oss_bucket
           endpoint = options[:endpoint]
-          if nil == endpoint
+          if endpoint.nil?
             location = get_bucket_location(bucket)
             endpoint = 'http://' + location + '.aliyuncs.com'
           end
@@ -37,8 +39,7 @@ module Fog
       end
 
       class Mock
-        def get_object(object, range = nil, options = {})
-        end
+        def get_object(object, range = nil, options = {}); end
       end
     end
   end

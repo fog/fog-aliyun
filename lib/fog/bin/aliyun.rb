@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Aliyun < Fog::Bin
   class << self
     def class_for(key)
@@ -13,13 +15,14 @@ class Aliyun < Fog::Bin
 
     def [](service)
       @@connections ||= Hash.new do |hash, key|
-        hash[key] = case key
-                    when :storage
-                      Fog::Logger.warning('Aliyun[:storage] is not recommended, use Storage[:openstack] for portability')
-                      Fog::Storage.new(provider: 'aliyun')
-                    else
-                      raise ArgumentError, "Unrecognized service: #{key.inspect}"
-        end
+        hash[key] =
+          case key
+          when :storage
+            Fog::Logger.warning('Aliyun[:storage] is not recommended, use Storage[:openstack] for portability')
+            Fog::Storage.new(provider: 'aliyun')
+          else
+            raise ArgumentError, "Unrecognized service: #{key.inspect}"
+          end
       end
       @@connections[service]
     end

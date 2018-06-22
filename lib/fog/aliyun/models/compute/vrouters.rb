@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'fog/core/collection'
 require 'fog/aliyun/models/compute/vrouter'
 
@@ -51,9 +53,7 @@ module Fog
         #
 
         def get(vRouterId)
-          if vRouterId
-            self.class.new(service: service).all('vRouterId' => vRouterId)[0]
-          end
+          self.class.new(service: service).all('vRouterId' => vRouterId)[0] if vRouterId
         end
       end
     end

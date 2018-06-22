@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Fog
   module Compute
     class Aliyun
@@ -140,15 +142,15 @@ module Fog
           end
 
           response_data = {}
-          if options['return_reservation_id'] == 'True'
-            response_data = { 'reservation_id' => "r-#{Fog::Mock.random_numbers(6)}" }
-          else
-            response_data = {
-              'adminPass'       => 'password',
-              'id'              => server_id,
-              'links'           => mock_data['links']
-            }
-          end
+          response_data = if options['return_reservation_id'] == 'True'
+                            { 'reservation_id' => "r-#{Fog::Mock.random_numbers(6)}" }
+                          else
+                            {
+                              'adminPass'       => 'password',
+                              'id'              => server_id,
+                              'links'           => mock_data['links']
+                            }
+                          end
 
           if block_devices = options['block_device_mapping_v2']
             block_devices.each { |bd| compute.volumes.get(bd[:uuid]).attach(server_id, bd[:device_name]) }

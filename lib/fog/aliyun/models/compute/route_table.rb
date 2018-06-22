@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'fog/core/model'
 module Fog
   module Compute
@@ -11,10 +13,10 @@ module Fog
         #   {"Status"=>"Available", "Type"=>"System", "InstanceId"=>"", "RouteTableId"=>"vtb-2504onoxh", "DestinationCidrBlock"=>"100.64.0.0/10"},
         #   {"Status"=>"Available", "Type"=>"System", "InstanceId"=>"", "RouteTableId"=>"vtb-2504onoxh", "DestinationCidrBlock"=>"10.0.0.0/8"}]},
         #  "RouteTableId"=>"vtb-2504onoxh", "RouteTableType"=>"System", "VRouterId"=>"vrt-25azmd2wm"}]}
-        identity :id,             aliases: 'RouteTableId'
-        attribute :created_at,    aliases: 'CreationTime'
-        attribute :type,          aliases: 'RouteTableType'
-        attribute :v_router_id,   aliases: 'VRouterId'
+        identity :id, aliases: 'RouteTableId'
+        attribute :created_at, aliases: 'CreationTime'
+        attribute :type, aliases: 'RouteTableType'
+        attribute :v_router_id, aliases: 'VRouterId'
         # collection Fog::Compute::Aliyun::RouteEntrys
         def route_entrys
           @route_entrys ||= begin

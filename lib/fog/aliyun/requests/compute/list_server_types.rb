@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Fog
   module Compute
     class Aliyun
@@ -26,7 +28,7 @@ module Fog
           #  _InstanceType[[instanceType["CpuCoreCount"], instanceType["MemorySize"]]] = instanceType["InstanceTypeId"]
           # end
           # _InstanceType
-        end # end list_server_types
+        end list_server_types
 
         def get_instance_type(cpuCount, memorySize)
           _action = 'DescribeInstanceTypes'
@@ -53,10 +55,10 @@ module Fog
             puts '_instanceTypeId: ' + _InstanceTypeId
             break
             # end if
-          end # end each
+          end each
           _InstanceTypeId
-        end # end get_instance_type
-      end # end class Real
+        end get_instance_type
+      end class Real
 
       #      class Mock
       #        def list_servers(options = {})
@@ -71,7 +73,7 @@ module Fog
       #          response
       #        end
       #      end
-    end # end class Aliyun
-  end # end module Compute
+    end class Aliyun
+  end module Compute
   # end module Fog
 end

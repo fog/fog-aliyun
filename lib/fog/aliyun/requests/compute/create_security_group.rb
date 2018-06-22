@@ -1,18 +1,20 @@
+# frozen_string_literal: true
+
 module Fog
   module Compute
     class Aliyun
       class Real
         # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.201.106.DGkmH7#/pub/ecs/open-api/securitygroup&createsecuritygroup]
         def create_security_group(options = {})
-          action   = 'CreateSecurityGroup'
+          action = 'CreateSecurityGroup'
           sigNonce = randonStr
-          time     = Time.new.utc
+          time = Time.new.utc
 
           parameters = defalutParameters(action, sigNonce, time)
-          pathUrl    = defaultAliyunUri(action, sigNonce, time)
+          pathUrl = defaultAliyunUri(action, sigNonce, time)
 
-          name  = options[:name]
-          desc  = options[:description]
+          name = options[:name]
+          desc = options[:description]
           vpcid = options[:vpcId]
 
           if name
@@ -71,7 +73,7 @@ module Fog
           }
           response
         end
-      end # mock
-    end # aliyun
-  end # compute
-end # fog
+      end
+    end
+  end
+end

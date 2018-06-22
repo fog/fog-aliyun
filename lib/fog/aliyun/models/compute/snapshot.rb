@@ -1,20 +1,22 @@
+# frozen_string_literal: true
+
 require 'fog/core/model'
 module Fog
   module Compute
     class Aliyun
       class Snapshot < Fog::Model
-        identity  :id,          aliases: 'SnapshotId'
-        attribute :name,        aliases: 'SnapshotName'
+        identity :id, aliases: 'SnapshotId'
+        attribute :name, aliases: 'SnapshotName'
         attribute :description, aliases: 'Description'
-        attribute :progress,    aliases: 'Progress'
-        attribute :volume_id,     aliases: 'SourceDiskId'
-        attribute :volume_size,   aliases: 'SourceDiskSize'
-        attribute :volume_type,   aliases: 'SourceDiskType'
+        attribute :progress, aliases: 'Progress'
+        attribute :volume_id, aliases: 'SourceDiskId'
+        attribute :volume_size, aliases: 'SourceDiskSize'
+        attribute :volume_type, aliases: 'SourceDiskType'
         attribute :product_code, aliases: 'ProductCode'
-        attribute :created_at,  aliases: 'CreationTime'
-        attribute :state,       aliases: 'Status'
-        attribute :usage,       aliases: 'Usage'
-        attribute :tags,        aliases: 'Tags'
+        attribute :created_at, aliases: 'CreationTime'
+        attribute :state, aliases: 'Status'
+        attribute :usage, aliases: 'Usage'
+        attribute :tags, aliases: 'Tags'
 
         def destroy
           requires :id
