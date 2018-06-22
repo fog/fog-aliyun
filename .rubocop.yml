@@ -30,3 +30,6 @@ Naming/VariableName:
 
 Lint/UnderscorePrefixedVariableName:
   Enabled: false
+
+Metrics/LineLength:
+  Enabled: false

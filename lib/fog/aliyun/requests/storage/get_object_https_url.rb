@@ -25,19 +25,15 @@ module Fog
             expires_time = (Time.now.to_i + expires).to_s
             resource = bucket + '/' + object
             signature = sign('GET', expires_time, nil, resource)
-            url = 'https://' + bucket + '.' + location + '.aliyuncs.com/' + object +
-                  '?OSSAccessKeyId=' + @aliyun_accesskey_id + '&Expires=' + expires_time +
-                  '&Signature=' + URI.encode(signature, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
+            'https://' + bucket + '.' + location + '.aliyuncs.com/' + object +
+              '?OSSAccessKeyId=' + @aliyun_accesskey_id + '&Expires=' + expires_time +
+              '&Signature=' + URI.encode(signature, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
           elsif acl == 'public-read' || acl == 'public-read-write'
-            url = 'https://' + bucket + '.' + location + '.aliyuncs.com/' + object
+            'https://' + bucket + '.' + location + '.aliyuncs.com/' + object
           else
-            url = 'acl is wrong with value:' + acl
+            'acl is wrong with value:' + acl
           end
         end
-      end
-
-      class Mock
-        def get_object_https_url_public(object, expires, options = {}); end
       end
     end
   end

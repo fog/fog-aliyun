@@ -105,14 +105,18 @@ module Fog
             u.name == @openstack_username
           end
 
-          user_id = if user
-                      user.id
-                    else
-                      response = identity.create_user(@openstack_username,
-                                                      'password',
-                                                      "#{@openstack_username}@example.com")
-                      response.body['user']['id']
-          end
+          user_id =
+            if user
+              user.id
+            else
+              response =
+                identity.create_user(
+                  @openstack_username,
+                  'password',
+                  "#{@openstack_username}@example.com"
+                )
+              response.body['user']['id']
+            end
 
           mock_data = {
             'addresses'    => { 'Private' => [{ 'addr' => Fog::Mock.random_ip }] },

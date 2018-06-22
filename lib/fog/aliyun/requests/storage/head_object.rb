@@ -26,10 +26,6 @@ module Fog
           ret
         end
       end
-
-      class Mock
-        def head_object(object, options = {}); end
-      end
     end
   end
 end

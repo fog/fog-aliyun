@@ -31,8 +31,6 @@ module Fog
             path += '?delimiter=' + delimiter
           end
 
-          location = get_bucket_location(bucket)
-          endpoint = 'http://' + location + '.aliyuncs.com'
           resource = bucket + '/'
           ret = request(
             expects: [200, 203, 400],
@@ -42,7 +40,7 @@ module Fog
             bucket: bucket
           )
           xml = ret.data[:body]
-          result = XmlSimple.xml_in(xml)
+          XmlSimple.xml_in(xml)
         end
 
         def list_multipart_uploads(bucket, endpoint, _options = {})
@@ -61,7 +59,7 @@ module Fog
             resource: resource,
             endpoint: endpoint
           )
-          uploadid = XmlSimple.xml_in(ret.data[:body])['Upload']
+          XmlSimple.xml_in(ret.data[:body])['Upload']
         end
 
         def list_parts(bucket, object, endpoint, uploadid, _options = {})
@@ -80,12 +78,8 @@ module Fog
             resource: resource,
             endpoint: endpoint
           )
-          parts = XmlSimple.xml_in(ret.data[:body])['Part']
+          XmlSimple.xml_in(ret.data[:body])['Part']
         end
-      end
-
-      class Mock
-        def list_objects(options = {}); end
       end
     end
   end

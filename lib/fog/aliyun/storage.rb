@@ -160,7 +160,7 @@ module Fog
                     Fog::Storage::Aliyun::NotFound.slurp(error)
                   else
                     error
-              end
+                  end
           end
 
           response
@@ -199,22 +199,7 @@ module Fog
           @aliyun_accesskey_secret = options[:aliyun_accesskey_secret]
           @aliyun_oss_bucket = options[:aliyun_oss_bucket]
 
-          # missing_credentials = Array.new
-          # missing_credentials << :aliyun_oss_endpoint unless @aliyun_oss_endpoint
-          # missing_credentials << :aliyun_region_id unless @aliyun_region_id
-          # missing_credentials << :aliyun_accesskey_id  unless @aliyun_accesskey_id
-          # missing_credentials << :aliyun_accesskey_secret unless @aliyun_accesskey_secret
-          # raise ArgumentError, "Missing required arguments: #{missing_credentials.join(', ')}" unless missing_credentials.empty?
-
           @connection_options = options[:connection_options] || {}
-
-          # uri = URI.parse(@aliyun_oss_endpoint)
-          # @host   = uri.host
-          # @path   = uri.path
-          # @port   = uri.port
-          # @scheme = uri.scheme
-
-          # @persistent = options[:persistent] || false
         end
       end
     end

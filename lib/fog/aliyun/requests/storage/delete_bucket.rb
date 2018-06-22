@@ -22,10 +22,6 @@ module Fog
           )
         end
       end
-
-      class Mock
-        def delete_bucket(bucket); end
-      end
     end
   end
 end
