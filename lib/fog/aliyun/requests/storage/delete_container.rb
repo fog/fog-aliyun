@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Fog
   module Storage
     class Aliyun
@@ -27,8 +29,7 @@ module Fog
         end
       end
       class Mock
-        def delete_container(container, options = {})
-        end
+        def delete_container(container, options = {}); end
       end
     end
   end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Fog
   module Storage
     class Aliyun
@@ -44,7 +46,7 @@ module Fog
         end
 
         def list_multipart_uploads(bucket, endpoint, _options = {})
-          if nil == endpoint
+          if endpoint.nil?
             location = get_bucket_location(bucket)
             endpoint = 'http://' + location + '.aliyuncs.com'
           end
@@ -63,7 +65,7 @@ module Fog
         end
 
         def list_parts(bucket, object, endpoint, uploadid, _options = {})
-          if nil == endpoint
+          if endpoint.nil?
             location = get_bucket_location(bucket)
             endpoint = 'http://' + location + '.aliyuncs.com'
           end
@@ -83,8 +85,7 @@ module Fog
       end
 
       class Mock
-        def list_objects(options = {})
-        end
+        def list_objects(options = {}); end
       end
     end
   end

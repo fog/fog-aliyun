@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Fog
   module Storage
     class Aliyun
@@ -27,8 +29,7 @@ module Fog
       end
 
       class Mock
-        def put_container(name, options = {})
-        end
+        def put_container(name, options = {}); end
       end
     end
   end

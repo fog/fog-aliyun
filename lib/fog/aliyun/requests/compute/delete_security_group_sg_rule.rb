@@ -1,15 +1,17 @@
+# frozen_string_literal: true
+
 module Fog
   module Compute
     class Aliyun
       class Real
         def delete_security_group_sg_rule(securitygroup_id, source_securitygroup_id, option = {})
           # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/securitygroup&revokesecuritygroup]
-          action   = 'RevokeSecurityGroup'
+          action = 'RevokeSecurityGroup'
           sigNonce = randonStr
-          time     = Time.new.utc
+          time = Time.new.utc
 
           parameters = defalutParameters(action, sigNonce, time)
-          pathUrl    = defaultAliyunUri(action, sigNonce, time)
+          pathUrl = defaultAliyunUri(action, sigNonce, time)
 
           parameters['SecurityGroupId'] = securitygroup_id
           pathUrl += '&SecurityGroupId='
@@ -25,13 +27,13 @@ module Fog
           pathUrl += nicType
 
           portRange = option[:portRange]
-          portRange = '-1/-1' unless portRange
+          portRange ||= '-1/-1'
           parameters['PortRange'] = portRange
           pathUrl += '&PortRange='
           pathUrl += URI.encode(portRange, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
 
           protocol = option[:protocol]
-          protocol = 'all' unless protocol
+          protocol ||= 'all'
           parameters['IpProtocol'] = protocol
           pathUrl += '&IpProtocol='
           pathUrl += protocol
@@ -44,13 +46,13 @@ module Fog
           end
 
           policy = option[:policy]
-          policy = 'accept' unless policy
+          policy ||= 'accept'
           parameters['Policy'] = policy
           pathUrl += '&Policy='
           pathUrl += policy
 
           priority = option[:priority]
-          priority = '1' unless priority
+          priority ||= '1'
           parameters['Priority'] = priority
           pathUrl += '&Priority='
           pathUrl += priority
@@ -66,6 +68,6 @@ module Fog
           )
         end
       end
-    end # aliyun
-  end # compute
-end # fog
+    end
+  end
+end

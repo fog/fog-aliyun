@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Fog
   module Storage
     class Aliyun
@@ -59,9 +61,7 @@ module Fog
             resource: resource,
             endpoint: endpoint
           )
-          if 404 != ret.data[:status]
-            cors = XmlSimple.xml_in(ret.data[:body])['CORSRule'][0]
-          end
+          cors = XmlSimple.xml_in(ret.data[:body])['CORSRule'][0] if ret.data[:status] != 404
         end
 
         def get_bucket_lifecycle(bucket)
@@ -77,9 +77,7 @@ module Fog
             resource: resource,
             endpoint: endpoint
           )
-          if 404 != ret.data[:status]
-            lifecycle = XmlSimple.xml_in(ret.data[:body])['Rule'][0]
-          end
+          lifecycle = XmlSimple.xml_in(ret.data[:body])['Rule'][0] if ret.data[:status] != 404
         end
 
         def get_bucket_logging(bucket)
@@ -127,14 +125,11 @@ module Fog
             resource: resource,
             endpoint: endpoint
           )
-          if 404 != ret.data[:status]
-            website = XmlSimple.xml_in(ret.data[:body])
-          end
+          website = XmlSimple.xml_in(ret.data[:body]) if ret.data[:status] != 404
         end
       end
       class Mock
-        def get_bucket(bucket)
-        end
+        def get_bucket(bucket); end
       end
     end
   end

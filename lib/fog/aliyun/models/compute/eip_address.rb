@@ -1,18 +1,20 @@
+# frozen_string_literal: true
+
 require 'fog/core/model'
 module Fog
   module Compute
     class Aliyun
       class EipAddress < Fog::Model
-        identity :id,             aliases: 'AllocationId'
+        identity :id, aliases: 'AllocationId'
 
-        attribute :allocated_at,  aliases: 'AllocationTime'
-        attribute :bandwidth,     aliases: 'Bandwidth'
-        attribute :server_id,     aliases: 'InstanceId'
-        attribute :charge_type,   aliases: 'InternetChargeType'
-        attribute :ip_address,    aliases: %w(IpAddress EipAddress)
+        attribute :allocated_at, aliases: 'AllocationTime'
+        attribute :bandwidth, aliases: 'Bandwidth'
+        attribute :server_id, aliases: 'InstanceId'
+        attribute :charge_type, aliases: 'InternetChargeType'
+        attribute :ip_address, aliases: %w[IpAddress EipAddress]
         attribute :opertion_locks, aliases: 'OperationLocks'
-        attribute :region_id,     aliases: 'RegionId'
-        attribute :state,         aliases: 'Status'
+        attribute :region_id, aliases: 'RegionId'
+        attribute :state, aliases: 'Status'
 
         def destroy
           requires :id

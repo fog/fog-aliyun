@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Fog
   module Storage
     class Aliyun
@@ -26,8 +28,7 @@ module Fog
       end
 
       class Mock
-        def head_object(object, options = {})
-        end
+        def head_object(object, options = {}); end
       end
     end
   end

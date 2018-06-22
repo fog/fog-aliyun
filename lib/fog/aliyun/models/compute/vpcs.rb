@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'fog/core/collection'
 require 'fog/aliyun/models/compute/vpc'
 
@@ -70,9 +72,7 @@ module Fog
         #
 
         def get(vpcId)
-          if vpcId
-            $vpc = self.class.new(service: service).all('vpcId' => vpcId)[0]
-          end
+          $vpc = self.class.new(service: service).all('vpcId' => vpcId)[0] if vpcId
         end
       end
     end

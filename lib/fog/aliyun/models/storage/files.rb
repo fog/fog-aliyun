@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'fog/core/collection'
 require 'fog/aliyun/models/storage/file'
 
@@ -15,11 +17,9 @@ module Fog
 
         def all(_options = {})
           requires :directory
-          if directory.key != '' && directory.key != '.' && !directory.key.nil?
-            prefix = directory.key + '/'
-          end
+          prefix = directory.key + '/' if directory.key != '' && directory.key != '.' && !directory.key.nil?
           files = service.list_objects(prefix: prefix)['Contents']
-          return if nil == files
+          return if files.nil?
           data = []
           i = 0
           files.each do |file|
@@ -27,9 +27,7 @@ module Fog
             content_length = file['Size'][0].to_i
             key = file['Key'][0]
             lastModified = file['LastModified'][0]
-            last_modified = if !lastModified.nil? && lastModified != ''
-                              Time.parse(lastModified).localtime
-                            end
+            last_modified = (Time.parse(lastModified).localtime if !lastModified.nil? && lastModified != '')
             type = file['Type'][0]
             data[i] = { content_length: content_length,
                         key: key,
@@ -67,13 +65,13 @@ module Fog
                      directory.key + '/' + key
                    end
           begin
-          data = service.get_object(object)
-          rescue => error
+            data = service.get_object(object)
+          rescue StandardError => error
             case error.response.body
-              when /<Code>NoSuchKey<\/Code>/
-                nil
-              else
-                raise(error)
+            when /<Code>NoSuchKey<\/Code>/
+              nil
+            else
+              raise(error)
             end
           end
 
@@ -96,9 +94,7 @@ module Fog
           end
 
           lastModified = data[:headers]['Last-Modified']
-          last_modified = if !lastModified.nil? && lastModified != ''
-                            Time.parse(lastModified).localtime
-                          end
+          last_modified = (Time.parse(lastModified).localtime if !lastModified.nil? && lastModified != '')
 
           date = data[:headers]['Date']
           date = (Time.parse(date).localtime if !date.nil? && date != '')
@@ -159,9 +155,7 @@ module Fog
                    end
           data = service.head_object(object).data
           lastModified = data[:headers]['Last-Modified']
-          last_modified = if !lastModified.nil? && lastModified != ''
-                            Time.parse(lastModified).localtime
-                          end
+          last_modified = (Time.parse(lastModified).localtime if !lastModified.nil? && lastModified != '')
 
           date = data[:headers]['Date']
           date = (Time.parse(date).localtime if !date.nil? && date != '')

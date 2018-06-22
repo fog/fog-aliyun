@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Fog
   module Compute
     class Aliyun
@@ -28,14 +30,14 @@ module Fog
             method: 'GET',
             path: _pathURL
           )
-        end # def start_server
-      end # class Real
+        end start_server
+      end Real
 
       class Mock
         def start_server(_server_id)
           true
-        end # def start_server
-      end # class Mock
-    end # class aliyun
-  end # module Compute
-end # module Fog
+        end start_server
+      end Mock
+    end aliyun
+  end Compute
+end Fog

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Fog
   module Compute
     class Aliyun
@@ -22,7 +24,7 @@ module Fog
             pathUrl += nicType
           end
           pageNumber = options[:pageNumber]
-          pageSize   = options[:pageSize]
+          pageSize = options[:pageSize]
           if pageNumber
             parameters['PageNumber'] = pageNumber
             pathUrl += '&PageNumber='
@@ -67,7 +69,7 @@ module Fog
           end
           response
         end
-      end # mock
-    end # aliyun
-  end # compute
-end # fog
+      end
+    end
+  end
+end

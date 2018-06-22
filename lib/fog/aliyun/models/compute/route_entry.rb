@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'fog/core/model'
 module Fog
   module Compute
@@ -11,11 +13,11 @@ module Fog
         #    {"Status"=>"Available", "Type"=>"System", "InstanceId"=>"", "RouteTableId"=>"vtb-2504onoxh", "DestinationCidrBlock"=>"100.64.0.0/10"},
         #    {"Status"=>"Available", "Type"=>"System", "InstanceId"=>"", "RouteTableId"=>"vtb-2504onoxh", "DestinationCidrBlock"=>"10.0.0.0/8"}]},
         #  "RouteTableId"=>"vtb-2504onoxh", "RouteTableType"=>"System", "VRouterId"=>"vrt-25azmd2wm"}]}
-        identity :cidr_block,         aliases: 'DestinationCidrBlock'
-        attribute :state,             aliases: 'Status'
-        attribute :server_id,         aliases: 'InstanceId'
-        attribute :type,              aliases: 'Type'
-        attribute :route_table_id,    aliases: 'RouteTableId'
+        identity :cidr_block, aliases: 'DestinationCidrBlock'
+        attribute :state, aliases: 'Status'
+        attribute :server_id, aliases: 'InstanceId'
+        attribute :type, aliases: 'Type'
+        attribute :route_table_id, aliases: 'RouteTableId'
 
         # def save
         #   requires :cidr_block,:route_table_id

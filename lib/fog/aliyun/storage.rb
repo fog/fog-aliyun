@@ -1,29 +1,30 @@
+# frozen_string_literal: true
+
 require 'xmlsimple'
 
 module Fog
   module Storage
     class Aliyun < Fog::Service
-
       DEFAULT_REGION = 'cn-hangzhou'
 
       DEFAULT_SCHEME = 'http'
       DEFAULT_SCHEME_PORT = {
-          'http' => 80,
-          'https' => 443
-      }
+        'http' => 80,
+        'https' => 443
+      }.freeze
 
       recognizes :aliyun_oss_endpoint,
                  :aliyun_oss_location,
                  :aliyun_region_id
-      requires   :aliyun_accesskey_id,
-                 :aliyun_accesskey_secret,
-                 :aliyun_oss_bucket
+      requires :aliyun_accesskey_id,
+               :aliyun_accesskey_secret,
+               :aliyun_oss_bucket
 
       model_path 'fog/aliyun/models/storage'
-      model       :directory
-      collection  :directories
-      model       :file
-      collection  :files
+      model :directory
+      collection :directories
+      model :file
+      collection :files
 
       request_path 'fog/aliyun/requests/storage'
       request :copy_object
@@ -70,11 +71,11 @@ module Fog
 
         def initialize(options = {})
           # initialize the parameters
-          @aliyun_region_id        = options[:aliyun_region_id] || options[:aliyun_oss_location] || DEFAULT_REGION
-          @aliyun_oss_endpoint     = options[:aliyun_oss_endpoint] || region_to_endpoint(@aliyun_region_id)
-          @aliyun_accesskey_id     = options[:aliyun_accesskey_id]
+          @aliyun_region_id = options[:aliyun_region_id] || options[:aliyun_oss_location] || DEFAULT_REGION
+          @aliyun_oss_endpoint = options[:aliyun_oss_endpoint] || region_to_endpoint(@aliyun_region_id)
+          @aliyun_accesskey_id = options[:aliyun_accesskey_id]
           @aliyun_accesskey_secret = options[:aliyun_accesskey_secret]
-          @aliyun_oss_bucket       = options[:aliyun_oss_bucket]
+          @aliyun_oss_bucket = options[:aliyun_oss_bucket]
 
           # check for the parameters
           missing_credentials = []
@@ -87,15 +88,13 @@ module Fog
 
           endpoint = @aliyun_oss_endpoint
 
-          if !endpoint.start_with?(DEFAULT_SCHEME)
-            @aliyun_oss_endpoint = "#{DEFAULT_SCHEME}://#{endpoint}"
-          end
+          @aliyun_oss_endpoint = "#{DEFAULT_SCHEME}://#{endpoint}" unless endpoint.start_with?(DEFAULT_SCHEME)
 
           uri = URI.parse(@aliyun_oss_endpoint)
-          @host   = uri.host
-          @path   = uri.path
+          @host = uri.host
+          @path = uri.path
           @scheme = uri.scheme || DEFAULT_SCHEME
-          @port   = uri.port || DEFAULT_SCHEME_PORT[@scheme]
+          @port = uri.port || DEFAULT_SCHEME_PORT[@scheme]
 
           @persistent = options[:persistent] || false
         end
@@ -104,12 +103,12 @@ module Fog
           @connection.reset
         end
 
-        def region_to_endpoint(region=nil)
+        def region_to_endpoint(region = nil)
           case region.to_s
-            when ''
-              "oss-#{DEFAULT_REGION}.aliyuncs.com"
-            else
-              "oss-#{region}.aliyuncs.com"
+          when ''
+            "oss-#{DEFAULT_REGION}.aliyuncs.com"
+          else
+            "oss-#{region}.aliyuncs.com"
           end
         end
 
@@ -121,14 +120,14 @@ module Fog
           endpoint = params[:endpoint]
           if endpoint
             uri = URI.parse(endpoint)
-            host   = uri.host
-            path   = uri.path
-            port   = uri.port
+            host = uri.host
+            path = uri.path
+            port = uri.port
             scheme = uri.scheme
           else
-            host   = @host
-            path   = @path
-            port   = @port
+            host = @host
+            path = @path
+            port = @port
             scheme = @scheme
           end
 
@@ -144,10 +143,8 @@ module Fog
 
           begin
             headers = ''
-            if params[:headers]
-              params[:headers].each do |k, v|
-                headers += "#{k}:#{v}\n" if k != 'Range'
-              end
+            params[:headers]&.each do |k, v|
+              headers += "#{k}:#{v}\n" if k != 'Range'
             end
             signature = sign(method, date, contentType, params[:resource], headers)
             response = @connection.request(params.merge(headers: {
@@ -179,22 +176,14 @@ module Fog
                                     '/'
                                   end
 
-          canonicalizedOSSHeaders = if headers
-                                      headers
-                                    else
-                                      ''
-                                    end
+          canonicalizedOSSHeaders = headers || ''
 
-          contentTypeStr = if contentType
-                             contentType
-                           else
-                             ''
-                           end
+          contentTypeStr = contentType || ''
 
           stringToSign = method + "\n" + contentmd5 + "\n" + contentTypeStr + "\n" + date + "\n" + canonicalizedOSSHeaders + canonicalizedResource
 
-          digVer =  OpenSSL::Digest.new('sha1')
-          digest =  OpenSSL::HMAC.digest(digVer, @aliyun_accesskey_secret, stringToSign)
+          digVer = OpenSSL::Digest.new('sha1')
+          digest = OpenSSL::HMAC.digest(digVer, @aliyun_accesskey_secret, stringToSign)
           signature = Base64.encode64(digest)
           signature[-1] = ''
 
@@ -204,11 +193,11 @@ module Fog
 
       class Mock
         def initialize(options = {})
-          @aliyun_oss_endpoint     = options[:aliyun_oss_endpoint]
-          @aliyun_region_id        = options[:aliyun_region_id]
-          @aliyun_accesskey_id     = options[:aliyun_accesskey_id]
+          @aliyun_oss_endpoint = options[:aliyun_oss_endpoint]
+          @aliyun_region_id = options[:aliyun_region_id]
+          @aliyun_accesskey_id = options[:aliyun_accesskey_id]
           @aliyun_accesskey_secret = options[:aliyun_accesskey_secret]
-          @aliyun_oss_bucket       = options[:aliyun_oss_bucket]
+          @aliyun_oss_bucket = options[:aliyun_oss_bucket]
 
           # missing_credentials = Array.new
           # missing_credentials << :aliyun_oss_endpoint unless @aliyun_oss_endpoint

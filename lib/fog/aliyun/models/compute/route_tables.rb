@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'fog/core/collection'
 require 'fog/aliyun/models/compute/route_table'
 
@@ -17,9 +19,7 @@ module Fog
 
         def get(routeTableId)
           requires :v_router
-          if routeTableId
-            self.class.new(service: service, v_router: v_router).all(routeTableId: routeTableId)[0]
-          end
+          self.class.new(service: service, v_router: v_router).all(routeTableId: routeTableId)[0] if routeTableId
         end
       end
     end

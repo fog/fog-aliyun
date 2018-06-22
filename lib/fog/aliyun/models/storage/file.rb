@@ -1,20 +1,22 @@
+# frozen_string_literal: true
+
 require 'fog/core/model'
 
 module Fog
   module Storage
     class Aliyun
       class File < Fog::Model
-        identity  :key,                 aliases: 'name'
-        attribute :date,                aliases: 'Date'
-        attribute :content_length,      aliases: 'Content-Length', type: :integer
-        attribute :content_type,        aliases: 'Content-Type'
-        attribute :connection,          aliases: 'Connection'
+        identity :key, aliases: 'name'
+        attribute :date, aliases: 'Date'
+        attribute :content_length, aliases: 'Content-Length', type: :integer
+        attribute :content_type, aliases: 'Content-Type'
+        attribute :connection, aliases: 'Connection'
         attribute :content_disposition, aliases: 'Content-Disposition'
-        attribute :etag,                aliases: 'Etag'
-        attribute :last_modified,       aliases: 'Last-Modified', type: :time
-        attribute :accept_ranges,       aliases: 'Accept-Ranges'
-        attribute :server,              aliases: 'Server'
-        attribute :object_type,         aliases: 'x-oss-object-type'
+        attribute :etag, aliases: 'Etag'
+        attribute :last_modified, aliases: 'Last-Modified', type: :time
+        attribute :accept_ranges, aliases: 'Accept-Ranges'
+        attribute :server, aliases: 'Server'
+        attribute :object_type, aliases: 'x-oss-object-type'
 
         def body
           attributes[:body] ||= if last_modified
@@ -37,11 +39,11 @@ module Fog
                           else
                             directory.key + '/' + key
                           end
-          if target_directory_key == ''
-            target_object = target_file_key
-          else
-            target_object = target_directory_key + '/' + target_file_key
-          end
+          target_object = if target_directory_key == ''
+                            target_file_key
+                          else
+                            target_directory_key + '/' + target_file_key
+                          end
           service.copy_object(nil, source_object, nil, target_object, options)
           target_directory = service.directories.new(key: target_directory_key)
           target_directory.files.get(target_file_key)
@@ -169,7 +171,7 @@ module Fog
                      end
 
             headers = service.head_object(object).data[:headers]
-            headers.reject! { |k, _v| !metadata_attribute?(k) }
+            headers.select! { |k, _v| metadata_attribute?(k) }
           else
             {}
           end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Fog
   module Compute
     class Aliyun < Fog::Service
@@ -10,30 +12,30 @@ module Fog
       ## MODELS
       #
       model_path 'fog/aliyun/models/compute'
-      model       :server
-      collection  :servers
-      model       :image
-      collection  :images
-      model       :eip_address
-      collection  :eip_addresses
-      model       :security_group
-      collection  :security_groups
-      model       :security_group_rule
-      collection  :security_group_rules
-      model       :volume
-      collection  :volumes
-      model       :snapshot
-      collection  :snapshots
-      model       :vpc
-      collection  :vpcs
-      model       :vswitch
-      collection  :vswitches
-      model       :vrouter
-      collection  :vrouters
-      model       :route_table
-      collection  :route_tables
-      model       :route_entry
-      collection  :route_entrys
+      model :server
+      collection :servers
+      model :image
+      collection :images
+      model :eip_address
+      collection :eip_addresses
+      model :security_group
+      collection :security_groups
+      model :security_group_rule
+      collection :security_group_rules
+      model :volume
+      collection :volumes
+      model :snapshot
+      collection :snapshots
+      model :vpc
+      collection :vpcs
+      model :vswitch
+      collection :vswitches
+      model :vrouter
+      collection :vrouters
+      model :route_table
+      collection :route_tables
+      model :route_entry
+      collection :route_entrys
 
       ## REQUESTS
       #
@@ -194,7 +196,7 @@ module Fog
           @aliyun_user_domain = options[:aliyun_user_domain] || options[:aliyun_domain]
           @aliyun_project_domain = options[:aliyun_project_domain] || options[:aliyun_domain] || 'Default'
 
-          raise ArgumentError, "Missing required arguments: :aliyun_auth_url" unless options.key?[:aliyun_auth_url]
+          raise ArgumentError, 'Missing required arguments: :aliyun_auth_url' unless options.key?[:aliyun_auth_url]
           @aliyun_auth_uri = URI.parse(options[:aliyun_auth_url])
 
           @current_tenant = options[:aliyun_tenant]
@@ -257,11 +259,11 @@ module Fog
 
         def initialize(options = {})
           # initialize the parameters
-          @aliyun_url              = options[:aliyun_url]
-          @aliyun_accesskey_id     = options[:aliyun_accesskey_id]
+          @aliyun_url = options[:aliyun_url]
+          @aliyun_accesskey_id = options[:aliyun_accesskey_id]
           @aliyun_accesskey_secret = options[:aliyun_accesskey_secret]
-          @aliyun_region_id        = options[:aliyun_region_id]
-          @aliyun_zone_id          = options[:aliyun_zone_id]
+          @aliyun_region_id = options[:aliyun_region_id]
+          @aliyun_zone_id = options[:aliyun_zone_id]
 
           # check for the parameters
           missing_credentials = []
@@ -275,17 +277,17 @@ module Fog
           @connection_options = options[:connection_options] || {}
 
           uri = URI.parse(@aliyun_url)
-          @host   = uri.host
-          @path   = uri.path
-          @port   = uri.port
+          @host = uri.host
+          @path = uri.path
+          @port = uri.port
           @scheme = uri.scheme
-          
-          vpcuri = URI.parse("https://vpc.aliyuncs.com")
-          @vpchost   = vpcuri.host
-          @vpcpath   = vpcuri.path
-          @vpcport   = vpcuri.port
-          @vpcscheme = vpcuri.scheme          
-          
+
+          vpcuri = URI.parse('https://vpc.aliyuncs.com')
+          @vpchost = vpcuri.host
+          @vpcpath = vpcuri.path
+          @vpcport = vpcuri.port
+          @vpcscheme = vpcuri.scheme
+
           @persistent = options[:persistent] || false
           @connection = Fog::Core::Connection.new("#{@scheme}://#{@host}:#{@port}", @persistent, @connection_options)
           @VPCconnection = Fog::Core::Connection.new("#{@vpcscheme}://#{@vpchost}:#{@vpcport}", @persistent, @connection_options)
@@ -328,8 +330,8 @@ module Fog
               'Accept' => 'application/json',
               'X-Auth-Token' => @auth_token
             }.merge!(params[:headers] || {}),
-                                                        path: "#{@path}/#{params[:path]}",
-                                                        query: params[:query]))
+                                                           path: "#{@path}/#{params[:path]}",
+                                                           query: params[:query]))
           rescue Excon::Errors::HTTPStatusError => error
             raise case error
                   when Excon::Errors::NotFound
@@ -412,8 +414,8 @@ module Fog
           stringToSign = 'GET&%2F&' + URI.encode(canonicalizedQueryString, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
           key = accessKeySecret + '&'
 
-          digVer =  OpenSSL::Digest.new('sha1')
-          digest =  OpenSSL::HMAC.digest(digVer, key, stringToSign)
+          digVer = OpenSSL::Digest.new('sha1')
+          digest = OpenSSL::HMAC.digest(digVer, key, stringToSign)
           signature = Base64.encode64(digest)
           signature[-1] = ''
           encodedSig = URI.encode(signature, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Fog
   module Compute
     class Aliyun
@@ -9,11 +11,11 @@ module Fog
           time = Time.new.utc
 
           parameters = defalutParameters(action, sigNonce, time)
-          pathUrl    = defaultAliyunUri(action, sigNonce, time)
+          pathUrl = defaultAliyunUri(action, sigNonce, time)
 
           pageNumber = options[:pageNumber]
-          pageSize   = options[:pageSize]
-          vpcId      = options[:vpcId]
+          pageSize = options[:pageSize]
+          vpcId = options[:vpcId]
 
           if vpcId
             parameters['VpcId'] = vpcId
@@ -28,7 +30,7 @@ module Fog
           end
 
           pageSize = options[:pageSize]
-          pageSize = '50' unless pageSize
+          pageSize ||= '50'
           parameters['PageSize'] = pageSize
           pathUrl += '&PageSize='
           pathUrl += pageSize
@@ -72,7 +74,7 @@ module Fog
             status: 200
           )
         end
-      end # mock
-    end # aliyun
-  end # compute
-end # fog
+      end
+    end
+  end
+end

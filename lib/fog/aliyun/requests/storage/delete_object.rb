@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Fog
   module Storage
     class Aliyun
@@ -24,7 +26,7 @@ module Fog
         end
 
         def abort_multipart_upload(bucket, object, endpoint, uploadid)
-          if nil == endpoint
+          if endpoint.nil?
             location = get_bucket_location(bucket)
             endpoint = 'http://' + location + '.aliyuncs.com'
           end
@@ -43,8 +45,7 @@ module Fog
       end
 
       class Mock
-        def delete_object(object, options = {})
-        end
+        def delete_object(object, options = {}); end
       end
     end
   end

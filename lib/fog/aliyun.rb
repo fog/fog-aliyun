@@ -1,14 +1,16 @@
+# frozen_string_literal: true
+
 require 'fog/core'
 require 'fog/json'
 require 'fog/aliyun/version'
 
 module Fog
   module Compute
-    ret = autoload :Aliyun, 'fog/aliyun/compute'
+    autoload :Aliyun, 'fog/aliyun/compute'
   end
 
   module Storage
-    ret = autoload :Aliyun, 'fog/aliyun/storage'
+    autoload :Aliyun, 'fog/aliyun/storage'
   end
 
   module Aliyun

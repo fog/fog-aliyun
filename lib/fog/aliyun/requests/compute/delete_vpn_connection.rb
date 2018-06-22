@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Fog
   module Compute
     class Aliyun
@@ -9,7 +11,7 @@ module Fog
           time = Time.new.utc
 
           parameters = defalutVPCParameters(action, sigNonce, time)
-          pathUrl    = defaultAliyunVPCUri(action, sigNonce, time)
+          pathUrl = defaultAliyunVPCUri(action, sigNonce, time)
 
           if vpn_connectionid
             parameters['VpnConnectionId'] = vpn_connectionid
@@ -30,6 +32,6 @@ module Fog
           )
         end
       end
-    end # aliyun
-  end # compute
-end # fog
+    end
+  end
+end

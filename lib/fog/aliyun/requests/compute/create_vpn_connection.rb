@@ -1,15 +1,17 @@
+# frozen_string_literal: true
+
 module Fog
   module Compute
     class Aliyun
       class Real
-        def create_vpn_connection(customergatewayId, vpngatewayId, localsubnet, remotesubnet,options = {})
+        def create_vpn_connection(customergatewayId, vpngatewayId, localsubnet, remotesubnet, options = {})
           # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/vswitch&createvswitch]
           action = 'CreateVpnConnection'
           sigNonce = randonStr
           time = Time.new.utc
 
           parameters = defalutVPCParameters(action, sigNonce, time)
-          pathUrl    = defaultAliyunVPCUri(action, sigNonce, time)
+          pathUrl = defaultAliyunVPCUri(action, sigNonce, time)
 
           parameters['CustomerGatewayId'] = customergatewayId
           pathUrl += '&CustomerGatewayId='
@@ -22,7 +24,7 @@ module Fog
           parameters['LocalSubnet'] = localsubnet
           pathUrl += '&LocalSubnet='
           pathUrl += localsubnet
-          
+
           parameters['RemoteSubnet'] = remotesubnet
           pathUrl += '&RemoteSubnet='
           pathUrl += remotesubnet
@@ -53,6 +55,6 @@ module Fog
           )
         end
       end
-    end # aliyun
-  end # compute
-end # fog
+    end
+  end
+end

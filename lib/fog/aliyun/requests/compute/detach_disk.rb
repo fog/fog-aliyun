@@ -1,15 +1,17 @@
+# frozen_string_literal: true
+
 module Fog
   module Compute
     class Aliyun
       class Real
         # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/disk&detachdisk]
         def detach_disk(instanceId, diskId, _options = {})
-          action   = 'DetachDisk'
+          action = 'DetachDisk'
           sigNonce = randonStr
-          time     = Time.new.utc
+          time = Time.new.utc
 
           parameters = defalutParameters(action, sigNonce, time)
-          pathUrl    = defaultAliyunUri(action, sigNonce, time)
+          pathUrl = defaultAliyunUri(action, sigNonce, time)
 
           parameters['InstanceId'] = instanceId
           pathUrl += '&InstanceId='
@@ -18,7 +20,7 @@ module Fog
           parameters['DiskId'] = diskId
           pathUrl += '&DiskId='
           pathUrl += diskId
-          
+
           device = _options[:device]
           if device
             parameters['Device'] = device

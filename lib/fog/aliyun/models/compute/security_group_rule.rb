@@ -1,22 +1,24 @@
+# frozen_string_literal: true
+
 require 'fog/core/model'
 
 module Fog
   module Compute
     class Aliyun
       class SecurityGroupRule < Fog::Model
-        attribute :security_group_id,         aliases: 'SecurityGroupId'
-        attribute :source_cidr_ip,            aliases: 'SourceCidrIp'
-        attribute :source_owner,              aliases: 'SourceGroupOwnerAccount'
-        attribute :source_group_id,           aliases: 'SourceGroupId'
-        attribute :ip_protocol,               aliases: 'IpProtocol'
-        attribute :dest_cidr_ip,              aliases: 'DestCidrIp'
-        attribute :dest_owner,                aliases: 'DestGroupOwnerAccount'
-        attribute :dest_group_id,             aliases: 'DestGroupId'
-        attribute :nic_type,                  aliases: 'NicType'
-        attribute :policy,                    aliases: 'Policy'
-        attribute :port_range,                aliases: 'PortRange'
-        attribute :direction,                 aliases: 'Direction'
-        attribute :priority,                  aliases: 'Priority'
+        attribute :security_group_id, aliases: 'SecurityGroupId'
+        attribute :source_cidr_ip, aliases: 'SourceCidrIp'
+        attribute :source_owner, aliases: 'SourceGroupOwnerAccount'
+        attribute :source_group_id, aliases: 'SourceGroupId'
+        attribute :ip_protocol, aliases: 'IpProtocol'
+        attribute :dest_cidr_ip, aliases: 'DestCidrIp'
+        attribute :dest_owner, aliases: 'DestGroupOwnerAccount'
+        attribute :dest_group_id, aliases: 'DestGroupId'
+        attribute :nic_type, aliases: 'NicType'
+        attribute :policy, aliases: 'Policy'
+        attribute :port_range, aliases: 'PortRange'
+        attribute :direction, aliases: 'Direction'
+        attribute :priority, aliases: 'Priority'
 
         def save
           requires :security_group_id, :ip_protocol, :port_range, :direction

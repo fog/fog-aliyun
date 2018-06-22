@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Fog
   module Compute
     class Aliyun
@@ -19,12 +21,12 @@ module Fog
         #
         # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.201.106.DGkmH7#/pub/ecs/open-api/disk&createdisk]
         def create_disk(size, options = {})
-          action   = 'CreateDisk'
+          action = 'CreateDisk'
           sigNonce = randonStr
-          time     = Time.new.utc
+          time = Time.new.utc
 
           parameters = defalutParameters(action, sigNonce, time)
-          pathUrl    = defaultAliyunUri(action, sigNonce, time)
+          pathUrl = defaultAliyunUri(action, sigNonce, time)
 
           parameters['ZoneId'] = @aliyun_zone_id
           pathUrl += '&ZoneId='
@@ -34,8 +36,8 @@ module Fog
           pathUrl += '&Size='
           pathUrl += size
 
-          name  = options[:name]
-          desc  = options[:description]
+          name = options[:name]
+          desc = options[:description]
           category = options[:category]
 
           if name
@@ -84,12 +86,12 @@ module Fog
         #
         # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.201.106.DGkmH7#/pub/ecs/open-api/disk&createdisk]
         def create_disk_by_snapshot(snapshotId, options = {})
-          action   = 'CreateDisk'
+          action = 'CreateDisk'
           sigNonce = randonStr
-          time     = Time.new.utc
+          time = Time.new.utc
 
           parameters = defalutParameters(action, sigNonce, time)
-          pathUrl    = defaultAliyunUri(action, sigNonce, time)
+          pathUrl = defaultAliyunUri(action, sigNonce, time)
 
           parameters['ZoneId'] = @aliyun_zone_id
           pathUrl += '&ZoneId='
@@ -99,8 +101,8 @@ module Fog
           pathUrl += '&SnapshotId='
           pathUrl += snapshotId
 
-          name  = options[:name]
-          desc  = options[:description]
+          name = options[:name]
+          desc = options[:description]
           category = options[:category]
 
           if name
@@ -132,6 +134,6 @@ module Fog
           )
         end
       end
-    end # aliyun
-  end # compute
-end # fog
+    end
+  end
+end

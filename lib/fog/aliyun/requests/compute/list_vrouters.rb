@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Fog
   module Compute
     class Aliyun
@@ -9,7 +11,7 @@ module Fog
           time = Time.new.utc
 
           parameters = defalutParameters(action, sigNonce, time)
-          pathUrl    = defaultAliyunUri(action, sigNonce, time)
+          pathUrl = defaultAliyunUri(action, sigNonce, time)
 
           _VRouterId = options[:vRouterId]
           if _VRouterId
@@ -19,14 +21,14 @@ module Fog
           end
 
           pageNumber = options[:pageNumber]
-          pageSize   = options[:pageSize]
+          pageSize = options[:pageSize]
           if pageNumber
             parameters['PageNumber'] = pageNumber
             pathUrl += '&PageNumber='
             pathUrl += pageNumber
           end
 
-          pageSize = '50' unless pageSize
+          pageSize ||= '50'
           parameters['PageSize'] = pageSize
           pathUrl += '&PageSize='
           pathUrl += pageSize
@@ -49,7 +51,7 @@ module Fog
           data = list_images_detail.body['VRouters']
           images = []
           for image in data
-            images << image.reject { |key, _value| !%w(id name links).include?(key) }
+            images << image.select { |key, _value| %w[id name links].include?(key) }
           end
           response.status = [200, 203][rand(1)]
           response.body = { 'VRouter' => images }

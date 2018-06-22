@@ -1,16 +1,18 @@
+# frozen_string_literal: true
+
 require 'fog/core/model'
 module Fog
   module Compute
     class Aliyun
       class VRouter < Fog::Model
-        identity :id,               aliases: 'VRouterId'
+        identity :id, aliases: 'VRouterId'
 
-        attribute :name,            aliases: 'VRouterName'
+        attribute :name, aliases: 'VRouterName'
         attribute :route_table_ids, aliases: 'RouteTableIds'
-        attribute :created_at,      aliases: 'CreationTime'
-        attribute :description,     aliases: 'Description'
-        attribute :region_id,       aliases: 'RegionId'
-        attribute :vpc_id,          aliases: 'VpcId'
+        attribute :created_at, aliases: 'CreationTime'
+        attribute :description, aliases: 'Description'
+        attribute :region_id, aliases: 'RegionId'
+        attribute :vpc_id, aliases: 'VpcId'
 
         def vpc
           requires :vpc_id
