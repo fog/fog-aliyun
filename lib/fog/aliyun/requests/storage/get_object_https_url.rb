@@ -9,7 +9,7 @@ module Fog
         # ==== Parameters
         # * container<~String> - Name of container containing object
         # * object<~String> - Name of object to get expiring url for
-        # * expires<~Time> - An expiry time for this url
+        # * expires<~Integer> - An expiry time for this url
         #
         # ==== Returns
         # * response<~Excon::Response>:

@@ -87,6 +87,9 @@ module Fog
         # @return [String] url
         #
         def url(expires, options = {})
+
+          expires = expires.nil? ? 0 : expires.to_i
+
           requires :directory, :key
           object = if directory.key == ''
                      key
