@@ -53,9 +53,10 @@ opt = {
 conn = Fog::Storage.new(opt)
 ```
 **-> Note:** `:aliyun_region_id` is optional and  default to "cn-hangzhou".
+
 **-> Note:** `:aliyun_oss_endpoint` is optional. If it is not specified, it will be generated automatically by `:aliyun_region_id`.
-Its basic format is "oss-<region-id>.aliyuncs.com" and with default schema "http" and default port "80".
-If you want to use https or 443 port, you can use a format "<schema>://oss-<region-id>.aliyuncs.com:<port>".
+Its basic format is `oss-<region-id>.aliyuncs.com` and with default schema "http" and default port "80".
+If you want to use https or 443 port, you can use a format `<schema>://oss-<region-id>.aliyuncs.com:<port>`.
 
 
 ## Fog::Aliyun Abstractions

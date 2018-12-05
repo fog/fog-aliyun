@@ -133,6 +133,7 @@ module Fog
                    else
                      directory.key + '/' + key
                    end
+          expires = expires.nil? ? 0 : expires.to_i
           service.get_object_http_url_public(object, expires, options)
         end
 
@@ -143,6 +144,7 @@ module Fog
                    else
                      directory.key + '/' + key
                    end
+          expires = expires.nil? ? 0 : expires.to_i
           service.get_object_https_url_public(object, expires, options)
         end
 
