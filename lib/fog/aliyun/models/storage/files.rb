@@ -156,6 +156,7 @@ module Fog
                      directory.key + '/' + key
                    end
           data = service.head_object(object).data
+          return nil if data[:status] == 404
           lastModified = data[:headers]['Last-Modified']
           last_modified = (Time.parse(lastModified).localtime if !lastModified.nil? && lastModified != '')
 
