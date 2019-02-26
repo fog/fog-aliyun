@@ -10,7 +10,7 @@ module Fog
         model Fog::Compute::Aliyun::SecurityGroup
 
         def all(options = {})
-          data = Fog::JSON.decode(service.list_security_groups(options).body)['SecurityGroups']['SecurityGroup']
+          data = service.list_security_groups(options).body['SecurityGroups']['SecurityGroup']
           load(data)
           # ['Images']['Image']
         end

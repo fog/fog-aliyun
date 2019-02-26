@@ -78,7 +78,7 @@ module Fog
             Fog::Logger.deprecation("all with #{filters_arg.class} param is deprecated, use all('diskIds' => []) instead [light_black](#{caller.first})[/]")
             filters_arg = { 'diskIds' => [*filters_arg] }
           end
-          data = Fog::JSON.decode(service.list_disks(filters_arg).body)['Disks']['Disk']
+          data = service.list_disks(filters_arg).body['Disks']['Disk']
           load(data)
           # load(data['volumeSet'])
           # if server
