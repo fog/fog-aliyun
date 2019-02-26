@@ -33,7 +33,7 @@ module Fog
             Fog::Logger.warning("all with #{filters_arg.class} param is deprecated, use all('vRouterId' => "") instead [light_black](#{caller.first})[/]")
             filters_arg = { 'vRouterId' => filters_arg }
           end
-          data = Fog::JSON.decode(service.list_vrouters(filters_arg).body)['VRouters']['VRouter']
+          data = service.list_vrouters(filters_arg).body['VRouters']['VRouter']
           load(data)
         end
 
