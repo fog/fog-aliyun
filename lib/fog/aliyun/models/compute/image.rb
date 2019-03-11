@@ -29,7 +29,9 @@ module Fog
         attribute :snapshot_id, aliases: 'SnapshotId'
 
         def initialize(attributes)
-          self.snapshot_id = attributes['DiskDeviceMappings']['DiskDeviceMapping'][0]['SnapshotId']
+          unless attributes['DiskDeviceMappings']['DiskDeviceMapping'].empty?
+            self.snapshot_id = attributes['DiskDeviceMappings']['DiskDeviceMapping'][0]['SnapshotId']
+          end
           super
         end
 
