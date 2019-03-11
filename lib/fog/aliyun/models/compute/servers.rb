@@ -10,7 +10,8 @@ module Fog
         model Fog::Compute::Aliyun::Server
 
         def all(options = {})
-          Fog::JSON.decode(service.list_servers(options).body)['Instances']['Instance']
+          data = Fog::JSON.decode(service.list_servers(options).body)['Instances']['Instance']
+          load(data)
         end
 
         # Creates a new server and populates ssh keys
