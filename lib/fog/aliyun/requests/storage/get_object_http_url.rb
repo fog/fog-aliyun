@@ -22,7 +22,7 @@ module Fog
           location = get_bucket_location(bucket)
 
           if acl == 'private'
-            expires_time = (Time.now.to_i + expires).to_s
+            expires_time = (Time.now.to_i + (expires.nil? ? 0 : expires.to_i)).to_s
             resource = bucket + '/' + object
             signature = sign('GET', expires_time, nil, resource)
             'http://' + bucket + '.' + location + '.aliyuncs.com/' + object +
