@@ -41,7 +41,7 @@ module Fog
           )
 
           _InstanceTypeId = nil
-          _InstanceTypeList = Fog::JSON.decode(response.body)['InstanceTypes']['InstanceType']
+          _InstanceTypeList = response.body['InstanceTypes']['InstanceType']
           _InstanceTypeList.each do |instance_type|
             next unless (instance_type['CpuCoreCount'] == cpuCount) && (instance_type['MemorySize'] == memorySize)
             _InstanceTypeId = instance_type['InstanceTypeId']

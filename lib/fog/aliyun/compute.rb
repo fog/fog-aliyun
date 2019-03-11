@@ -351,6 +351,20 @@ module Fog
           '?Format=JSON&AccessKeyId=' + @aliyun_accesskey_id + '&Action=' + action + '&SignatureMethod=HMAC-SHA1&RegionId=' + @aliyun_region_id + '&SignatureNonce=' + sigNonce + '&SignatureVersion=1.0&Version=2014-05-26&Timestamp=' + urlTimeFormat
         end
 
+        def defaultAliyunQueryParameters(action, sigNonce, time)
+          {
+            Format: 'JSON',
+            AccessKeyId: @aliyun_accesskey_id,
+            Action: action,
+            SignatureMethod: 'HMAC-SHA1',
+            RegionId: @aliyun_region_id,
+            SignatureNonce: sigNonce,
+            SignatureVersion: '1.0',
+            Version: '2014-05-26',
+            Timestamp: time.strftime('%Y-%m-%dT%H:%M:%SZ')
+          }
+        end
+
         def defaultAliyunVPCUri(action, sigNonce, time)
           parTimeFormat = time.strftime('%Y-%m-%dT%H:%M:%SZ')
           urlTimeFormat = URI.encode(parTimeFormat, ':')
@@ -399,7 +413,14 @@ module Fog
         end
 
         # compute signature
+        # This method should be considered deprecated and replaced with sign_without_encoding, which is better for using querystring hashes and not 
+        # building querystrings with string concatination.
         def sign(accessKeySecret, parameters)
+          signature = sign_without_encoding(accessKeySecret, parameters)
+          URI.encode(signature, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
+        end
+
+        def sign_without_encoding(accessKeySecret, parameters)
           sortedParameters = parameters.sort
           canonicalizedQueryString = ''
           sortedParameters.each do |k, v|
@@ -414,9 +435,7 @@ module Fog
           digest = OpenSSL::HMAC.digest(digVer, key, stringToSign)
           signature = Base64.encode64(digest)
           signature[-1] = ''
-          encodedSig = URI.encode(signature, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
-
-          encodedSig
+          signature
         end
       end
     end

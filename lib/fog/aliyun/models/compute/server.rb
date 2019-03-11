@@ -36,7 +36,7 @@ module Fog
         attribute :expired_at, aliases: 'ExpiredTime'
 
         def image
-          requires image_id
+          requires :image_id
           Fog::Compute::Aliyun::Image.new(service: service).all(imageId: image_id)[0]
         end
 

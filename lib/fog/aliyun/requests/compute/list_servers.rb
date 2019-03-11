@@ -11,7 +11,7 @@ module Fog
           _time = Time.new.utc
 
           _parameters = defalutParameters(_action, _sigNonce, _time)
-          _pathURL = defaultAliyunUri(_action, _sigNonce, _time)
+          _query_parameters = defaultAliyunQueryParameters(_action, _sigNonce, _time)
 
           _InstanceId = options[:instanceId]
           _VpcId = options[:vpcId]
@@ -22,35 +22,35 @@ module Fog
           unless _InstanceId.nil?
             _InstanceStr = "[\"#{_InstanceId}\"]"
             _parameters['InstanceIds'] = _InstanceStr
-            _pathURL += '&InstanceIds=' + _InstanceStr
+            _query_parameters[:InstanceIds] = _InstanceStr
           end
 
           unless _VpcId.nil?
             _parameters['VpcId'] = _VpcId
-            _pathURL += '&VpcId=' + _VpcId
+            _query_parameters[:VpcId] = _VpcId
           end
 
           unless _SecurityGroupId.nil?
             _parameters['SecurityGroupId'] = _SecurityGroupId
-            _pathURL += '&SecurityGroupId=' + _SecurityGroupId
+            _query_parameters[:SecurityGroupId] = _SecurityGroupId
           end
 
           unless _PageNumber.nil?
             _parameters['PageNumber'] = _PageNumber
-            _pathURL += '&PageNumber=' + _PageNumber
+            _query_parameters[:PageNumber] = _PageNumber
           end
 
           _PageSize ||= '50'
           _parameters['PageSize'] = _PageSize
-          _pathURL += '&PageSize=' + _PageSize
+          _query_parameters[:PageSize] = _PageSize
 
-          _signature = sign(@aliyun_accesskey_secret, _parameters)
-          _pathURL += '&Signature=' + _signature
+          _signature = sign_without_encoding(@aliyun_accesskey_secret, _parameters)
+          _query_parameters[:Signature] = _signature
 
           request(
             expects: [200, 203],
             method: 'GET',
-            path: _pathURL
+            query: _query_parameters
           )
         end
       end
