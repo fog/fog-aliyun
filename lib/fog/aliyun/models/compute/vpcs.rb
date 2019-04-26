@@ -72,7 +72,7 @@ module Fog
         #
 
         def get(vpcId)
-          $vpc = self.class.new(service: service).all('vpcId' => vpcId)[0] if vpcId
+          $vpc = self.class.new(service: service).all(:vpcId => vpcId)[0] if vpcId
         end
       end
     end
