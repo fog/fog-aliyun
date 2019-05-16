@@ -380,7 +380,7 @@ module Fog
         end
 
         # operation compute--collection of default parameters
-        def defalutParameters(action, sigNonce, time)
+        def defaultParameters(action, sigNonce, time)
           parTimeFormat = time.strftime('%Y-%m-%dT%H:%M:%SZ')
           para = {
             'Format' => 'JSON',
@@ -413,7 +413,7 @@ module Fog
         end
 
         # compute signature
-        # This method should be considered deprecated and replaced with sign_without_encoding, which is better for using querystring hashes and not 
+        # This method should be considered deprecated and replaced with sign_without_encoding, which is better for using querystring hashes and not
         # building querystrings with string concatination.
         def sign(accessKeySecret, parameters)
           signature = sign_without_encoding(accessKeySecret, parameters)

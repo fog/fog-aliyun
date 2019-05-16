@@ -10,7 +10,7 @@ module Fog
           sigNonce = randonStr
           time = Time.new.utc
 
-          parameters = defalutParameters(action, sigNonce, time)
+          parameters = defaultParameters(action, sigNonce, time)
           pathUrl = defaultAliyunUri(action, sigNonce, time)
 
           if security_group_id
