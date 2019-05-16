@@ -107,9 +107,6 @@ module Fog
       # VRouter
       request :list_vrouters
 
-      request :create_key_pair
-      request :delete_key_pairs
-
       # RouteTable
       request :list_route_tables
 
@@ -122,6 +119,9 @@ module Fog
 
       # Keypair
       request :import_key_pair
+      request :describe_key_pairs
+      request :create_key_pair
+      request :delete_key_pairs
 
       class Mock
         attr_reader :auth_token
