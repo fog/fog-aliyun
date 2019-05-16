@@ -22,7 +22,7 @@ module Fog
 
           type = options['instance_type']
 
-          _parameters = defalutParameters(_action, _sigNonce, _time)
+          _parameters = defaultParameters(_action, _sigNonce, _time)
           _pathURL = defaultAliyunUri(_action, _sigNonce, _time)
 
           _parameters['InstanceId'] = server_id

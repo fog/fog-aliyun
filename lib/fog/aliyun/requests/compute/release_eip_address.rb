@@ -10,7 +10,7 @@ module Fog
           _sigNonce = randonStr
           _time = Time.new.utc
 
-          _parameters = defalutParameters(_action, _sigNonce, _time)
+          _parameters = defaultParameters(_action, _sigNonce, _time)
           _pathURL = defaultAliyunUri(_action, _sigNonce, _time)
 
           _parameters['AllocationId'] = allocationId

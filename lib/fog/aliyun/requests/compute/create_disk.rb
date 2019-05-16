@@ -25,7 +25,7 @@ module Fog
           sigNonce = randonStr
           time = Time.new.utc
 
-          parameters = defalutParameters(action, sigNonce, time)
+          parameters = defaultParameters(action, sigNonce, time)
           pathUrl = defaultAliyunUri(action, sigNonce, time)
 
           parameters['ZoneId'] = @aliyun_zone_id
@@ -90,7 +90,7 @@ module Fog
           sigNonce = randonStr
           time = Time.new.utc
 
-          parameters = defalutParameters(action, sigNonce, time)
+          parameters = defaultParameters(action, sigNonce, time)
           pathUrl = defaultAliyunUri(action, sigNonce, time)
 
           parameters['ZoneId'] = @aliyun_zone_id
