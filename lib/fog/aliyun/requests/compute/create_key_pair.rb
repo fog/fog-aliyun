@@ -2,7 +2,7 @@ module Fog
   module Compute
     class Aliyun
       class Real
-        def create_key_pair(keyPairName, tagNKey, tagNValue)
+        def create_key_pair(keyPairName, options = {})
           _action = 'CreateKeyPair'
           _sigNonce = randonStr
           _time = Time.new.utc
@@ -13,11 +13,18 @@ module Fog
           _parameters['KeyPairName'] = keyPairName
           _pathURL += '&KeyPairName=' + keyPairName
 
-          _parameters['Tag.n.Key'] = tagNKey
-          _pathURL += '&Tag.n.Key=' + tagNKey
+          tagNKey = options[:tag_n_key]
+          tagNValue = options[:tag_n_value]
 
-          _parameters['Tag.n.Value'] = tagNValue
-          _pathURL += '&Tag.n.Value=' + tagNValue
+          if tagNKey
+            _parameters['Tag.n.Key'] = tagNKey
+            _pathURL += '&Tag.n.Key=' + tagNKey
+          end
+
+          if tagNValue
+            _parameters['Tag.n.Value'] = tagNValue
+            _pathURL += '&Tag.n.Value=' + tagNValue
+          end
 
           _signature = sign(@aliyun_accesskey_secret, _parameters)
           _pathURL += '&Signature=' + _signature
