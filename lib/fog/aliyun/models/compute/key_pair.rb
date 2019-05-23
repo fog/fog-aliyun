@@ -8,7 +8,7 @@ module Fog
         attribute :name, aliases: 'KeyPairName'
         attribute :tag_n_key, aliases: 'Tag.n.Key'
         attribute :tag_n_value, aliases: 'Tag.n.Value'
-        attribute :finger_print, aliases: 'KeyPairFingerPrint'
+        attribute :fingerprint, aliases: 'KeyPairFingerPrint'
         attribute :private_key, aliases: 'PrivateKeyBody'
         attribute :public_key, aliases: 'PublicKeyBody'
         attribute :page_number, aliases: 'PageNumber'

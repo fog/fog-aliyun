@@ -11,7 +11,7 @@ module Fog
           _pathURL = defaultAliyunUri(_action, _sigNonce, _time)
 
           keyPairName = options[:name]
-          keyPairFingerPrint = options[:finger_print]
+          keyPairFingerPrint = options[:fingerprint]
           pageNumber = options[:page_number]
           pageSize = options[:page_size]
           tagNKey = options[:tag_n_key]
