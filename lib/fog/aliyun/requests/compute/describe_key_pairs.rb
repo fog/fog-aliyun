@@ -2,7 +2,7 @@ module Fog
   module Compute
     class Aliyun
       class Real
-        def describe_key_pairs(keyPairName, options = {})
+        def describe_key_pairs(options = {})
           _action = 'DescribeKeyPairs'
           _sigNonce = randonStr
           _time = Time.new.utc
@@ -10,14 +10,17 @@ module Fog
           _parameters = defalutParameters(_action, _sigNonce, _time)
           _pathURL = defaultAliyunUri(_action, _sigNonce, _time)
 
-          _parameters['KeyPairName'] = keyPairName
-          _pathURL += '&KeyPairName=' + keyPairName
+          keyPairName = options[:name]
+          keyPairFingerPrint = options[:finger_print]
+          pageNumber = options[:page_number]
+          pageSize = options[:page_size]
+          tagNKey = options[:tag_n_key]
+          tagNValue = options[:tag_n_value]
 
-          keyPairFingerPrint = options[:keyPairFingerPrint]
-          pageNumber = options[:pageNumber]
-          pageSize = options[:pageSize]
-          tagNKey = options[:tagNKey]
-          tagNValue = options[:tagNValue]
+          if keyPairName
+            _parameters['KeyPairName'] = keyPairName
+            _pathURL += '&KeyPairName=' + keyPairName
+          end
 
           if keyPairFingerPrint
             _parameters['KeyPairFingerPrint'] = keyPairFingerPrint
