@@ -34,6 +34,7 @@ module Fog
         attribute :charge_type, aliases: 'InstanceChargeType'
         attribute :operation_locks, aliases: 'OperationLocks'
         attribute :expired_at, aliases: 'ExpiredTime'
+        attribute :vswitch_id, aliases: 'VSwitchId'
 
         def image
           requires :image_id
