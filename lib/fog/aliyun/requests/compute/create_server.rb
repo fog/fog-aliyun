@@ -83,6 +83,12 @@ module Fog
             end
           end
 
+          _KeyPairName = options[:KeyPairName]
+          if _KeyPairName
+            _parameters['KeyPairName'] = _KeyPairName
+            _pathURL += '&KeyPairName=' + _KeyPairName
+          end
+
           _signature = sign(@aliyun_accesskey_secret, _parameters)
           _pathURL += '&Signature=' + _signature
 

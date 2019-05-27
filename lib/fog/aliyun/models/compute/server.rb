@@ -35,6 +35,7 @@ module Fog
         attribute :operation_locks, aliases: 'OperationLocks'
         attribute :expired_at, aliases: 'ExpiredTime'
         attribute :vswitch_id, aliases: 'VSwitchId'
+        attribute :key_pair_name, aliases: 'KeyPairName'
 
         def image
           requires :image_id
