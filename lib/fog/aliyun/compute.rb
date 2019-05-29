@@ -36,7 +36,8 @@ module Fog
       collection :route_tables
       model :route_entry
       collection :route_entrys
-
+      model :flavor
+      collection :flavors
       ## REQUESTS
       #
       request_path 'fog/aliyun/requests/compute'
@@ -413,7 +414,7 @@ module Fog
         end
 
         # compute signature
-        # This method should be considered deprecated and replaced with sign_without_encoding, which is better for using querystring hashes and not 
+        # This method should be considered deprecated and replaced with sign_without_encoding, which is better for using querystring hashes and not
         # building querystrings with string concatination.
         def sign(accessKeySecret, parameters)
           signature = sign_without_encoding(accessKeySecret, parameters)
