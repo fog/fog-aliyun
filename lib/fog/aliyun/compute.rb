@@ -36,7 +36,8 @@ module Fog
       collection :route_tables
       model :route_entry
       collection :route_entrys
-
+      model :flavor
+      collection :flavors
       ## REQUESTS
       #
       request_path 'fog/aliyun/requests/compute'
