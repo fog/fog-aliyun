@@ -48,6 +48,15 @@ module Fog
           $vpc = Fog::Compute::Aliyun::Vpcs.new(service: service).all('vpcId' => vpc_id)[0]
         end
 
+        def save(options = {})
+          requires :image_id, :security_group_ids, :type
+          options[:VSwitchId] = vswitch_id if vswitch_id
+          options[:KeyPairName] = key_pair_name if key_pair_name
+          options[:UserData] = user_data if user_data
+          options[:InstanceName] = name if name
+          data = Fog::JSON.decode(service.create_server(image_id, security_group_ids, type, options).body)
+          merge_attributes(data)
+        end
         # {"ImageId"=>"ubuntu1404_32_20G_aliaegis_20150325.vhd", "InnerIpAddress"=>{"IpAddress"=>["10.171.90.171"]},
         #  "VlanId"=>"", "InstanceId"=>"i-25d1ry3jz",
         # "EipAddress"=>{"IpAddress"=>"", "AllocationId"=>"", "InternetChargeType"=>""},
