@@ -45,6 +45,36 @@ module Fog
           $vpc = Fog::Compute::Aliyun::Vpcs.new(service: service).all('vpcId' => vpc_id)[0]
         end
 
+        def destroy
+          requires :id
+          stop if running?
+          wait_for { stopped? }
+          service.delete_server(id)
+        end
+
+        def start
+          requires :id
+          service.start_server(id)
+        end
+
+        def stop
+          requires :id
+          service.stop_server(id)
+        end
+
+        def reboot(options = {})
+          requires :id
+          service.reboot_server(id, options)
+        end
+
+        def stopped?
+          state == 'Stopped'
+        end
+
+        def running?
+          state == 'Running'
+        end
+
         # {"ImageId"=>"ubuntu1404_32_20G_aliaegis_20150325.vhd", "InnerIpAddress"=>{"IpAddress"=>["10.171.90.171"]},
         #  "VlanId"=>"", "InstanceId"=>"i-25d1ry3jz",
         # "EipAddress"=>{"IpAddress"=>"", "AllocationId"=>"", "InternetChargeType"=>""},
