@@ -271,7 +271,6 @@ module Fog
           missing_credentials << :aliyun_accesskey_secret unless @aliyun_accesskey_secret
           missing_credentials << :aliyun_region_id unless @aliyun_region_id
           missing_credentials << :aliyun_url unless @aliyun_url
-          missing_credentials << :aliyun_zone_id unless @aliyun_zone_id
           raise ArgumentError, "Missing required arguments: #{missing_credentials.join(', ')}" unless missing_credentials.empty?
 
           @connection_options = options[:connection_options] || {}
