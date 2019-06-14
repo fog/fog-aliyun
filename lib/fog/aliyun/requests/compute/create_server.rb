@@ -68,19 +68,18 @@ module Fog
               _parameters['PrivateIpAddress'] = _PrivateIpAddress
               _pathURL += '&PrivateIpAddress=' + _PrivateIpAddress
             end
-          else
+          end
 
-            _InternetMaxBandwidthIn = options[:InternetMaxBandwidthIn]
-            if _InternetMaxBandwidthIn
-              _parameters['InternetMaxBandwidthIn'] = _InternetMaxBandwidthIn
-              _pathURL += '&InternetMaxBandwidthIn=' + _InternetMaxBandwidthIn
-            end
+          _InternetMaxBandwidthIn = options[:InternetMaxBandwidthIn]
+          if _InternetMaxBandwidthIn
+            _parameters['InternetMaxBandwidthIn'] = _InternetMaxBandwidthIn
+            _pathURL += '&InternetMaxBandwidthIn=' + _InternetMaxBandwidthIn
+          end
 
-            _InternetMaxBandwidthOut = options[:InternetMaxBandwidthOut]
-            if _InternetMaxBandwidthOut
-              _parameters['InternetMaxBandwidthOut'] = _InternetMaxBandwidthOut
-              _pathURL += '&InternetMaxBandwidthOut=' + _InternetMaxBandwidthOut
-            end
+          _InternetMaxBandwidthOut = options[:InternetMaxBandwidthOut]
+          if _InternetMaxBandwidthOut
+            _parameters['InternetMaxBandwidthOut'] = _InternetMaxBandwidthOut
+            _pathURL += '&InternetMaxBandwidthOut=' + _InternetMaxBandwidthOut
           end
 
           _signature = sign(@aliyun_accesskey_secret, _parameters)
