@@ -117,6 +117,9 @@ module Fog
       request :attach_disk
       request :detach_disk
 
+      # PublicIpAddress
+      request :allocate_public_ip_address
+
       class Mock
         attr_reader :auth_token
         attr_reader :auth_token_expiration
