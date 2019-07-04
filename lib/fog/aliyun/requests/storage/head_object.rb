@@ -12,8 +12,10 @@ module Fog
         def head_object(object, options = {})
           bucket = options[:bucket]
           bucket ||= @aliyun_oss_bucket
-          location = get_bucket_location(bucket)
-          endpoint = 'http://' + location + '.aliyuncs.com'
+          endpoint = options[:endpoint]
+          if endpoint.nil?
+            endpoint = get_bucket_endpoint(bucket)
+          end
           resource = bucket + '/' + object
           ret = request(
             expects: [200, 404],

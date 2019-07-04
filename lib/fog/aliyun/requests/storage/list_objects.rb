@@ -45,8 +45,7 @@ module Fog
 
         def list_multipart_uploads(bucket, endpoint, _options = {})
           if endpoint.nil?
-            location = get_bucket_location(bucket)
-            endpoint = 'http://' + location + '.aliyuncs.com'
+            endpoint = get_bucket_endpoint(bucket)
           end
           path = '?uploads'
           resource = bucket + '/' + path
@@ -64,8 +63,7 @@ module Fog
 
         def list_parts(bucket, object, endpoint, uploadid, _options = {})
           if endpoint.nil?
-            location = get_bucket_location(bucket)
-            endpoint = 'http://' + location + '.aliyuncs.com'
+            endpoint = get_bucket_endpoint(bucket)
           end
           path = object + '?uploadId=' + uploadid
           resource = bucket + '/' + path

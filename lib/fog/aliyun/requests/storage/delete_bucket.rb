@@ -10,8 +10,7 @@ module Fog
         # * bucket<~String> - Name of bucket to delete
         #
         def delete_bucket(bucket)
-          location = get_bucket_location(bucket)
-          endpoint = 'http://' + location + '.aliyuncs.com'
+          endpoint = get_bucket_endpoint(bucket)
           resource = bucket + '/'
           request(
             expects: 204,

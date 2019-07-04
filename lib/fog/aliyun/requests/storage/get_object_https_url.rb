@@ -21,6 +21,10 @@ module Fog
           acl = get_bucket_acl(bucket)
           location = get_bucket_location(bucket)
 
+          if @aliyun_oss_endpoint.downcase()['-internal']
+            location =   location + '-internal' 
+          end     
+
           if acl == 'private'
             expires_time = (Time.now.to_i + (expires.nil? ? 0 : expires.to_i)).to_s
             resource = bucket + '/' + object
