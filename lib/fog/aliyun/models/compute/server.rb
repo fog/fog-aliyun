@@ -71,7 +71,7 @@ module Fog
           state == 'Stopped'
         end
 
-        def running?
+        def ready?
           state == 'Running'
         end
 
