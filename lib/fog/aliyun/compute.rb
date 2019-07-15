@@ -36,7 +36,8 @@ module Fog
       collection :route_tables
       model :route_entry
       collection :route_entrys
-
+      model :key_pair
+      collection :key_pairs
       ## REQUESTS
       #
       request_path 'fog/aliyun/requests/compute'
@@ -116,6 +117,12 @@ module Fog
       request :delete_disk
       request :attach_disk
       request :detach_disk
+
+      # Keypair
+      request :import_key_pair
+      request :describe_key_pairs
+      request :create_key_pair
+      request :delete_key_pairs
 
       class Mock
         attr_reader :auth_token
@@ -413,7 +420,7 @@ module Fog
         end
 
         # compute signature
-        # This method should be considered deprecated and replaced with sign_without_encoding, which is better for using querystring hashes and not 
+        # This method should be considered deprecated and replaced with sign_without_encoding, which is better for using querystring hashes and not
         # building querystrings with string concatination.
         def sign(accessKeySecret, parameters)
           signature = sign_without_encoding(accessKeySecret, parameters)
