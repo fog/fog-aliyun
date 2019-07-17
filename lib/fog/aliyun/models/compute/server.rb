@@ -47,7 +47,7 @@ module Fog
 
         def destroy
           requires :id
-          stop if running?
+          stop if ready?
           wait_for { stopped? }
           service.delete_server(id)
         end
