@@ -68,7 +68,7 @@ module Fog
             data = service.get_object(object)
           rescue StandardError => error
             case error.response.body
-            when %r{<Code>NoSuchKey</Code>}
+            when %r{<Code>NoSuchKey</Code>},%r{<Code>SymlinkTargetNotExist</Code>}
               nil
             else
               raise(error)
