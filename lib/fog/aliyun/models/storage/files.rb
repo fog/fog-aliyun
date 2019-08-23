@@ -84,8 +84,17 @@ module Fog
               _start = (i - 1) * Excon::CHUNK_SIZE
               _end = i * Excon::CHUNK_SIZE - 1
               range = "#{_start}-#{_end}"
-              data = service.get_object(object, range)
-              chunk = data[:body]
+              begin
+                data = service.get_object(object, range)
+                chunk = data[:body]
+              rescue StandardError => error
+                case error.response.body
+                  when %r{<Code>NoSuchKey</Code>},%r{<Code>SymlinkTargetNotExist</Code>}
+                    chunk = ''
+                  else
+                    raise(error)
+                end
+              end
               yield(chunk)
               body = nil
             end
