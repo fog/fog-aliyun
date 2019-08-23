@@ -174,8 +174,11 @@ module Fog
                        directory.key + '/' + key
                      end
 
-            headers = service.head_object(object).data[:headers]
-            headers.select! { |k, _v| metadata_attribute?(k) }
+            data = service.head_object(object).data
+            if data[:status] == 200
+              headers = data[:headers]
+              headers.select! { |k, _v| metadata_attribute?(k) }
+            end
           else
             {}
           end
