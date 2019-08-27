@@ -34,6 +34,14 @@ module Fog
         #          server
         #        end
 
+        def bootstrap(args)
+          server = create(args)
+          server.wait_for { stopped? }
+          service.allocate_public_ip_address(server.id) if !args[:max_bandwidth_out].empty? && args[:assign_public_ip]
+          server.start
+          server
+        end
+
         def get(server_id)
           self.class.new(service: service).all(instanceId: server_id)[0] if server_id
         end
