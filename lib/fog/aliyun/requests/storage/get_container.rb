@@ -38,7 +38,7 @@ module Fog
             path += '?delimiter=' + delimiter
           end
 
-          location = get_bucket_location(bucket)
+          # location = get_bucket_location(bucket)
           resource = bucket + '/'
           ret = request(
             expects: [200, 203, 400],

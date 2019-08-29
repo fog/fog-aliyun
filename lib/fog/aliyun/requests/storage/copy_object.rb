@@ -19,8 +19,10 @@ module Fog
           source_bucket ||= bucket
           target_bucket ||= bucket
           headers = { 'x-oss-copy-source' => "/#{source_bucket}/#{source_object}" }
-          location = get_bucket_location(target_bucket)
-          endpoint = 'http://' + location + '.aliyuncs.com'
+          endpoint = options[:endpoint]
+          if endpoint.nil?
+            endpoint = get_bucket_endpoint(bucket)
+          end
           resource = target_bucket + '/' + target_object
           request(expects: [200, 203],
                   headers: headers,

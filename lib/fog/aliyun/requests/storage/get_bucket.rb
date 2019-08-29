@@ -5,8 +5,7 @@ module Fog
     class Aliyun
       class Real
         def get_bucket(bucket)
-          location = get_bucket_location(bucket)
-          endpoint = 'http://' + location + '.aliyuncs.com'
+          endpoint = get_bucket_endpoint(bucket)
           resource = bucket + '/'
           ret = request(
             expects: [200, 203],
@@ -17,6 +16,18 @@ module Fog
           )
           xml = ret.data[:body]
           XmlSimple.xml_in(xml)
+        end
+
+        def get_bucket_endpoint(bucket)
+          location = get_bucket_location(bucket)
+          # If the endpoint specified contains with -internal, then assume it is a vpc endpoint, 
+          # hence, the bucket endpoint returned is also internal one...
+          # Otherwise, continue to use the public endpoint as previous edition.
+          if @aliyun_oss_endpoint.downcase()['-internal']
+            endpoint = 'http://' + location + '-internal'+'.aliyuncs.com'
+          else
+            endpoint = 'http://' + location +'.aliyuncs.com'
+          end     
         end
 
         def get_bucket_location(bucket)
@@ -33,8 +44,7 @@ module Fog
         end
 
         def get_bucket_acl(bucket)
-          location = get_bucket_location(bucket)
-          endpoint = 'http://' + location + '.aliyuncs.com'
+          endpoint = get_bucket_endpoint(bucket)
           attribute = '?acl'
           resource = bucket + '/' + attribute
           ret = request(
@@ -49,8 +59,7 @@ module Fog
         end
 
         def get_bucket_CORSRules(bucket)
-          location = get_bucket_location(bucket)
-          endpoint = 'http://' + location + '.aliyuncs.com'
+          endpoint = get_bucket_endpoint(bucket)
           attribute = '?cors'
           resource = bucket + '/' + attribute
           ret = request(
@@ -65,8 +74,7 @@ module Fog
         end
 
         def get_bucket_lifecycle(bucket)
-          location = get_bucket_location(bucket)
-          endpoint = 'http://' + location + '.aliyuncs.com'
+          endpoint = get_bucket_endpoint(bucket)
           attribute = '?lifecycle'
           resource = bucket + '/' + attribute
           ret = request(
@@ -81,8 +89,7 @@ module Fog
         end
 
         def get_bucket_logging(bucket)
-          location = get_bucket_location(bucket)
-          endpoint = 'http://' + location + '.aliyuncs.com'
+          endpoint = get_bucket_endpoint(bucket)
           attribute = '?logging'
           resource = bucket + '/' + attribute
           ret = request(
@@ -97,8 +104,7 @@ module Fog
         end
 
         def get_bucket_referer(bucket)
-          location = get_bucket_location(bucket)
-          endpoint = 'http://' + location + '.aliyuncs.com'
+          endpoint = get_bucket_endpoint(bucket)
           attribute = '?referer'
           resource = bucket + '/' + attribute
           ret = request(
@@ -113,8 +119,7 @@ module Fog
         end
 
         def get_bucket_website(bucket)
-          location = get_bucket_location(bucket)
-          endpoint = 'http://' + location + '.aliyuncs.com'
+          endpoint = get_bucket_endpoint(bucket)
           attribute = '?website'
           resource = bucket + '/' + attribute
           ret = request(

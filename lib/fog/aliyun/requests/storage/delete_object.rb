@@ -12,8 +12,10 @@ module Fog
         def delete_object(object, options = {})
           bucket = options[:bucket]
           bucket ||= @aliyun_oss_bucket
-          location = get_bucket_location(bucket)
-          endpoint = 'http://' + location + '.aliyuncs.com'
+          endpoint = options[:endpoint]
+          if endpoint.nil?
+            endpoint = get_bucket_endpoint(bucket)
+          end
           resource = bucket + '/' + object
           request(
             expects: 204,
@@ -27,8 +29,7 @@ module Fog
 
         def abort_multipart_upload(bucket, object, endpoint, uploadid)
           if endpoint.nil?
-            location = get_bucket_location(bucket)
-            endpoint = 'http://' + location + '.aliyuncs.com'
+            endpoint = get_bucket_endpoint(bucket)
           end
           path = object + '?uploadId=' + uploadid
           resource = bucket + '/' + path
