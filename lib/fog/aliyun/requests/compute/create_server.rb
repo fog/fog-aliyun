@@ -11,80 +11,83 @@ module Fog
           _time = Time.new.utc
 
           _parameters = defalutParameters(_action, _sigNonce, _time)
-          _pathURL = defaultAliyunUri(_action, _sigNonce, _time)
-
           _parameters['ImageId'] = imageId
-          _pathURL += '&ImageId=' + imageId
-
           _parameters['InstanceType'] = instanceType
-          _pathURL += '&InstanceType=' + instanceType
-
           _parameters['SecurityGroupId'] = securityGroupId
-          _pathURL += '&SecurityGroupId=' + securityGroupId
 
           _ZoneId = options[:ZoneId]
           if _ZoneId
             _parameters['ZoneId'] = _ZoneId
-            _pathURL += '&ZoneId=' + _ZoneId
           end
 
           _InstanceName = options[:InstanceName]
           if _InstanceName
             _parameters['InstanceName'] = _InstanceName
-            _pathURL += '&InstanceName=' + _InstanceName
           end
 
           _Description = options[:Description]
           if _Description
             _parameters['Description'] = _Description
-            _pathURL += '&Description=' + _Description
           end
 
           _InternetChargeType = options[:InternetChargeType]
           if _InternetChargeType
             _parameters['InternetChargeType'] = _InternetChargeType
-            _pathURL += '&InternetChargeType=' + _InternetChargeType
           end
 
           _HostName = options[:HostName]
           if _HostName
             _parameters['HostName'] = _HostName
-            _pathURL += '&HostName=' + _HostName
           end
 
           _Password = options[:Password]
           if _Password
             _parameters['Password'] = _Password
-            _pathURL += '&Password=' + _Password
+          end
+
+          _SpotStrategy = options[:SpotStrategy]
+          if _SpotStrategy
+            _parameters['SpotStrategy'] = _SpotStrategy
+          end
+
+          _SpotPriceLimit = options[:SpotPriceLimit]
+          if _SpotPriceLimit
+            _parameters['SpotPriceLimit'] = _SpotPriceLimit
+          end
+
+          _SpotDuration = options[:SpotDuration]
+          if _SpotDuration
+            _parameters['SpotDuration'] = _SpotDuration
+          end
+
+          _SpotInterruptionBehavior = options[:SpotInterruptionBehavior]
+          if _SpotInterruptionBehavior
+            _parameters['SpotInterruptionBehavior'] = _SpotInterruptionBehavior
           end
 
           _VSwitchId = options[:VSwitchId]
           _PrivateIpAddress = options[:PrivateIpAddress]
           if _VSwitchId
             _parameters['VSwitchId'] = _VSwitchId
-            _pathURL += '&VSwitchId=' + _VSwitchId
 
             if _PrivateIpAddress
               _parameters['PrivateIpAddress'] = _PrivateIpAddress
-              _pathURL += '&PrivateIpAddress=' + _PrivateIpAddress
             end
           else
 
             _InternetMaxBandwidthIn = options[:InternetMaxBandwidthIn]
             if _InternetMaxBandwidthIn
               _parameters['InternetMaxBandwidthIn'] = _InternetMaxBandwidthIn
-              _pathURL += '&InternetMaxBandwidthIn=' + _InternetMaxBandwidthIn
             end
 
             _InternetMaxBandwidthOut = options[:InternetMaxBandwidthOut]
             if _InternetMaxBandwidthOut
               _parameters['InternetMaxBandwidthOut'] = _InternetMaxBandwidthOut
-              _pathURL += '&InternetMaxBandwidthOut=' + _InternetMaxBandwidthOut
             end
           end
 
           _signature = sign(@aliyun_accesskey_secret, _parameters)
-          _pathURL += '&Signature=' + _signature
+          _pathURL = defaultAliyunUri(_action, _sigNonce, _time) + '&' + _parameters.merge({Signature: _signature}).map{|k,v| "#{k}=#{v}" }.join('&')
 
           request(
             expects: [200, 203],

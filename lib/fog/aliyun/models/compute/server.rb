@@ -34,6 +34,10 @@ module Fog
         attribute :charge_type, aliases: 'InstanceChargeType'
         attribute :operation_locks, aliases: 'OperationLocks'
         attribute :expired_at, aliases: 'ExpiredTime'
+        attribute :spot_strategy, aliases: 'SpotStrategy'
+        attribute :spot_price_limit, aliases: 'SpotPriceLimit'
+        attribute :spot_duration, aliases: 'SpotDuration'
+        attribute :spot_interruption_behavior, aliases: 'SpotInterruptionBehavior'
 
         def image
           requires :image_id
