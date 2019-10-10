@@ -33,7 +33,7 @@ module Fog
           options[:bandwidth] = bandwidth if bandwidth
           options[:internet_charge_type] = charge_type if charge_type
 
-          data = Fog::JSON.decode(service.allocate_eip_address(options).body)
+          data = service.allocate_eip_address(options).body
           merge_attributes(data)
           true
         end
