@@ -24,11 +24,27 @@ module Fog
           load(data)
         end
 
+        # get method used to get a specified directory.
+        # If the directory is not exist, this method will create a new with 'key'
+        # In order to support multi-buckets scenario which making bucket as a solo directory, it have been expanded.
+        # If key is a directory(including /), return an existed or a new one;
+        # If key does not contain /, if bucket, return '', else return an existed or a new one directory;
         def get(key, options = {})
           if !key.nil? && key != '' && key != '.'
-            dir = key + '/'
-            ret = service.head_object(dir, options)
-            new(key: key) if ret.data[:status] == 200
+            if key.include? '/'
+              dir = key + '/'
+              ret = service.head_object(dir, options)
+              new(key: key) if ret.data[:status] == 200
+            else
+              data = service.get_bucket(key)
+              if data[:status] == 404
+                dir = key + '/'
+                ret = service.head_object(dir, options)
+                new(key: key) if ret.data[:status] == 200
+              else
+                new(key: '')
+              end
+            end
           else
             new(key: '')
           end
