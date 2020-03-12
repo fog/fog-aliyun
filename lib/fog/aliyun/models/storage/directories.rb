@@ -31,13 +31,16 @@ module Fog
         # If key does not contain /, if bucket, return '', else return an existed or a new one directory;
         def get(key, options = {})
           if !key.nil? && key != '' && key != '.'
+            key = key.chomp('/')
             if key.include? '/'
               dir = key + '/'
               ret = service.head_object(dir, options)
               new(key: key) if ret.data[:status] == 200
             else
               data = service.get_bucket(key)
-              if data[:status] == 404
+              puts "[DEBUG] Getting the bucket named with #{key}..."
+              puts data
+              if data.class == Hash && data.key?('Code') && !data['Code'].nil? && !data['Code'].empty?
                 dir = key + '/'
                 ret = service.head_object(dir, options)
                 new(key: key) if ret.data[:status] == 200
