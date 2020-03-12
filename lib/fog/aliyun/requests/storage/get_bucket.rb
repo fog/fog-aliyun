@@ -6,10 +6,18 @@ module Fog
       class Real
         def get_bucket(bucket)
           location = get_bucket_location(bucket)
+          # If there is an error, it will return a Hash with error code, host id and others
+          # If can not get a valid location, will return one using region
+          if location.class == Hash && location.key?('HostId')
+            value = location['HostId']
+            location = value[0].split('.')[1]
+          else
+            location = 'oss-' + @aliyun_region_id
+          end
           endpoint = 'http://' + location + '.aliyuncs.com'
           resource = bucket + '/'
           ret = request(
-            expects: [200, 203],
+            expects: [200, 203, 404],
             method: 'GET',
             bucket: bucket,
             resource: resource,
@@ -23,7 +31,7 @@ module Fog
           attribute = '?location'
           resource = bucket + '/' + attribute
           ret = request(
-            expects: [200, 203],
+            expects: [200, 203, 403, 404],
             method: 'GET',
             path: attribute,
             bucket: bucket,
