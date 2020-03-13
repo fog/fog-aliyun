@@ -41,7 +41,18 @@ module Fog
 
         def save
           requires :key
-          service.put_container(key)
+
+          # Checking whether the key is a bucket and meet the multi-bucket scenario.
+          # If the key is a existing bucket, return it directly.
+          key = key.chomp('/')
+          if !key.nil? && key != '' && key != '.' && !(key.include? '/')
+            data = service.get_bucket(key)
+            if data.class == Hash && data.key?('Code') && !data['Code'].nil? && !data['Code'].empty?
+              puts "[INFO] The key #{key} is not a bucket and create one folder named with it."
+              service.put_container(key)
+            end
+          end
+
           true
         end
       end

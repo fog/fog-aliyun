@@ -7,10 +7,10 @@ require 'fog/aliyun/version'
 Gem::Specification.new do |spec|
   spec.name = 'fog-aliyun'
   spec.version = Fog::Aliyun::VERSION
-  spec.authors = ['Qinsi Deng, Jianxun Li, Jane Han']
-  spec.email = ['dengqinsi@sina.com']
+  spec.authors = ['Qinsi Deng, Jianxun Li, Jane Han, Guimin He']
+  spec.email = ['dengqinsi@sina.com', 'guimin.hgm@alibaba-inc.com']
 
-  spec.summary = 'Fog provider for Aliyun Web Services.'
+  spec.summary = 'Fog provider for Alibaba Cloud Web Services.'
   spec.description = 'As a FOG provider, fog-aliyun support aliyun OSS/ECS. It will support more aliyun services later.'
   spec.homepage = 'https://github.com/fog/fog-aliyun'
   spec.license = 'MIT'

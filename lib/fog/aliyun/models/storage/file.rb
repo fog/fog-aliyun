@@ -35,11 +35,13 @@ module Fog
 
         def copy(target_directory_key, target_file_key, options = {})
           requires :directory, :key
-          source_object = if directory.key == ''
+          directory_key = collection.check_directory_key(directory.key)
+          source_object = if directory_key == ''
                             key
                           else
-                            directory.key + '/' + key
+                            directory_key + '/' + key
                           end
+          target_directory_key = collection.check_directory_key(target_directory_key)
           target_object = if target_directory_key == ''
                             target_file_key
                           else
@@ -52,10 +54,11 @@ module Fog
 
         def destroy
           requires :directory, :key
-          object = if directory.key == ''
+          directory_key = collection.check_directory_key(directory.key)
+          object = if directory_key == ''
                      key
                    else
-                     directory.key + '/' + key
+                     directory_key + '/' + key
                    end
           service.delete_object(object)
           true
@@ -91,10 +94,11 @@ module Fog
           expires = expires.nil? ? 0 : expires.to_i
 
           requires :directory, :key
-          object = if directory.key == ''
+          directory_key = collection.check_directory_key(directory.key)
+          object = if directory_key == ''
                      key
                    else
-                     directory.key + '/' + key
+                     directory_key + '/' + key
                    end
           service.get_object_http_url_public(object, expires, options)
         end
@@ -109,11 +113,11 @@ module Fog
           options['Content-Type'] = content_type if content_type
           options['Content-Disposition'] = content_disposition if content_disposition
           options.merge!(metadata_to_headers)
-
-          object = if directory.key == ''
+          directory_key = collection.check_directory_key(directory.key)
+          object = if directory_key == ''
                      key
                    else
-                     directory.key + '/' + key
+                     directory_key + '/' + key
                    end
           if body.is_a?(::File)
             data = service.put_object(object, body, options).data
@@ -168,10 +172,11 @@ module Fog
 
         def metadata_attributes
           if last_modified
-            object = if directory.key == ''
+            directory_key = collection.check_directory_key(directory.key)
+            object = if directory_key == ''
                        key
                      else
-                       directory.key + '/' + key
+                       directory_key + '/' + key
                      end
 
             data = service.head_object(object).data

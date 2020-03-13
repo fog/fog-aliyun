@@ -15,9 +15,38 @@ module Fog
 
         model Fog::Storage::Aliyun::File
 
+        # check_directory_key have two functions:
+        # 1. trim the directory_key suffix '/'
+        # 2. checking whether the directory_key is a bucket.
+        #    If so, it will return directly to avoid to create a new redundant folder named with directory_key.
+        #    This point will be applied to multi-bucket and make bucket as a directory scenario.
+        def check_directory_key(directory_key)
+          if directory_key != ''
+            # trim the suffix '/'
+            directory_key = directory_key.chomp('/')
+            # The bucket name can not contain '/', so if directory_key, return directory.
+            if directory_key.include? '/'
+              directory_key
+            else
+              data = service.get_bucket(directory_key)
+              puts "[DEBUG] Getting the bucket named with directory name #{directory_key}..."
+              if data.class == Hash && data.key?('Code') && !data['Code'].nil? && !data['Code'].empty?
+                puts "[INFO] The directory name #{directory_key} is not a bucket and will create one folder named with it."
+                directory_key
+              else
+                puts "[INFO] The directory name #{directory_key} is a bucket and store objects directly."
+                ''
+              end
+            end
+          else
+            ''
+          end
+        end
+
         def all(_options = {})
           requires :directory
-          prefix = directory.key + '/' if directory.key != '' && directory.key != '.' && !directory.key.nil?
+          directory_key = check_directory_key(directory.key)
+          prefix = directory_key + '/' if directory_key != '' && directory_key != '.' && !directory_key.nil?
           files = service.list_objects(prefix: prefix)['Contents']
           return if files.nil?
           data = []
@@ -59,10 +88,11 @@ module Fog
 
         def get(key)
           requires :directory
-          object = if directory.key == ''
+          directory_key = check_directory_key(directory.key)
+          object = if directory_key == ''
                      key
                    else
-                     directory.key + '/' + key
+                     directory_key + '/' + key
                    end
           begin
             data = service.get_object(object)
@@ -127,20 +157,22 @@ module Fog
 
         def get_url(key)
           requires :directory
-          object = if directory.key == ''
+          directory_key = check_directory_key(directory.key)
+          object = if directory_key == ''
                      key
                    else
-                     directory.key + '/' + key
+                     directory_key + '/' + key
                    end
           service.get_object_http_url_public(object, 3600)
         end
 
         def get_http_url(key, expires, options = {})
           requires :directory
-          object = if directory.key == ''
+          directory_key = check_directory_key(directory.key)
+          object = if directory_key == ''
                      key
                    else
-                     directory.key + '/' + key
+                     directory_key + '/' + key
                    end
           expires = expires.nil? ? 0 : expires.to_i
           service.get_object_http_url_public(object, expires, options)
@@ -148,10 +180,11 @@ module Fog
 
         def get_https_url(key, expires, options = {})
           requires :directory
-          object = if directory.key == ''
+          directory_key = check_directory_key(directory.key)
+          object = if directory_key == ''
                      key
                    else
-                     directory.key + '/' + key
+                     directory_key + '/' + key
                    end
           expires = expires.nil? ? 0 : expires.to_i
           service.get_object_https_url_public(object, expires, options)
@@ -159,10 +192,11 @@ module Fog
 
         def head(key, _options = {})
           requires :directory
-          object = if directory.key == ''
+          directory_key = check_directory_key(directory.key)
+          object = if directory_key == ''
                      key
                    else
-                     directory.key + '/' + key
+                     directory_key + '/' + key
                    end
           data = service.head_object(object).data
           return nil if data[:status] == 404
