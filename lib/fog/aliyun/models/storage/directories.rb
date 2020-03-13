@@ -38,8 +38,6 @@ module Fog
               new(key: key) if ret.data[:status] == 200
             else
               data = service.get_bucket(key)
-              puts "[DEBUG] Getting the bucket named with #{key}..."
-              puts data
               if data.class == Hash && data.key?('Code') && !data['Code'].nil? && !data['Code'].empty?
                 dir = key + '/'
                 ret = service.head_object(dir, options)
