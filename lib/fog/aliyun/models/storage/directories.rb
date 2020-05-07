@@ -30,6 +30,9 @@ module Fog
         # If key is a directory(including /), return an existed or a new one;
         # If key does not contain /, if bucket, return '', else return an existed or a new one directory;
         def get(key, options = {})
+          if key.is_a? Array
+            key = key[0]
+          end
           if !key.nil? && key != '' && key != '.'
             key = key.chomp('/')
             if key.include? '/'
@@ -37,14 +40,34 @@ module Fog
               ret = service.head_object(dir, options)
               new(key: key) if ret.data[:status] == 200
             else
-              data = service.get_bucket(key)
-              if data.class == Hash && data.key?('Code') && !data['Code'].nil? && !data['Code'].empty?
-                dir = key + '/'
-                ret = service.head_object(dir, options)
-                new(key: key) if ret.data[:status] == 200
-              else
-                new(key: '')
+              remap_attributes(options, {
+                  :delimiter  => 'delimiter',
+                  :marker     => 'marker',
+                  :max_keys   => 'max-keys',
+                  :prefix     => 'prefix'
+              })
+              data = service.get_bucket(key, options)
+              directory = new(:key => data['Name'], :is_persisted => true)
+              options = {}
+              for k, v in data
+                if ['CommonPrefixes', 'Delimiter', 'IsTruncated', 'Marker', 'MaxKeys', 'Prefix'].include?(k)
+                  # Sometimes, the v will be a Array, like "Name"=>["blobstore-droplet1"], "Prefix"=>[{}], "Marker"=>[{}], "MaxKeys"=>["100"], "Delimiter"=>[{}], "IsTruncated"=>["false"]
+                  # and there needs to parse them
+                  if !v.nil? && (v.is_a? Array) && (v.size > 0)
+                    if v[0].is_a? Hash
+                      v = nil
+                    else
+                      v = v[0]
+                    end
+                  end
+                  options[k] = v
+                end
               end
+              directory.files.merge_attributes(options)
+              if data.key?('Contents') && !data['Contents'].nil?
+                directory.files.load(data['Contents'])
+              end
+              directory
             end
           else
             new(key: '')

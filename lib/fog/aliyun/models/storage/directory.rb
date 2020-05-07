@@ -7,7 +7,7 @@ module Fog
   module Storage
     class Aliyun
       class Directory < Fog::Model
-        identity :key
+        identity :key, :aliases => ['Key', 'Name', 'name']
 
         def destroy
           requires :key
@@ -15,7 +15,6 @@ module Fog
           ret = service.list_objects(prefix: prefix)['Contents']
 
           if ret.nil?
-            puts ' Not found: Direction not exist!'
             false
           elsif ret.size == 1
             service.delete_container(key)
@@ -48,7 +47,6 @@ module Fog
           if !key.nil? && key != '' && key != '.' && !(key.include? '/')
             data = service.get_bucket(key)
             if data.class == Hash && data.key?('Code') && !data['Code'].nil? && !data['Code'].empty?
-              puts "[INFO] The key #{key} is not a bucket and create one folder named with it."
               service.put_container(key)
             end
           end
