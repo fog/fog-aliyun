@@ -6,7 +6,7 @@ module Fog
   module Storage
     class Aliyun
       class File < Fog::Model
-        identity :key, aliases: 'name'
+        identity :key, aliases: ['Key', 'Name', 'name']
         attribute :date, aliases: 'Date'
         attribute :content_length, aliases: 'Content-Length', type: :integer
         attribute :content_type, aliases: 'Content-Type'
@@ -35,32 +35,32 @@ module Fog
 
         def copy(target_directory_key, target_file_key, options = {})
           requires :directory, :key
-          directory_key = collection.check_directory_key(directory.key)
+          source_bucket, directory_key = collection.check_directory_key(directory.key)
           source_object = if directory_key == ''
                             key
                           else
                             directory_key + '/' + key
                           end
-          target_directory_key = collection.check_directory_key(target_directory_key)
+          target_bucket, target_directory_key = collection.check_directory_key(target_directory_key)
           target_object = if target_directory_key == ''
                             target_file_key
                           else
                             target_directory_key + '/' + target_file_key
                           end
-          service.copy_object(nil, source_object, nil, target_object, options)
+          service.copy_object(source_bucket, source_object, target_bucket, target_object, options)
           target_directory = service.directories.new(key: target_directory_key)
           target_directory.files.get(target_file_key)
         end
 
         def destroy
           requires :directory, :key
-          directory_key = collection.check_directory_key(directory.key)
+          bucket_name, directory_key = collection.check_directory_key(directory.key)
           object = if directory_key == ''
                      key
                    else
                      directory_key + '/' + key
                    end
-          service.delete_object(object)
+          service.delete_object(object, bucket: bucket_name)
           true
         end
 
@@ -94,13 +94,13 @@ module Fog
           expires = expires.nil? ? 0 : expires.to_i
 
           requires :directory, :key
-          directory_key = collection.check_directory_key(directory.key)
+          bucket_name, directory_key = collection.check_directory_key(directory.key)
           object = if directory_key == ''
                      key
                    else
                      directory_key + '/' + key
                    end
-          service.get_object_http_url_public(object, expires, options)
+          service.get_object_http_url_public(object, expires, options.merge(bucket: bucket_name))
         end
 
         def public_url
@@ -113,16 +113,16 @@ module Fog
           options['Content-Type'] = content_type if content_type
           options['Content-Disposition'] = content_disposition if content_disposition
           options.merge!(metadata_to_headers)
-          directory_key = collection.check_directory_key(directory.key)
+          bucket_name, directory_key = collection.check_directory_key(directory.key)
           object = if directory_key == ''
                      key
                    else
                      directory_key + '/' + key
                    end
           if body.is_a?(::File)
-            data = service.put_object(object, body, options).data
+            data = service.put_object(object, body, options.merge(bucket: bucket_name)).data
           elsif body.is_a?(String)
-            data = service.put_object_with_body(object, body, options).data
+            data = service.put_object_with_body(object, body, options.merge(bucket: bucket_name)).data
           else
             raise Fog::Storage::Aliyun::Error, " Forbidden: Invalid body type: #{body.class}!"
           end
@@ -172,14 +172,14 @@ module Fog
 
         def metadata_attributes
           if last_modified
-            directory_key = collection.check_directory_key(directory.key)
+            bucket_name, directory_key = collection.check_directory_key(directory.key)
             object = if directory_key == ''
                        key
                      else
                        directory_key + '/' + key
                      end
 
-            data = service.head_object(object).data
+            data = service.head_object(object, bucket: bucket_name).data
             if data[:status] == 200
               headers = data[:headers]
               headers.select! { |k, _v| metadata_attribute?(k) }

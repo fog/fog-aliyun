@@ -4,7 +4,7 @@ module Fog
   module Storage
     class Aliyun
       class Real
-        def get_bucket(bucket)
+        def get_bucket(bucket, options = {})
           location = get_bucket_location(bucket)
           # If there is an error, it will return a Hash with error code, host id and others
           # If can not get a valid location, will return one using region
@@ -15,13 +15,38 @@ module Fog
             location = 'oss-' + @aliyun_region_id
           end
           endpoint = 'http://' + location + '.aliyuncs.com'
+
+          prefix = options['prefix']
+          marker = options['marker']
+          maxKeys = options['max_keys']
+          delimiter = options['delimiter']
+          path = ''
+          if prefix
+            path += '/?prefix=' + prefix
+            path += '&marker=' + marker if marker
+            path += '&max-keys=' + maxKeys.to_s if maxKeys
+            path += '&delimiter=' + delimiter if delimiter
+
+          elsif marker
+            path += '/?marker=' + marker
+            path += '&max-keys=' + maxKeys.to_s if maxKeys
+            path += '&delimiter=' + delimiter if delimiter
+
+          elsif maxKeys
+            path += '/?max-keys=' + maxKeys.to_s
+            path += '&delimiter=' + delimiter if delimiter
+          elsif delimiter
+            path += '/?delimiter=' + delimiter
+          end
+
           resource = bucket + '/'
           ret = request(
             expects: [200, 203, 404],
             method: 'GET',
             bucket: bucket,
             resource: resource,
-            endpoint: endpoint
+            endpoint: endpoint,
+            path: path
           )
           xml = ret.data[:body]
           XmlSimple.xml_in(xml)

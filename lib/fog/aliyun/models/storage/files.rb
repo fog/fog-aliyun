@@ -9,9 +9,13 @@ module Fog
       class Files < Fog::Collection
         attribute :directory
         attribute :limit
-        attribute :marker
+        attribute :prefix,          :aliases => 'Prefix'
         attribute :path
-        attribute :prefix
+        attribute :common_prefixes, :aliases => 'CommonPrefixes'
+        attribute :delimiter,       :aliases => 'Delimiter'
+        attribute :is_truncated,    :aliases => 'IsTruncated'
+        attribute :marker,          :aliases => 'Marker'
+        attribute :max_keys,        :aliases => ['MaxKeys', 'max-keys']
 
         model Fog::Storage::Aliyun::File
 
@@ -21,6 +25,10 @@ module Fog
         #    If so, it will return directly to avoid to create a new redundant folder named with directory_key.
         #    This point will be applied to multi-bucket and make bucket as a directory scenario.
         def check_directory_key(directory_key)
+          bucket_name = nil
+          if directory_key.is_a? Array
+            directory_key = directory_key[0]
+          end
           if directory_key != ''
             # trim the suffix '/'
             directory_key = directory_key.chomp('/')
@@ -29,25 +37,23 @@ module Fog
               directory_key
             else
               data = service.get_bucket(directory_key)
-              puts "[DEBUG] Getting the bucket named with directory name #{directory_key}..."
               if data.class == Hash && data.key?('Code') && !data['Code'].nil? && !data['Code'].empty?
-                puts "[INFO] The directory name #{directory_key} is not a bucket and will create one folder named with it."
                 directory_key
               else
-                puts "[INFO] The directory name #{directory_key} is a bucket and store objects directly."
-                ''
+                bucket_name = directory_key
+                directory_key = ''
               end
             end
-          else
-            ''
           end
+          return bucket_name, directory_key
         end
 
         def all(_options = {})
           requires :directory
-          directory_key = check_directory_key(directory.key)
-          prefix = directory_key + '/' if directory_key != '' && directory_key != '.' && !directory_key.nil?
-          files = service.list_objects(prefix: prefix)['Contents']
+          bucket_name, directory_key = check_directory_key(directory.key)
+          prefix_value = prefix
+          prefix_value = directory_key + '/' + prefix if directory_key != '' && directory_key != '.' && !directory_key.nil?
+          files = service.list_objects(prefix: prefix_value, bucket: bucket_name)['Contents']
           return if files.nil?
           data = []
           i = 0
@@ -88,14 +94,14 @@ module Fog
 
         def get(key)
           requires :directory
-          directory_key = check_directory_key(directory.key)
+          bucket_name, directory_key = check_directory_key(directory.key)
           object = if directory_key == ''
                      key
                    else
                      directory_key + '/' + key
                    end
           begin
-            data = service.get_object(object)
+            data = service.get_object(object, nil, bucket: bucket_name)
           rescue StandardError => error
             case error.response.body
             when %r{<Code>NoSuchKey</Code>},%r{<Code>SymlinkTargetNotExist</Code>}
@@ -115,7 +121,7 @@ module Fog
               _end = i * Excon::CHUNK_SIZE - 1
               range = "#{_start}-#{_end}"
               begin
-                data = service.get_object(object, range)
+                data = service.get_object(object, range, bucket: bucket_name)
                 chunk = data[:body]
               rescue StandardError => error
                 case error.response.body
@@ -157,48 +163,48 @@ module Fog
 
         def get_url(key)
           requires :directory
-          directory_key = check_directory_key(directory.key)
+          bucket_name, directory_key = check_directory_key(directory.key)
           object = if directory_key == ''
                      key
                    else
                      directory_key + '/' + key
                    end
-          service.get_object_http_url_public(object, 3600)
+          service.get_object_http_url_public(object, 3600, bucket: bucket_name)
         end
 
         def get_http_url(key, expires, options = {})
           requires :directory
-          directory_key = check_directory_key(directory.key)
+          bucket_name, directory_key = check_directory_key(directory.key)
           object = if directory_key == ''
                      key
                    else
                      directory_key + '/' + key
                    end
           expires = expires.nil? ? 0 : expires.to_i
-          service.get_object_http_url_public(object, expires, options)
+          service.get_object_http_url_public(object, expires, options.merge(bucket: bucket_name))
         end
 
         def get_https_url(key, expires, options = {})
           requires :directory
-          directory_key = check_directory_key(directory.key)
+          bucket_name, directory_key = check_directory_key(directory.key)
           object = if directory_key == ''
                      key
                    else
                      directory_key + '/' + key
                    end
           expires = expires.nil? ? 0 : expires.to_i
-          service.get_object_https_url_public(object, expires, options)
+          service.get_object_https_url_public(object, expires, options.merge(bucket: bucket_name))
         end
 
         def head(key, _options = {})
           requires :directory
-          directory_key = check_directory_key(directory.key)
+          bucket_name, directory_key = check_directory_key(directory.key)
           object = if directory_key == ''
                      key
                    else
                      directory_key + '/' + key
                    end
-          data = service.head_object(object).data
+          data = service.head_object(object, bucket: bucket_name).data
           return nil if data[:status] == 404
           lastModified = data[:headers]['Last-Modified']
           last_modified = (Time.parse(lastModified).localtime if !lastModified.nil? && lastModified != '')
@@ -225,6 +231,13 @@ module Fog
 
         def new(attributes = {})
           requires :directory
+          # Sometimes, the v will be a Array, like "Prefix"=>[{}], "Marker"=>[xxxx], "MaxKeys"=>["100"], "IsTruncated"=>["false"]
+          # and there needs to parse them
+          for k, v in attributes
+            if !v.nil? && (v.is_a? Array) && (v.size > 0)
+              attributes[k] = v[0]
+            end
+          end
           super({ directory: directory }.merge!(attributes))
         end
       end

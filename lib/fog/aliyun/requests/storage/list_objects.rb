@@ -14,21 +14,21 @@ module Fog
 
           path = ''
           if prefix
-            path += '?prefix=' + prefix
+            path += '/?prefix=' + prefix
             path += '&marker=' + marker if marker
-            path += '&max-keys=' + maxKeys if maxKeys
+            path += '&max-keys=' + maxKeys.to_s if maxKeys
             path += '&delimiter=' + delimiter if delimiter
 
           elsif marker
-            path += '?marker=' + marker
-            path += '&max-keys=' + maxKeys if maxKeys
+            path += '/?marker=' + marker
+            path += '&max-keys=' + maxKeys.to_s if maxKeys
             path += '&delimiter=' + delimiter if delimiter
 
           elsif maxKeys
-            path += '?max-keys=' + maxKeys
+            path += '/?max-keys=' + maxKeys.to_s
             path += '&delimiter=' + delimiter if delimiter
           elsif delimiter
-            path += '?delimiter=' + delimiter
+            path += '/?delimiter=' + delimiter
           end
 
           resource = bucket + '/'
