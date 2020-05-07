@@ -9,7 +9,9 @@ module Fog
           bucket ||= @aliyun_oss_bucket
           prefix = options[:prefix]
           marker = options[:marker]
-          maxKeys = options[:maxKeys]
+          # Set the ListObjects max limitation to 1000
+          maxKeys = options[:maxKeys] || 1000
+          maxKeys = [maxKeys, 1000].min
           delimiter = options[:delimiter]
 
           path = ''

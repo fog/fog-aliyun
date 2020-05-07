@@ -18,7 +18,9 @@ module Fog
 
           prefix = options['prefix']
           marker = options['marker']
-          maxKeys = options['max_keys']
+          # Set the GetBucket max limitation to 1000
+          maxKeys = options['max_keys'] || 1000
+          maxKeys = [maxKeys, 1000].min
           delimiter = options['delimiter']
           path = ''
           if prefix
