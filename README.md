@@ -30,9 +30,9 @@ Since it's a bad practice to have your credentials in source code, you should lo
 
 ```
 default:
-  :aliyun_accesskey_id:     <YOUR_ACCESS_KEY_ID>,
-  :aliyun_accesskey_secret: <YOUR_SECRET_ACCESS_KEY>,
-  :aliyun_region_id:        <YOUR_TARGET_REGION>
+  aliyun_accesskey_id:     "<YOUR_ACCESS_KEY_ID>"
+  aliyun_accesskey_secret: "<YOUR_SECRET_ACCESS_KEY>"
+  aliyun_region_id:        "<YOUR_TARGET_REGION>"
 ```
 
 ### Connecting to OSS
@@ -306,6 +306,55 @@ file.destroy
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+
+## Testing
+
+
+
+To run test suite use the following command:
+
+```
+rake spec
+```
+
+### Code coverage
+
+To run test suite with code coverage:
+
+```
+export COVERAGE=true
+rake spec
+```
+
+The result will be generated in `coverage` folder.
+
+### Integration tests
+
+To run integration tests please prepare a set of AliCloud credentials to be used by integration tests.
+
+Define the credentials and bucket in `~/.fog` file in using following format:
+
+```
+default:
+  aliyun_accesskey_id:     "...access key..." # You can create a set of credentials  
+  aliyun_accesskey_secret: "...secret..." # using Alicloud console portal
+  aliyun_region_id:        "...region name..." # Example: cn-shanghai
+  aliyun_oss_bucket:       "...name of the bucket..." # Example: fog-integration-test-bucket
+```
+
+WARNING: Do NOT use any productive account credentials and buckets for the testing, it may be harmful to your data!
+
+The tests are using [https://github.com/aliyun/aliyun-cli#installation](Aliyun CLI) to setup integration bucket and content for tests, 
+please install it locally before running integration tests.
+
+Aliyun CLI will be configured automatically as part of test execution using the credentials provided for fog connection.
+
+Then run the test suite with `INTEGRATION` environment variable to activate integration tests:
+
+```
+export INTEGRATION=true
+rake spec
+```
 
 ## License
 
