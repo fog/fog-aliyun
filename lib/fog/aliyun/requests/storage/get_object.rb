@@ -16,7 +16,6 @@ module Fog
           endpoint = options[:endpoint]
           if endpoint.nil?
             location = get_bucket_location(bucket)
-            endpoint = 'http://' + location + '.aliyuncs.com'
           end
           resource = bucket + '/' + object
           para = {
@@ -25,7 +24,8 @@ module Fog
             path: object,
             bucket: bucket,
             resource: resource,
-            endpoint: endpoint
+            endpoint: endpoint,
+            location: location
           }
 
           if range

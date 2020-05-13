@@ -13,8 +13,6 @@ module Fog
         def delete_container(container, options = {})
           bucket = options[:bucket]
           bucket ||= @aliyun_oss_bucket
-          location = get_bucket_location(bucket)
-          endpoint = 'http://' + location + '.aliyuncs.com'
           object = container + '/'
           resource = bucket + '/' + object
 
@@ -24,7 +22,7 @@ module Fog
             path: object,
             bucket: bucket,
             resource: resource,
-            endpoint: endpoint
+            location: get_bucket_location(bucket)
           )
         end
       end

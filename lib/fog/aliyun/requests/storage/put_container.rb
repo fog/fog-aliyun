@@ -12,8 +12,6 @@ module Fog
         def put_container(name, options = {})
           bucket = options[:bucket]
           bucket ||= @aliyun_oss_bucket
-          location = get_bucket_location(bucket)
-          endpoint = 'http://' + location + '.aliyuncs.com'
 
           path = name + '/'
           resource = bucket + '/' + name + '/'
@@ -23,7 +21,7 @@ module Fog
             path: path,
             bucket: bucket,
             resource: resource,
-            endpoint: endpoint
+            location: get_bucket_location(bucket)
           )
         end
       end

@@ -45,11 +45,9 @@ module Fog
           XmlSimple.xml_in(xml)
         end
 
-        def list_multipart_uploads(bucket, endpoint, _options = {})
-          if endpoint.nil?
-            location = get_bucket_location(bucket)
-            endpoint = 'http://' + location + '.aliyuncs.com'
-          end
+        def list_multipart_uploads(bucket, location, _options = {})
+          location ||= get_bucket_location(bucket)
+
           path = '?uploads'
           resource = bucket + '/' + path
 
@@ -59,16 +57,14 @@ module Fog
             path: path,
             bucket: bucket,
             resource: resource,
-            endpoint: endpoint
+            location: location
           )
           XmlSimple.xml_in(ret.data[:body])['Upload']
         end
 
-        def list_parts(bucket, object, endpoint, uploadid, _options = {})
-          if endpoint.nil?
-            location = get_bucket_location(bucket)
-            endpoint = 'http://' + location + '.aliyuncs.com'
-          end
+        def list_parts(bucket, object, location, uploadid, _options = {})
+          location ||= get_bucket_location(bucket)
+
           path = object + '?uploadId=' + uploadid
           resource = bucket + '/' + path
 
@@ -78,7 +74,7 @@ module Fog
             path: path,
             bucket: bucket,
             resource: resource,
-            endpoint: endpoint
+            location: location
           )
           XmlSimple.xml_in(ret.data[:body])['Part']
         end

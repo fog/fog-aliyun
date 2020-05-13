@@ -5,17 +5,6 @@ module Fog
     class Aliyun
       class Real
         def get_bucket(bucket, options = {})
-          location = get_bucket_location(bucket)
-          # If there is an error, it will return a Hash with error code, host id and others
-          # If can not get a valid location, will return one using region
-          if location.class == Hash && location.key?('HostId')
-            value = location['HostId']
-            location = value[0].split('.')[1]
-          else
-            location = 'oss-' + @aliyun_region_id
-          end
-          endpoint = 'http://' + location + '.aliyuncs.com'
-
           prefix = options['prefix']
           marker = options['marker']
           # Set the GetBucket max limitation to 1000
@@ -47,7 +36,7 @@ module Fog
             method: 'GET',
             bucket: bucket,
             resource: resource,
-            endpoint: endpoint,
+            location: get_bucket_location(bucket),
             path: path
           )
           xml = ret.data[:body]
@@ -64,12 +53,17 @@ module Fog
             bucket: bucket,
             resource: resource
           )
-          XmlSimple.xml_in(ret.data[:body])
+          # If there is an error, it will return a Hash with error code, host id and others
+          # If can not get a valid location, will return one using region
+          location = XmlSimple.xml_in(ret.data[:body])
+          if location.class == Hash && location.key?('HostId')
+            value = location['HostId']
+            location = value[0].split('.')[1]
+          end
+          location ||= 'oss-' + @aliyun_region_id
         end
 
         def get_bucket_acl(bucket)
-          location = get_bucket_location(bucket)
-          endpoint = 'http://' + location + '.aliyuncs.com'
           attribute = '?acl'
           resource = bucket + '/' + attribute
           ret = request(
@@ -78,14 +72,12 @@ module Fog
             path: attribute,
             bucket: bucket,
             resource: resource,
-            endpoint: endpoint
+            location: get_bucket_location(bucket)
           )
           XmlSimple.xml_in(ret.data[:body])['AccessControlList'][0]['Grant'][0]
         end
 
         def get_bucket_CORSRules(bucket)
-          location = get_bucket_location(bucket)
-          endpoint = 'http://' + location + '.aliyuncs.com'
           attribute = '?cors'
           resource = bucket + '/' + attribute
           ret = request(
@@ -94,14 +86,12 @@ module Fog
             path: attribute,
             bucket: bucket,
             resource: resource,
-            endpoint: endpoint
+            location: get_bucket_location(bucket)
           )
           XmlSimple.xml_in(ret.data[:body])['CORSRule'][0] if ret.data[:status] != 404
         end
 
         def get_bucket_lifecycle(bucket)
-          location = get_bucket_location(bucket)
-          endpoint = 'http://' + location + '.aliyuncs.com'
           attribute = '?lifecycle'
           resource = bucket + '/' + attribute
           ret = request(
@@ -110,14 +100,12 @@ module Fog
             path: attribute,
             bucket: bucket,
             resource: resource,
-            endpoint: endpoint
+            location: get_bucket_location(bucket)
           )
           XmlSimple.xml_in(ret.data[:body])['Rule'][0] if ret.data[:status] != 404
         end
 
         def get_bucket_logging(bucket)
-          location = get_bucket_location(bucket)
-          endpoint = 'http://' + location + '.aliyuncs.com'
           attribute = '?logging'
           resource = bucket + '/' + attribute
           ret = request(
@@ -126,14 +114,12 @@ module Fog
             path: attribute,
             bucket: bucket,
             resource: resource,
-            endpoint: endpoint
+            location: get_bucket_location(bucket)
           )
           XmlSimple.xml_in(ret.data[:body])['LoggingEnabled'][0]['TargetPrefix']
         end
 
         def get_bucket_referer(bucket)
-          location = get_bucket_location(bucket)
-          endpoint = 'http://' + location + '.aliyuncs.com'
           attribute = '?referer'
           resource = bucket + '/' + attribute
           ret = request(
@@ -142,14 +128,12 @@ module Fog
             path: attribute,
             bucket: bucket,
             resource: resource,
-            endpoint: endpoint
+            location: get_bucket_location(bucket)
           )
           XmlSimple.xml_in(ret.data[:body])
         end
 
         def get_bucket_website(bucket)
-          location = get_bucket_location(bucket)
-          endpoint = 'http://' + location + '.aliyuncs.com'
           attribute = '?website'
           resource = bucket + '/' + attribute
           ret = request(
@@ -158,7 +142,7 @@ module Fog
             path: attribute,
             bucket: bucket,
             resource: resource,
-            endpoint: endpoint
+            location: get_bucket_location(bucket)
           )
           XmlSimple.xml_in(ret.data[:body]) if ret.data[:status] != 404
         end

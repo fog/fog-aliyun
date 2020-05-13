@@ -7,7 +7,7 @@ module Fog
     class Aliyun < Fog::Service
       DEFAULT_REGION = 'cn-hangzhou'
 
-      DEFAULT_SCHEME = 'http'
+      DEFAULT_SCHEME = 'https'
       DEFAULT_SCHEME_PORT = {
         'http' => 80,
         'https' => 443
@@ -118,18 +118,21 @@ module Fog
           date = time.strftime('%a, %d %b %Y %H:%M:%S GMT')
 
           endpoint = params[:endpoint]
+          location = params[:location]
           if endpoint
             uri = URI.parse(endpoint)
             host = uri.host
             path = uri.path
             port = uri.port
             scheme = uri.scheme
-          else
-            host = @host
-            path = @path
-            port = @port
-            scheme = @scheme
+          elsif location
+            host = location + '.aliyuncs.com'
           end
+
+          host ||= @host
+          path ||= @path
+          port ||= @port
+          scheme ||= @scheme
 
           bucket = params[:bucket]
           tmpHost = if bucket
