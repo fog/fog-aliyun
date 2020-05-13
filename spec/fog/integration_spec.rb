@@ -28,6 +28,18 @@ describe 'Integration tests', :integration => true do
     expect(@conn.get_container('').length).to eq(1)
   end
 
+  it 'Should delete 2 directories in bucket' do
+    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir1 > /dev/null")
+    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir2 > /dev/null")
+    expect(@conn.directories.all.length).to eq(2)
+    file = @conn.directories.get(@conn.aliyun_oss_bucket, prefix:'test_dir1').files[0]
+    file.destroy
+    expect(@conn.directories.all.length).to eq(1)
+    file = @conn.directories.get(@conn.aliyun_oss_bucket, prefix:'test_dir').files[0]
+    file.destroy
+    expect(@conn.directories.all).to eq(nil)
+  end
+
   it 'Should find test file in the root of bucket' do
     file = Tempfile.new('fog-upload-file')
     file.write("Hello World!")
@@ -58,6 +70,26 @@ describe 'Integration tests', :integration => true do
       expect(files[1].key).to eq("test_file2")
       expect(files.get("test_file1").key).to eq("test_file1")
       expect(files.get("test_file2").key).to eq("test_file2")
+    ensure
+      file.close
+      file.unlink
+    end
+  end
+
+  it 'Should delete 2 tests file in the root of bucket' do
+    file = Tempfile.new('fog-upload-file')
+    file.write("Hello World!")
+    begin
+      system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/test_file1 > /dev/null")
+      system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/test_file2 > /dev/null")
+      files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+      expect(files.length).to eq(2)
+      expect(files.all.length).to eq(2)
+      expect(files.empty?).to eq(false)
+      files[0].destroy
+      expect(@conn.directories.get(@conn.aliyun_oss_bucket).files.length).to eq(1)
+      files[1].destroy
+      expect(@conn.directories.get(@conn.aliyun_oss_bucket).files.length).to eq(0)
     ensure
       file.close
       file.unlink
