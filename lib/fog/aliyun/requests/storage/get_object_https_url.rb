@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Fog
-  module Storage
-    class Aliyun
+  module Aliyun
+    class Storage
       class Real
         # Get an expiring object https url from Cloud Files
         #

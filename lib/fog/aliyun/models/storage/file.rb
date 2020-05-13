@@ -3,8 +3,8 @@
 require 'fog/core/model'
 
 module Fog
-  module Storage
-    class Aliyun
+  module Aliyun
+    class Storage
       class File < Fog::Model
         identity :key, aliases: ['Key', 'Name', 'name']
         attribute :date, aliases: 'Date'
@@ -124,7 +124,7 @@ module Fog
           elsif body.is_a?(String)
             data = service.put_object_with_body(object, body, options.merge(bucket: bucket_name)).data
           else
-            raise Fog::Storage::Aliyun::Error, " Forbidden: Invalid body type: #{body.class}!"
+            raise Fog::Aliyun::Storage::Error, " Forbidden: Invalid body type: #{body.class}!"
           end
           update_attributes_from(data)
           refresh_metadata

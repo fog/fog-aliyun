@@ -3,8 +3,8 @@
 require 'xmlsimple'
 
 module Fog
-  module Storage
-    class Aliyun < Fog::Service
+  module Aliyun
+    class Storage < Fog::Service
       DEFAULT_REGION = 'cn-hangzhou'
 
       DEFAULT_SCHEME = 'https'
@@ -160,7 +160,7 @@ module Fog
           rescue Excon::Errors::HTTPStatusError => error
             raise case error
                   when Excon::Errors::NotFound
-                    Fog::Storage::Aliyun::NotFound.slurp(error)
+                    Fog::Aliyun::Storage::NotFound.slurp(error)
                   else
                     error
                   end

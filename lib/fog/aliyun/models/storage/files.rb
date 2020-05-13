@@ -4,8 +4,8 @@ require 'fog/core/collection'
 require 'fog/aliyun/models/storage/file'
 
 module Fog
-  module Storage
-    class Aliyun
+  module Aliyun
+    class Storage
       class Files < Fog::Collection
         attribute :directory
         attribute :limit
@@ -17,7 +17,7 @@ module Fog
         attribute :marker,          :aliases => 'Marker'
         attribute :max_keys,        :aliases => ['MaxKeys', 'max-keys']
 
-        model Fog::Storage::Aliyun::File
+        model Fog::Aliyun::Storage::File
 
         # check_directory_key have two functions:
         # 1. trim the directory_key suffix '/'
@@ -225,7 +225,7 @@ module Fog
             object_type: data[:headers]['x-oss-object-type']
           }
           new(file_data)
-        rescue Fog::Storage::Aliyun::NotFound
+        rescue Fog::Aliyun::Storage::NotFound
           nil
         end
 
