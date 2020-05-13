@@ -42,13 +42,18 @@ module Fog
             path += '?delimiter=' + delimiter
           end
 
-          location = get_bucket_location(bucket)
+          endpoint = options[:endpoint]
+          if endpoint.nil?
+            location = get_bucket_location(bucket)
+            endpoint = 'http://' + location + '.aliyuncs.com'
+          end
           resource = bucket + '/'
           ret = request(
             expects: [200, 203, 400],
             method: 'GET',
             path: path,
             resource: resource,
+            endpoint: endpoint,
             bucket: bucket
           )
           xml = ret.data[:body]

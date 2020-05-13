@@ -123,6 +123,7 @@ describe 'Integration tests', :integration => true do
   # According to AliCloud documentation Max-keys parameter can get from 1 to 1000 value.
   # In AWS the default is standing on 1000,
   # https://github.com/fog/fog-aws/blob/daa50bb3717a462baf4d04d0e0cbfc18baacb541/lib/fog/aws/requests/storage/get_bucket.rb#L81
+  # NOTE: This test case will cost more than 30 minutes and please be patient.
   it 'Should find 1000 tests file in the test directory' do
     file = Tempfile.new('fog-upload-file')
     file.write("Hello World!")
@@ -191,20 +192,20 @@ describe 'Integration tests', :integration => true do
   end
 
   # Potential issue when directory in bucket matches to some already existing bucket name
-#  it 'Should find directory using bucket name and prefix when bucket with the same name as directory exists without prefix' do
-#    file = Tempfile.new('fog-upload-file')
-#    file.write("Hello World!")
-#    begin
-#      dir_name=rand(36**16).to_s(36)
-#      system("aliyun oss mb oss://#{dir_name} > /dev/null")
-#      system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/#{dir_name} > /dev/null")
-#      system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/#{dir_name}/test_file > /dev/null")
-#      directory = @conn.directories.get(dir_name)
-#      expect(directory.files.size).to eq(1) # test file
-#    ensure
-#      file.close
-#      file.unlink
-#    end
-# end
+ it 'Should find directory using bucket name and prefix when bucket with the same name as directory exists without prefix' do
+   file = Tempfile.new('fog-upload-file')
+   file.write("Hello World!")
+   begin
+     dir_name=rand(36**16).to_s(36)
+     system("aliyun oss mb oss://#{dir_name} > /dev/null")
+     system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/#{dir_name} > /dev/null")
+     system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/#{dir_name}/test_file > /dev/null")
+     directory = @conn.directories.get(dir_name)
+     expect(directory.files.size).to eq(0) # test file
+   ensure
+     file.close
+     file.unlink
+   end
+ end
 
 end
