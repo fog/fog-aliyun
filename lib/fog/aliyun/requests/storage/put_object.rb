@@ -12,9 +12,7 @@ module Fog
         def put_object(object, file = nil, options = {})
           bucket = options[:bucket]
           bucket ||= @aliyun_oss_bucket
-          location = get_bucket_location(bucket)
-          endpoint = 'http://' + location + '.aliyuncs.com'
-          return put_folder(bucket, object, endpoint) if file.nil?
+          return put_folder(bucket, object) if file.nil?
 
           # put multiparts if object's size is over 100m
           return put_multipart_object(bucket, object, file) if file.size > 104_857_600
@@ -29,15 +27,13 @@ module Fog
             bucket: bucket,
             resource: resource,
             body: body,
-            endpoint: endpoint
+            location: get_bucket_location(bucket)
           )
         end
 
         def put_object_with_body(object, body, options = {})
           bucket = options[:bucket]
           bucket ||= @aliyun_oss_bucket
-          location = get_bucket_location(bucket)
-          endpoint = 'http://' + location + '.aliyuncs.com'
 
           resource = bucket + '/' + object
           request(
@@ -47,15 +43,11 @@ module Fog
             bucket: bucket,
             resource: resource,
             body: body,
-            endpoint: endpoint
+            location: get_bucket_location(bucket)
           )
         end
 
-        def put_folder(bucket, folder, endpoint)
-          if endpoint.nil?
-            location = get_bucket_location(bucket)
-            endpoint = 'http://' + location + '.aliyuncs.com'
-          end
+        def put_folder(bucket, folder)
           path = folder + '/'
           resource = bucket + '/' + folder + '/'
           request(
@@ -64,27 +56,26 @@ module Fog
             path: path,
             bucket: bucket,
             resource: resource,
-            endpoint: endpoint
+            location: get_bucket_location(bucket)
           )
         end
 
         def put_multipart_object(bucket, object, file)
           location = get_bucket_location(bucket)
-          endpoint = 'http://' + location + '.aliyuncs.com'
 
           # find the right uploadid
-          uploads = list_multipart_uploads(bucket, endpoint)
+          uploads = list_multipart_uploads(bucket, location)
           upload = (uploads&.find { |tmpupload| tmpupload['Key'][0] == object })
 
           uploadedSize = 0
           start_partNumber = 1
           if !upload.nil?
             uploadId = upload['UploadId'][0]
-            parts = list_parts(bucket, object, endpoint, uploadId)
+            parts = list_parts(bucket, object, location, uploadId)
             if !parts.nil? && !parts.empty?
               if parts[-1]['Size'][0].to_i != 5_242_880
                 # the part is the last one, if its size is over 5m, then finish this upload
-                complete_multipart_upload(bucket, object, endpoint, uploadId)
+                complete_multipart_upload(bucket, object, location, uploadId)
                 return
               end
               uploadedSize = (parts[0]['Size'][0].to_i * (parts.size - 1)) + parts[-1]['Size'][0].to_i
@@ -92,11 +83,11 @@ module Fog
             end
           else
             # create upload ID
-            uploadId = initiate_multipart_upload(bucket, object, endpoint)
+            uploadId = initiate_multipart_upload(bucket, object, location)
           end
 
           if file.size <= uploadedSize
-            complete_multipart_upload(bucket, object, endpoint, uploadId)
+            complete_multipart_upload(bucket, object, location, uploadId)
             return
           end
 
@@ -105,17 +96,14 @@ module Fog
 
           for i in start_partNumber..end_partNumber
             body = file.read(5_242_880)
-            upload_part(bucket, object, endpoint, i.to_s, uploadId, body)
+            upload_part(bucket, object, location, i.to_s, uploadId, body)
           end
 
-          complete_multipart_upload(bucket, object, endpoint, uploadId)
+          complete_multipart_upload(bucket, object, location, uploadId)
         end
 
-        def initiate_multipart_upload(bucket, object, endpoint)
-          if endpoint.nil?
-            location = get_bucket_location(bucket)
-            endpoint = 'http://' + location + '.aliyuncs.com'
-          end
+        def initiate_multipart_upload(bucket, object, location)
+          location ||= get_bucket_location(bucket)
           path = object + '?uploads'
           resource = bucket + '/' + path
           ret = request(
@@ -124,16 +112,13 @@ module Fog
             path: path,
             bucket: bucket,
             resource: resource,
-            endpoint: endpoint
+            location: location
           )
           XmlSimple.xml_in(ret.data[:body])['UploadId'][0]
         end
 
-        def upload_part(bucket, object, endpoint, partNumber, uploadId, body)
-          if endpoint.nil?
-            location = get_bucket_location(bucket)
-            endpoint = 'http://' + location + '.aliyuncs.com'
-          end
+        def upload_part(bucket, object, location, partNumber, uploadId, body)
+          location ||= get_bucket_location(bucket)
           path = object + '?partNumber=' + partNumber + '&uploadId=' + uploadId
           resource = bucket + '/' + path
           request(
@@ -143,16 +128,13 @@ module Fog
             bucket: bucket,
             resource: resource,
             body: body,
-            endpoint: endpoint
+            location: location
           )
         end
 
-        def complete_multipart_upload(bucket, object, endpoint, uploadId)
-          if endpoint.nil?
-            location = get_bucket_location(bucket)
-            endpoint = 'http://' + location + '.aliyuncs.com'
-          end
-          parts = list_parts(bucket, object, endpoint, uploadId, options = {})
+        def complete_multipart_upload(bucket, object, location, uploadId)
+          location ||= get_bucket_location(bucket)
+          parts = list_parts(bucket, object, location, uploadId, options = {})
           request_part = []
           return if parts.empty?
           for i in 0..(parts.size - 1)
@@ -169,7 +151,7 @@ module Fog
             path: path,
             bucket: bucket,
             resource: resource,
-            endpoint: endpoint,
+            location: location,
             body: body
           )
         end

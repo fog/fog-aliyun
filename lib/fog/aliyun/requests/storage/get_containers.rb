@@ -45,7 +45,6 @@ module Fog
           endpoint = options[:endpoint]
           if endpoint.nil?
             location = get_bucket_location(bucket)
-            endpoint = 'http://' + location + '.aliyuncs.com'
           end
           resource = bucket + '/'
           ret = request(
@@ -54,6 +53,7 @@ module Fog
             path: path,
             resource: resource,
             endpoint: endpoint,
+            location: location,
             bucket: bucket
           )
           xml = ret.data[:body]
