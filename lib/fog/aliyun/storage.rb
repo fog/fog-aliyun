@@ -3,8 +3,8 @@
 require 'xmlsimple'
 
 module Fog
-  module Storage
-    class Aliyun < Fog::Service
+  module Aliyun
+    class Storage < Fog::Service
       DEFAULT_REGION = 'cn-hangzhou'
 
       DEFAULT_SCHEME = 'https'
@@ -146,8 +146,10 @@ module Fog
 
           begin
             headers = ''
-            params[:headers]&.each do |k, v|
+            if params[:headers]
+              params[:headers].each do |k, v|
               headers += "#{k}:#{v}\n" if k != 'Range'
+              end
             end
             signature = sign(method, date, contentType, params[:resource], headers)
             response = @connection.request(params.merge(headers: {
@@ -160,7 +162,7 @@ module Fog
           rescue Excon::Errors::HTTPStatusError => error
             raise case error
                   when Excon::Errors::NotFound
-                    Fog::Storage::Aliyun::NotFound.slurp(error)
+                    Fog::Aliyun::Storage::NotFound.slurp(error)
                   else
                     error
                   end

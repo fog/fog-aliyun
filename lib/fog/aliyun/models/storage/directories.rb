@@ -4,10 +4,10 @@ require 'fog/core/collection'
 require 'fog/aliyun/models/storage/directory'
 
 module Fog
-  module Storage
-    class Aliyun
+  module Aliyun
+    class Storage
       class Directories < Fog::Collection
-        model Fog::Storage::Aliyun::Directory
+        model Fog::Aliyun::Storage::Directory
 
         def all
           containers = service.get_containers
@@ -72,7 +72,7 @@ module Fog
           else
             new(key: '')
           end
-        rescue Fog::Storage::Aliyun::NotFound
+        rescue Fog::Aliyun::Storage::NotFound
           nil
         end
       end
