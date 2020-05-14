@@ -4,8 +4,8 @@ require 'fog/core/model'
 require 'fog/aliyun/models/storage/files'
 
 module Fog
-  module Storage
-    class Aliyun
+  module Aliyun
+    class Storage
       class Directory < Fog::Model
         identity :key, :aliases => ['Key', 'Name', 'name']
 
@@ -20,14 +20,14 @@ module Fog
             service.delete_container(key)
             true
           else
-            raise Fog::Storage::Aliyun::Error, ' Forbidden: Direction not empty!'
+            raise Fog::Aliyun::Storage::Error, ' Forbidden: Direction not empty!'
             false
           end
         end
 
         def files
           @files ||= begin
-            Fog::Storage::Aliyun::Files.new(
+            Fog::Aliyun::Storage::Files.new(
               directory: self,
               service: service
             )

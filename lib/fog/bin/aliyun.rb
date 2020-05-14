@@ -5,7 +5,7 @@ class Aliyun < Fog::Bin
     def class_for(key)
       case key
       when :storage
-        Fog::Storage::Aliyun
+        Fog::Aliyun::Storage
       when :compute
         Fog::Compute::Aliyun
       else

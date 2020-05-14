@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Fog
-  module Storage
-    class Aliyun
+  module Aliyun
+    class Storage
       class Real
         def get_bucket(bucket, options = {})
           prefix = options['prefix']
