@@ -48,12 +48,20 @@ module Fog
           return bucket_name, directory_key
         end
 
-        def all(_options = {})
+        def all(options = {})
           requires :directory
           bucket_name, directory_key = check_directory_key(directory.key)
-          prefix_value = prefix
+          remap_attributes(options, {
+              :delimiter  => 'delimiter',
+              :marker     => 'marker',
+              :max_keys   => 'max-keys',
+              :prefix     => 'prefix'
+          })
+          prefix_value = options['prefix']
           prefix_value = directory_key + '/' + prefix if directory_key != '' && directory_key != '.' && !directory_key.nil?
-          files = service.list_objects(prefix: prefix_value, bucket: bucket_name)['Contents']
+          options['prefix'] = prefix_value
+          options['bucket'] = bucket_name
+          files = service.list_objects(options)['Contents']
           return if files.nil?
           data = []
           i = 0

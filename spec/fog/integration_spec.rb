@@ -271,8 +271,60 @@ describe 'Integration tests', :integration => true do
       system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/test_dir1/test_sub_dir/test_file2 > /dev/null")
       bucket = @conn.directories.get(@conn.aliyun_oss_bucket, prefix: 'test_dir1')
       expect(bucket.files.size).to eq(3)
+      bucket = @conn.directories.get(@conn.aliyun_oss_bucket, prefix: 'test_dir1/')
+      expect(bucket.files.size).to eq(3)
       bucket = @conn.directories.get(@conn.aliyun_oss_bucket, prefix: 'test_dir1', delimiter: '/')
       expect(bucket.files.size).to eq(2)
+      bucket = @conn.directories.get(@conn.aliyun_oss_bucket, prefix: 'test_dir1/', delimiter: '/')
+      expect(bucket.files.size).to eq(1)
+    ensure
+      file.close
+      file.unlink
+    end
+  end
+
+  it 'Should find files using prefix, marker, max_keys and delimiter' do
+    file = Tempfile.new('fog-upload-file')
+    file.write("Hello World!")
+    begin
+      system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/a_test_file1 > /dev/null")
+      system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/a_test_file2 > /dev/null")
+      system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/b_test_file1 > /dev/null")
+      system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/b_test_file2 > /dev/null")
+      system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/c_test_file1 > /dev/null")
+      system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/c_test_file2 > /dev/null")
+      files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+      # filtered by prefix
+      expect(files.length).to eq(6)
+      expect(files.all(prefix:'b_test').length).to eq(2)
+      expect(files.empty?).to eq(false)
+      expect(files[0].key).to eq("b_test_file1")
+      expect(files[1].key).to eq("b_test_file2")
+
+      # filtered by marker
+      expect(files.all(marker:'b_test').length).to eq(4)
+      expect(files.empty?).to eq(false)
+      expect(files[0].key).to eq("b_test_file1")
+      expect(files[2].key).to eq("c_test_file1")
+
+      # filtered by max_keys
+      expect(files.all(max_keys:2).length).to eq(2)
+      expect(files.empty?).to eq(false)
+      expect(files[0].key).to eq("a_test_file1")
+      expect(files[1].key).to eq("a_test_file2")
+
+      # filtered by delimiter
+      system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir1/test_sub_dir > /dev/null")
+      system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir2/test_sub_dir > /dev/null")
+      system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/test_dir1/test_file1 > /dev/null")
+      system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/test_dir1/test_sub_dir/test_file2 > /dev/null")
+      files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+      expect(files.all(prefix:'test_dir1').length).to eq(2)
+      expect(files.all(prefix:'test_dir1/').length).to eq(2)
+      expect(files.all(prefix:'test_dir1', delimiter: '/')).to eq(nil)
+      expect(files.all(prefix:'test_dir1/', delimiter: '/').length).to eq(1)
+      expect(files.empty?).to eq(false)
+      expect(files[0].key).to eq("test_dir1/test_file1")
     ensure
       file.close
       file.unlink

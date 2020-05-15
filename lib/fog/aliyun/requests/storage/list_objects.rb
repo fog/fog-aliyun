@@ -5,14 +5,14 @@ module Fog
     class Aliyun
       class Real
         def list_objects(options = {})
-          bucket = options[:bucket]
+          bucket = options['bucket']
           bucket ||= @aliyun_oss_bucket
-          prefix = options[:prefix]
-          marker = options[:marker]
+          prefix = options['prefix']
+          marker = options['marker']
           # Set the ListObjects max limitation to 1000
-          maxKeys = options[:maxKeys] || 1000
+          maxKeys = options['max-keys'] || 1000
           maxKeys = [maxKeys, 1000].min
-          delimiter = options[:delimiter]
+          delimiter = options['delimiter']
 
           path = ''
           if prefix
