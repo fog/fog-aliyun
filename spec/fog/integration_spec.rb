@@ -237,6 +237,48 @@ describe 'Integration tests', :integration => true do
     end
   end
 
+  # all of oss objects are ordered alphabetically
+  # setting marker will return all of directories after marker
+  it 'Should find directory using bucket name and marker' do
+    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/a_test_dir1 > /dev/null")
+    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/a_test_dir2 > /dev/null")
+    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/b_test_dir1 > /dev/null")
+    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/b_test_dir2 > /dev/null")
+    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/c_test_dir1 > /dev/null")
+    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/c_test_dir2 > /dev/null")
+    bucket = @conn.directories.get(@conn.aliyun_oss_bucket, marker: "b_test")
+    expect(bucket.files.size).to eq(4)
+  end
+
+  it 'Should find directory using bucket name and Max-keys' do
+    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/a_test_dir1 > /dev/null")
+    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/a_test_dir2 > /dev/null")
+    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/b_test_dir1 > /dev/null")
+    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/b_test_dir2 > /dev/null")
+    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/c_test_dir1 > /dev/null")
+    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/c_test_dir2 > /dev/null")
+    bucket = @conn.directories.get(@conn.aliyun_oss_bucket, max_keys: 2)
+    expect(bucket.files.size).to eq(2)
+  end
+
+  it 'Should find directory using bucket name and Delimiter' do
+    file = Tempfile.new('fog-upload-file')
+    file.write("Hello World!")
+    begin
+      system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir1/test_sub_dir > /dev/null")
+      system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir2/test_sub_dir > /dev/null")
+      system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/test_dir1/test_file1 > /dev/null")
+      system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/test_dir1/test_sub_dir/test_file2 > /dev/null")
+      bucket = @conn.directories.get(@conn.aliyun_oss_bucket, prefix: 'test_dir1')
+      expect(bucket.files.size).to eq(3)
+      bucket = @conn.directories.get(@conn.aliyun_oss_bucket, prefix: 'test_dir1', delimiter: '/')
+      expect(bucket.files.size).to eq(2)
+    ensure
+      file.close
+      file.unlink
+    end
+  end
+
   it 'Should create a new directory' do
     bucket = @conn.directories.get(@conn.aliyun_oss_bucket)
     bucket.files.create :key => 'test_dir/'
