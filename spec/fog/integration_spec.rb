@@ -107,6 +107,21 @@ describe 'Integration tests', :integration => true do
     expect(@conn.directories.get(@conn.aliyun_oss_bucket).files.length).to eq(0)
   end
 
+  it 'Should upload(write) a large file(more than 100M) in the root of bucket' do
+    if !File.exist?("morethan100m")
+      system("wget https://bosh.oss-cn-hangzhou.aliyuncs.com/fog/morethan100m -O morethan100m --show-progress")
+    end
+    directory = @conn.directories.get(@conn.aliyun_oss_bucket)
+    directory.files.create :key => 'morethan100m', :body => File.open('morethan100m')
+    files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+    expect(files.length).to eq(1)
+    expect(files.all.length).to eq(1)
+    expect(files.empty?).to eq(false)
+    expect(files.head(files[0].key).content_length).to eq(140_356_457)
+    files[0].destroy
+    expect(@conn.directories.get(@conn.aliyun_oss_bucket).files.length).to eq(0)
+  end
+
   it 'Should find test directory in the root of bucket' do
     system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir > /dev/null")
     bucket = @conn.directories.get(@conn.aliyun_oss_bucket)
