@@ -360,4 +360,26 @@ describe 'Integration tests', :integration => true do
    end
  end
 
+  # Test region is selected according to provider configuration
+  # check default region is used if no region provided explicitly
+  # There is need to set a env variable to support setting oss default bucket
+  if ENV['ALIYUN_OSS_DEFAULT_BUCKET']
+    default_bucket = ENV['ALIYUN_OSS_DEFAULT_BUCKET']
+    it 'Should create a new directory' do
+      bucket = @conn.directories.get(@conn.aliyun_oss_bucket)
+      bucket.files.create :key => 'test_dir/'
+      expect(bucket.files.get("test_dir/").key).to eq("test_dir/")
+      expect(bucket.key[0]).to eq(@conn.aliyun_oss_bucket)
+      @conn = Fog::Storage.new({
+                                   :aliyun_accesskey_id => @conn.aliyun_accesskey_id,
+                                   :aliyun_accesskey_secret => @conn.aliyun_accesskey_secret,
+                                   :provider => "Aliyun",
+                                   :aliyun_oss_bucket => default_bucket
+                               })
+      bucket = @conn.directories.get(@conn.aliyun_oss_bucket)
+      bucket.files.create :key => 'test_dir/'
+      expect(bucket.files.get("test_dir/").key).to eq("test_dir/")
+      expect(bucket.key[0]).to eq(default_bucket)
+    end
+  end
 end
