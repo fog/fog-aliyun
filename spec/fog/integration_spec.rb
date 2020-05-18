@@ -122,6 +122,54 @@ describe 'Integration tests', :integration => true do
     expect(@conn.directories.get(@conn.aliyun_oss_bucket).files.length).to eq(0)
   end
 
+  it 'Should create a file and update in-place when putting string content to an object.' do
+    # Ensure there is no any file
+    files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+    expect(files.length).to eq(0)
+
+    # Create a new file
+    files.create :key => 'test_file_save', :body => "Hello World!"
+    files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+    expect(files.length).to eq(1)
+    expect(files[0].key).to eq("test_file_save")
+    expect(files.get("test_file_save").content_length).to eq(12)
+
+    # Update the file in-place
+    files.create :key => 'test_file_save', :body => 'Hello World!Hello World!'
+    files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+    expect(files.length).to eq(1)
+    expect(files[0].key).to eq("test_file_save")
+    expect(files.get("test_file_save").content_length).to eq(24)
+
+    # Delete the file in-place
+    files[0].destroy
+    expect(@conn.directories.get(@conn.aliyun_oss_bucket).files.length).to eq(0)
+  end
+
+  it 'Should create a file and update in-place when putting a file to an object.' do
+    # Ensure there is no any file
+    files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+    expect(files.length).to eq(0)
+
+    # Create a new file
+    files.create :key => 'test_file_save', :body => File.open('./spec/fog/lorem.txt')
+    files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+    expect(files.length).to eq(1)
+    expect(files[0].key).to eq("test_file_save")
+    expect(files.get("test_file_save").content_length).to eq(446)
+
+    # Update the file in-place
+    files.create :key => 'test_file_save', :body => File.open('./spec/fog/lorem2.txt')
+    files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+    expect(files.length).to eq(1)
+    expect(files[0].key).to eq("test_file_save")
+    expect(files.get("test_file_save").content_length).to eq(14)
+
+    # Delete the file in-place
+    files[0].destroy
+    expect(@conn.directories.get(@conn.aliyun_oss_bucket).files.length).to eq(0)
+  end
+
   it 'Should find test directory in the root of bucket' do
     system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir > /dev/null")
     bucket = @conn.directories.get(@conn.aliyun_oss_bucket)
