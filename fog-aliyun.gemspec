@@ -27,6 +27,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec'
   spec.add_development_dependency 'rubocop'
   spec.add_development_dependency 'simplecov'
+  spec.add_development_dependency 'memory_profiler'
 
   spec.add_dependency 'fog-core'
   spec.add_dependency 'fog-json'

@@ -356,6 +356,15 @@ export INTEGRATION=true
 rake spec
 ```
 
+### Performance test
+
+Performance tests are providing memory consumption report for download/upload operations.
+
+```
+export PERFORMANCE=true
+rake spec
+```
+
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
