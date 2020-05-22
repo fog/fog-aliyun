@@ -2,6 +2,7 @@
 
 require 'fog/core/collection'
 require 'fog/aliyun/models/storage/file'
+require 'aliyun/oss'
 
 module Fog
   module Aliyun
@@ -110,63 +111,34 @@ module Fog
                    end
           begin
             data = service.get_object(object, nil, bucket: bucket_name)
-          rescue StandardError => error
-            case error.response.body
-            when %r{<Code>NoSuchKey</Code>},%r{<Code>SymlinkTargetNotExist</Code>}
+            lastModified = data['headers'][:last_modified]
+            last_modified = (Time.parse(lastModified).localtime if !lastModified.nil? && lastModified != '')
+
+            date = data['headers'][:date]
+            date = (Time.parse(date).localtime if !date.nil? && date != '')
+            file_data = {
+                body: data[:body],
+                content_length: data['headers'][:content_length].to_i,
+                key: key,
+                last_modified: last_modified,
+                content_type: data['headers'][:content_type],
+                etag: data['headers'][:etag],
+                date: date,
+                connection: data['headers'][:connection],
+                accept_ranges: data['headers'][:accept_ranges],
+                server: data['headers'][:server],
+                object_type: data['headers'][:x_oss_object_type]
+            }
+
+            new(file_data)
+          rescue AliyunOssSdk::ServerError => error
+            case error.error_code
+            when %r{NoSuchKey},%r{SymlinkTargetNotExist}
               nil
             else
               raise(error)
             end
           end
-
-          contentLen = data[:headers]['Content-Length'].to_i
-
-          if block_given?
-            pagesNum = (contentLen + Excon::CHUNK_SIZE - 1) / Excon::CHUNK_SIZE
-
-            for i in 1..pagesNum
-              _start = (i - 1) * Excon::CHUNK_SIZE
-              _end = i * Excon::CHUNK_SIZE - 1
-              range = "#{_start}-#{_end}"
-              begin
-                data = service.get_object(object, range, bucket: bucket_name)
-                chunk = data[:body]
-              rescue StandardError => error
-                case error.response.body
-                  when %r{<Code>NoSuchKey</Code>},%r{<Code>SymlinkTargetNotExist</Code>}
-                    chunk = ''
-                  else
-                    raise(error)
-                end
-              end
-              yield(chunk)
-              body = nil
-            end
-          else
-            body = data[:body]
-          end
-
-          lastModified = data[:headers]['Last-Modified']
-          last_modified = (Time.parse(lastModified).localtime if !lastModified.nil? && lastModified != '')
-
-          date = data[:headers]['Date']
-          date = (Time.parse(date).localtime if !date.nil? && date != '')
-          file_data = {
-            body: body,
-            content_length: contentLen,
-            key: key,
-            last_modified: last_modified,
-            content_type: data[:headers]['Content-Type'],
-            etag: data[:headers]['ETag'],
-            date: date,
-            connection: data[:headers]['Connection'],
-            accept_ranges: data[:headers]['Accept-Ranges'],
-            server: data[:headers]['Server'],
-            object_type: data[:headers]['x-oss-object-type'],
-            content_disposition: data[:headers]['Content-Disposition']
-          }
-
-          new(file_data)
         end
 
         def get_url(key)

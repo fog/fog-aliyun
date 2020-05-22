@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 require 'xmlsimple'
+require 'aliyun/oss'
+
+# Using Aliyun OSS Ruby SDK
+AliyunOssSdk= Aliyun::OSS
 
 module Fog
   module Aliyun
@@ -97,6 +101,11 @@ module Fog
           @port = uri.port || DEFAULT_SCHEME_PORT[@scheme]
 
           @persistent = options[:persistent] || false
+          @oss_client = AliyunOssSdk::Client.new(
+                                     :endpoint => @aliyun_oss_endpoint,
+                                     :access_key_id => @aliyun_accesskey_id,
+                                     :access_key_secret => @aliyun_accesskey_secret
+          )
         end
 
         def reload
