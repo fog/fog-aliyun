@@ -16,6 +16,13 @@ describe 'Integration tests', :integration => true do
     system("aliyun oss mb oss://#{@conn.aliyun_oss_bucket} > /dev/null")
   end
 
+  it 'test get file that not exists' do
+    directory = @conn.directories.get(@conn.aliyun_oss_bucket)
+    files = directory.files
+    file = files.get('test_dir/test_file_not_exists')
+    expect(file).to eq(nil)
+  end
+
   it 'Should get all directories in bucket' do
     system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir1 > /dev/null")
     system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir2 > /dev/null")
@@ -198,8 +205,8 @@ describe 'Integration tests', :integration => true do
       dir = bucket.files.get("test_dir/").directory
       files = dir.files
       expect(files.empty?).to eq(false)
-      # In AWS the path & key is test_dir/test_file
-      expect(files.get("test_file").key).to eq("test_file")
+      expect(files.length).to eq(2)
+      expect(files.get("test_dir/test_file").key).to eq("test_dir/test_file")
     ensure
       file.close
       file.unlink

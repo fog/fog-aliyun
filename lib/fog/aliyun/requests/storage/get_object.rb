@@ -11,30 +11,17 @@ module Fog
         #
         def get_object(object, range = nil, options = {})
           options = options.reject { |_key, value| value.nil? }
-          bucket = options[:bucket]
-          bucket ||= @aliyun_oss_bucket
-          endpoint = options[:endpoint]
-          if endpoint.nil?
-            location = get_bucket_location(bucket)
+          bucket_name = options[:bucket]
+          bucket_name ||= @aliyun_oss_bucket
+          # Using OSS ruby SDK to fix performance issue
+          bucket = @oss_client.get_bucket(bucket_name)
+          body = Array.new
+          obj = bucket.get_object(object) do |chunk|
+            body << chunk
           end
-          resource = bucket + '/' + object
-          para = {
-            expects: [200, 206, 404],
-            method: 'GET',
-            path: object,
-            bucket: bucket,
-            resource: resource,
-            endpoint: endpoint,
-            location: location
-          }
-
-          if range
-            rangeStr = 'bytes=' + range
-            para[:headers] = { 'Range' => rangeStr }
-          end
-
-          response = request(para)
-          response.data
+          response = {}
+          obj.instance_variables.each {|var| response[var.to_s.delete("@")] = obj.instance_variable_get(var) }
+          response.merge({:body => body.join('')})
         end
       end
     end
