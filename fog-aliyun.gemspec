@@ -34,4 +34,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'fog-json'
   spec.add_dependency 'ipaddress', '~> 0.8'
   spec.add_dependency 'xml-simple', '~> 1.1'
+  spec.add_dependency 'aliyun-sdk'
 end
