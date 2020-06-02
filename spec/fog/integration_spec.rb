@@ -224,9 +224,8 @@ describe 'Integration tests', :integration => true do
       dir = bucket.files.get("test_dir/").directory
       files = dir.files
       expect(files.empty?).to eq(false)
-      # In AWS the path & key is test_dir/test_file1
-      expect(files.get("test_file1").key).to eq("test_file1")
-      expect(files.get("test_file2").key).to eq("test_file2")
+      expect(files.get("test_dir/test_file1").key).to eq("test_dir/test_file1")
+      expect(files.get("test_dir/test_file2").key).to eq("test_dir/test_file2")
     ensure
       file.close
       file.unlink
@@ -253,8 +252,7 @@ describe 'Integration tests', :integration => true do
       expect(files.empty?).to eq(false)
       # In AWS the first item is directory, so result will have directory + 999 files
       (files_count - 1).times do |n|
-        # In AWS the path & key is test_dir/test_file
-        expect(files.get("test_file#{n}").key).to eq("test_file#{n}")
+        expect(files.get("test_dir/test_file#{n}").key).to eq("test_dir/test_file#{n}")
       end
     ensure
       file.close

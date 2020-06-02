@@ -10,32 +10,15 @@ module Fog
         # * object<~String> - Name of object to delete
         #
         def delete_object(object, options = {})
-          bucket = options[:bucket]
-          bucket ||= @aliyun_oss_bucket
-          resource = bucket + '/' + object
-          request(
-            expects: 204,
-            method: 'DELETE',
-            path: object,
-            bucket: bucket,
-            resource: resource,
-            location: get_bucket_location(bucket)
-          )
+          bucket_name = options[:bucket]
+          bucket_name ||= @aliyun_oss_bucket
+          bucket = @oss_client.get_bucket(bucket_name)
+          bucket.delete_object(object)
         end
 
-        def abort_multipart_upload(bucket, object, endpoint, uploadid)
-          path = object + '?uploadId=' + uploadid
-          resource = bucket + '/' + path
-
-          ret = request(
-            expects: 204,
-            method: 'DELETE',
-            path: path,
-            bucket: bucket,
-            resource: resource,
-            endpoint: endpoint,
-            location: get_bucket_location(bucket)
-          )
+        def abort_multipart_upload(bucket_name, object, upload_id)
+          bucket = @oss_client.get_bucket(bucket_name)
+          bucket.abort_upload(upload_id, object)
         end
       end
     end
