@@ -4,6 +4,10 @@ module Fog
   module Aliyun
     class Storage
       class Real
+        def bucket_exists?(bucket_name)
+          @oss_client.bucket_exists?(bucket_name)
+        end
+
         def get_bucket(bucket, options = {})
           prefix = options['prefix']
           marker = options['marker']
