@@ -36,14 +36,11 @@ module Fog
             # The bucket name can not contain '/', so if directory_key, return directory.
             if directory_key.include? '/'
               directory_key
+            elsif service.bucket_exists?(directory_key)
+              bucket_name = directory_key
+              directory_key = ''
             else
-              data = service.get_bucket(directory_key)
-              if data.class == Hash && data.key?('Code') && !data['Code'].nil? && !data['Code'].empty?
-                directory_key
-              else
-                bucket_name = directory_key
-                directory_key = ''
-              end
+              directory_key
             end
           end
           return bucket_name, directory_key
