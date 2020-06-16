@@ -24,6 +24,7 @@ module Fog
         def put_object_with_body(object, body, options = {})
           bucket_name = options[:bucket]
           bucket_name ||= @aliyun_oss_bucket
+          puts "\n put_object.rb/27: put_object_with_body object: #{object}\n"
 
           resource = bucket_name + '/' + object
           request(

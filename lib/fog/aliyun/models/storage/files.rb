@@ -182,6 +182,7 @@ module Fog
                      directory_key + '/' + key
                    end
           data = service.head_object(object, bucket: bucket_name)
+          puts "\n files.rb/185: data #{data}\n"
           return nil if data.nil? || data.headers.size == 0
 
           headers = data.headers

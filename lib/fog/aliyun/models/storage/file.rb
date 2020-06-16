@@ -127,6 +127,7 @@ module Fog
             raise Fog::Aliyun::Storage::Error, " Forbidden: Invalid body type: #{body.class}!"
           end
           data = service.head_object(object)
+          puts "\n file.rb/130: data #{data}\n"
           update_attributes_from(data)
           refresh_metadata
 
@@ -181,6 +182,7 @@ module Fog
                      end
 
             data = service.head_object(object, bucket: bucket_name)
+            puts "\n file.rb/185: data #{data}\n"
             if !data.nil? && data.headers.size > 0
               data.headers.select! { |k, _v| metadata_attribute?(k) }
             end

@@ -16,7 +16,7 @@ module Fog
           bucket_name ||= @aliyun_oss_bucket
           bucket = @oss_client.get_bucket(bucket_name)
           obj = bucket.get_object(object)
-          puts "888888888888888888 obj #{obj}"
+          puts "\n hhh head_object.rb/19: obj #{obj}"
           obj
         end
       end

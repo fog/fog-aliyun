@@ -39,6 +39,7 @@ module Fog
             if key.include? '/'
               dir = key + '/'
               ret = service.head_object(dir, options)
+              puts "\n directories.rb/42: ret #{ret}"
               new(key: key) if ret.nil? || ret.headers.nil?
             else
               remap_attributes(options, {
