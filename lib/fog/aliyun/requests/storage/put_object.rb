@@ -26,24 +26,22 @@ module Fog
             path: object,
             bucket: bucket,
             resource: resource,
-            body: body,
-            location: get_bucket_location(bucket)
+            body: body
           )
         end
 
         def put_object_with_body(object, body, options = {})
-          bucket = options[:bucket]
-          bucket ||= @aliyun_oss_bucket
+          bucket_name = options[:bucket]
+          bucket_name ||= @aliyun_oss_bucket
 
-          resource = bucket + '/' + object
+          resource = bucket_name + '/' + object
           request(
             expects: [200, 203],
             method: 'PUT',
             path: object,
-            bucket: bucket,
+            bucket: bucket_name,
             resource: resource,
-            body: body,
-            location: get_bucket_location(bucket)
+            body: body
           )
         end
 
@@ -55,27 +53,24 @@ module Fog
             method: 'PUT',
             path: path,
             bucket: bucket,
-            resource: resource,
-            location: get_bucket_location(bucket)
+            resource: resource
           )
         end
 
         def put_multipart_object(bucket, object, file)
-          location = get_bucket_location(bucket)
-
           # find the right uploadid
-          uploads = list_multipart_uploads(bucket, location)
+          uploads = list_multipart_uploads(bucket)
           upload = (uploads&.find { |tmpupload| tmpupload['Key'][0] == object })
 
           uploadedSize = 0
           start_partNumber = 1
           if !upload.nil?
             uploadId = upload['UploadId'][0]
-            parts = list_parts(bucket, object, location, uploadId)
+            parts = list_parts(bucket, object, uploadId)
             if !parts.nil? && !parts.empty?
               if parts[-1]['Size'][0].to_i != 5_242_880
                 # the part is the last one, if its size is over 5m, then finish this upload
-                complete_multipart_upload(bucket, object, location, uploadId)
+                complete_multipart_upload(bucket, object, uploadId)
                 return
               end
               uploadedSize = (parts[0]['Size'][0].to_i * (parts.size - 1)) + parts[-1]['Size'][0].to_i
@@ -83,11 +78,11 @@ module Fog
             end
           else
             # create upload ID
-            uploadId = initiate_multipart_upload(bucket, object, location)
+            uploadId = initiate_multipart_upload(bucket, object)
           end
 
           if file.size <= uploadedSize
-            complete_multipart_upload(bucket, object, location, uploadId)
+            complete_multipart_upload(bucket, object, uploadId)
             return
           end
 
@@ -96,14 +91,13 @@ module Fog
 
           for i in start_partNumber..end_partNumber
             body = file.read(5_242_880)
-            upload_part(bucket, object, location, i.to_s, uploadId, body)
+            upload_part(bucket, object, i.to_s, uploadId, body)
           end
 
-          complete_multipart_upload(bucket, object, location, uploadId)
+          complete_multipart_upload(bucket, object, uploadId)
         end
 
-        def initiate_multipart_upload(bucket, object, location)
-          location ||= get_bucket_location(bucket)
+        def initiate_multipart_upload(bucket, object)
           path = object + '?uploads'
           resource = bucket + '/' + path
           ret = request(
@@ -111,14 +105,12 @@ module Fog
             method: 'POST',
             path: path,
             bucket: bucket,
-            resource: resource,
-            location: location
+            resource: resource
           )
           XmlSimple.xml_in(ret.data[:body])['UploadId'][0]
         end
 
-        def upload_part(bucket, object, location, partNumber, uploadId, body)
-          location ||= get_bucket_location(bucket)
+        def upload_part(bucket, object, partNumber, uploadId, body)
           path = object + '?partNumber=' + partNumber + '&uploadId=' + uploadId
           resource = bucket + '/' + path
           request(
@@ -127,14 +119,12 @@ module Fog
             path: path,
             bucket: bucket,
             resource: resource,
-            body: body,
-            location: location
+            body: body
           )
         end
 
-        def complete_multipart_upload(bucket, object, location, uploadId)
-          location ||= get_bucket_location(bucket)
-          parts = list_parts(bucket, object, location, uploadId, options = {})
+        def complete_multipart_upload(bucket, object, uploadId)
+          parts = list_parts(bucket, object, uploadId, options = {})
           request_part = []
           return if parts.empty?
           for i in 0..(parts.size - 1)
@@ -151,7 +141,6 @@ module Fog
             path: path,
             bucket: bucket,
             resource: resource,
-            location: location,
             body: body
           )
         end

@@ -126,31 +126,14 @@ module Fog
           time = Time.new.utc
           date = time.strftime('%a, %d %b %Y %H:%M:%S GMT')
 
-          endpoint = params[:endpoint]
-          location = params[:location]
-          if endpoint
-            uri = URI.parse(endpoint)
-            host = uri.host
-            path = uri.path
-            port = uri.port
-            scheme = uri.scheme
-          elsif location
-            host = location + '.aliyuncs.com'
-          end
-
-          host ||= @host
-          path ||= @path
-          port ||= @port
-          scheme ||= @scheme
-
           bucket = params[:bucket]
           tmpHost = if bucket
-                      bucket + '.' + host
+                      bucket + '.' + @host
                     else
-                      host
+                      @host
                     end
 
-          @connection = Fog::Core::Connection.new("#{scheme}://#{tmpHost}", @persistent, @connection_options)
+          @connection = Fog::Core::Connection.new("#{@scheme}://#{tmpHost}", @persistent, @connection_options)
           contentType = params[:contentType]
 
           begin
@@ -166,7 +149,7 @@ module Fog
               'Authorization' => 'OSS ' + @aliyun_accesskey_id + ':' + signature,
               'Date' => date
             }.merge!(params[:headers] || {}),
-                                                        path: "#{path}/#{params[:path]}",
+                                                        path: "#{@path}/#{params[:path]}",
                                                         query: params[:query]))
           rescue Excon::Errors::HTTPStatusError => error
             raise case error
