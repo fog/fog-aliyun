@@ -120,7 +120,8 @@ module Fog
                      directory_key + '/' + key
                    end
           if body.is_a?(::File)
-            data = service.put_object(object, body, options.merge(bucket: bucket_name)).data
+            service.put_object(object, body, options.merge(bucket: bucket_name))
+            data = service.head_object(object, bucket: bucket_name)
           elsif body.is_a?(String)
             data = service.put_object_with_body(object, body, options.merge(bucket: bucket_name)).data
           else
