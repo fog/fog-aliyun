@@ -181,25 +181,27 @@ module Fog
                    else
                      directory_key + '/' + key
                    end
-          data = service.head_object(object, bucket: bucket_name).data
-          return nil if data[:status] == 404
-          lastModified = data[:headers]['Last-Modified']
+          data = service.head_object(object, bucket: bucket_name)
+          return nil if data.nil? || data.headers.size == 0
+
+          headers = data.headers
+          lastModified = headers[:last_modified]
           last_modified = (Time.parse(lastModified).localtime if !lastModified.nil? && lastModified != '')
 
-          date = data[:headers]['Date']
+          date = headers[:date]
           date = (Time.parse(date).localtime if !date.nil? && date != '')
 
           file_data = {
-            content_length: data[:headers]['Content-Length'].to_i,
+            content_length: headers[:content_length].to_i,
             key: key,
             last_modified: last_modified,
-            content_type: data[:headers]['Content-Type'],
-            etag: data[:headers]['ETag'],
+            content_type: headers[:content_type],
+            etag: headers[:etag],
             date: date,
-            connection: data[:headers]['Connection'],
-            accept_ranges: data[:headers]['Accept-Ranges'],
-            server: data[:headers]['Server'],
-            object_type: data[:headers]['x-oss-object-type']
+            connection: headers[:connection],
+            accept_ranges: headers[:accept_ranges],
+            server: headers[:server],
+            object_type: headers[:x_oss_object_type]
           }
           new(file_data)
         rescue Fog::Aliyun::Storage::NotFound

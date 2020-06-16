@@ -10,6 +10,7 @@ module Fog
         model Fog::Aliyun::Storage::Directory
 
         def all
+          puts "aaaaaaaaaaaaaaaaaaaaaaaaaaaall"
           containers = service.get_containers
           return nil if containers.nil?
           data = []
@@ -38,7 +39,7 @@ module Fog
             if key.include? '/'
               dir = key + '/'
               ret = service.head_object(dir, options)
-              new(key: key) if ret.data[:status] == 200
+              new(key: key) if ret.nil? || ret.headers.nil?
             else
               remap_attributes(options, {
                   :delimiter  => 'delimiter',

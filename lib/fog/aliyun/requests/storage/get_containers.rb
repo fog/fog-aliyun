@@ -42,18 +42,12 @@ module Fog
             path += '?delimiter=' + delimiter
           end
 
-          endpoint = options[:endpoint]
-          if endpoint.nil?
-            location = get_bucket_location(bucket)
-          end
           resource = bucket + '/'
           ret = request(
             expects: [200, 203, 400],
             method: 'GET',
             path: path,
             resource: resource,
-            endpoint: endpoint,
-            location: location,
             bucket: bucket
           )
           xml = ret.data[:body]

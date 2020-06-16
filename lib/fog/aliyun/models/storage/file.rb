@@ -120,12 +120,13 @@ module Fog
                      directory_key + '/' + key
                    end
           if body.is_a?(::File)
-            data = service.put_object(object, body, options.merge(bucket: bucket_name)).data
+            service.put_object(object, body, options.merge(bucket: bucket_name))
           elsif body.is_a?(String)
-            data = service.put_object_with_body(object, body, options.merge(bucket: bucket_name)).data
+            service.put_object_with_body(object, body, options.merge(bucket: bucket_name))
           else
             raise Fog::Aliyun::Storage::Error, " Forbidden: Invalid body type: #{body.class}!"
           end
+          data = service.head_object(object)
           update_attributes_from(data)
           refresh_metadata
 
@@ -179,10 +180,9 @@ module Fog
                        directory_key + '/' + key
                      end
 
-            data = service.head_object(object, bucket: bucket_name).data
-            if data[:status] == 200
-              headers = data[:headers]
-              headers.select! { |k, _v| metadata_attribute?(k) }
+            data = service.head_object(object, bucket: bucket_name)
+            if !data.nil? && data.headers.size > 0
+              data.headers.select! { |k, _v| metadata_attribute?(k) }
             end
           else
             {}
@@ -198,7 +198,9 @@ module Fog
         end
 
         def update_attributes_from(data)
-          merge_attributes(data[:headers].reject { |key, _value| ['Content-Length', 'Content-Type'].include?(key) })
+          if !data.nil?
+            merge_attributes(data.headers.reject { |key, _value| [:content_length, :content_type].include?(key) })
+          end
         end
       end
     end
