@@ -10,24 +10,15 @@ module Fog
         # * object<~String> - Name of object to look for
         #
         def put_object(object, file = nil, options = {})
-          bucket = options[:bucket]
-          bucket ||= @aliyun_oss_bucket
-          return put_folder(bucket, object) if file.nil?
-
-          # put multiparts if object's size is over 100m
-          return put_multipart_object(bucket, object, file) if file.size > 104_857_600
-
-          body = file.read
-
-          resource = bucket + '/' + object
-          request(
-            expects: [200, 203],
-            method: 'PUT',
-            path: object,
-            bucket: bucket,
-            resource: resource,
-            body: body
-          )
+          bucket_name = options[:bucket]
+          bucket_name ||= @aliyun_oss_bucket
+          bucket = @oss_client.get_bucket(bucket_name)
+          return bucket.put_object(object) if file.nil?
+          # With a single PUT operation you can upload objects up to 5 GB in size.
+          if file.size > 5_368_709_120
+            bucket.resumable_upload(object, file.path)
+          end
+          bucket.put_object(object, :file => file.path)
         end
 
         def put_object_with_body(object, body, options = {})
