@@ -15,8 +15,7 @@ module Fog
             expects: 204,
             method: 'DELETE',
             bucket: bucket,
-            resource: resource,
-            location: get_bucket_location(bucket)
+            resource: resource
           )
         end
       end

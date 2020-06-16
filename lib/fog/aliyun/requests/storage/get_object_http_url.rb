@@ -16,20 +16,20 @@ module Fog
         #   * body<~String> - url for object
         def get_object_http_url_public(object, expires, options = {})
           options = options.reject { |_key, value| value.nil? }
-          bucket = options[:bucket]
-          bucket ||= @aliyun_oss_bucket
-          acl = get_bucket_acl(bucket)
-          location = get_bucket_location(bucket)
+          bucket_name = options[:bucket]
+          bucket_name ||= @aliyun_oss_bucket
+          bucket = @oss_client.get_bucket(bucket_name)
+          acl = bucket.acl()
 
           if acl == 'private'
             expires_time = (Time.now.to_i + (expires.nil? ? 0 : expires.to_i)).to_s
-            resource = bucket + '/' + object
+            resource = bucket_name + '/' + object
             signature = sign('GET', expires_time, nil, resource)
-            'http://' + bucket + '.' + location + '.aliyuncs.com/' + object +
+            'http://' + bucket_name + '.' + @host + '/' + object +
               '?OSSAccessKeyId=' + @aliyun_accesskey_id + '&Expires=' + expires_time +
               '&Signature=' + URI.encode(signature, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
           elsif acl == 'public-read' || acl == 'public-read-write'
-            'http://' + bucket + '.' + location + '.aliyuncs.com/' + object
+            'http://' + bucket_name + '.' + @host + '/' + object
           else
             'acl is wrong with value:' + acl
           end

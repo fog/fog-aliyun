@@ -18,8 +18,7 @@ module Fog
             method: 'HEAD',
             path: object,
             bucket: bucket,
-            resource: resource,
-            location: get_bucket_location(bucket)
+            resource: resource
           )
           ret
         end

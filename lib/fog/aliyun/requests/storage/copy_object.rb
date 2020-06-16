@@ -25,8 +25,7 @@ module Fog
                   method: 'PUT',
                   path: target_object,
                   bucket: target_bucket,
-                  resource: resource,
-                  location: get_bucket_location(bucket))
+                  resource: resource)
         end
       end
     end

@@ -21,8 +21,7 @@ module Fog
             method: 'DELETE',
             path: object,
             bucket: bucket,
-            resource: resource,
-            location: get_bucket_location(bucket)
+            resource: resource
           )
         end
       end
