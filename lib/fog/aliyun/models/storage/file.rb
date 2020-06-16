@@ -119,6 +119,7 @@ module Fog
                    else
                      directory_key + '/' + key
                    end
+          puts "\n file.rb/122: object #{object}, options #{options},,, body class #{body.class}\n"
           if body.is_a?(::File)
             service.put_object(object, body, options.merge(bucket: bucket_name))
           elsif body.is_a?(String)
@@ -126,8 +127,9 @@ module Fog
           else
             raise Fog::Aliyun::Storage::Error, " Forbidden: Invalid body type: #{body.class}!"
           end
+          puts "\n file.rb/130: after uploading"
           data = service.head_object(object)
-          puts "\n file.rb/130: data #{data}\n"
+          puts "\n file.rb/132: data #{data}\n"
           update_attributes_from(data)
           refresh_metadata
 

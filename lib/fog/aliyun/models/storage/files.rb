@@ -182,7 +182,7 @@ module Fog
                      directory_key + '/' + key
                    end
           data = service.head_object(object, bucket: bucket_name)
-          puts "\n files.rb/185: data #{data}\n"
+          puts "\n files.rb/185: key #{key}, object #{object} data #{data}\n"
           return nil if data.nil? || data.headers.size == 0
 
           headers = data.headers
@@ -204,6 +204,7 @@ module Fog
             server: headers[:server],
             object_type: headers[:x_oss_object_type]
           }
+          puts "\n files.rb/207: file_data #{file_data}"
           new(file_data)
         rescue Fog::Aliyun::Storage::NotFound
           nil
