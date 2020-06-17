@@ -64,6 +64,14 @@ describe 'Integration tests', :integration => true do
     end
   end
 
+  it 'Should getting bucket when directory exists named with the same name as a bucket' do
+    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/#{@conn.aliyun_oss_bucket} > /dev/null")
+    files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+    expect(files.length).to eq(1)
+    expect(files.get(@conn.aliyun_oss_bucket+"/").key).to eq(@conn.aliyun_oss_bucket+"/")
+    files[0].destroy
+  end
+
   it 'test get file that not exists' do
     directory = @conn.directories.get(@conn.aliyun_oss_bucket)
     files = directory.files
