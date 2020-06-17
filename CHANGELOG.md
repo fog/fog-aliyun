@@ -1,4 +1,15 @@
-## 0.3.16 (Unreleased)
+## 0.3.17 (Unreleased)
+## 0.3.16 (June 18, 2020)
+
+IMPROVEMENTS:
+- [Enhance tests][Files & Directory scenarios] Test get nested directories and files in nested directory [GH-98](https://github.com/fog/fog-aliyun/pull/98)
+- remove get_bucket_location and use ruby sdk to improve performance when uploading object [GH-97](https://github.com/fog/fog-aliyun/pull/97)
+- using bucket_exist to checking bucket [GH-95](https://github.com/fog/fog-aliyun/pull/95)
+- add change log [GH-94](https://github.com/fog/fog-aliyun/pull/94)
+
+BUG FIXES:
+- fix delete all of files bug when specifying a prefix [GH-102](https://github.com/fog/fog-aliyun/pull/102)
+
 ## 0.3.15 (June 05, 2020)
 
 BUG FIXES:
