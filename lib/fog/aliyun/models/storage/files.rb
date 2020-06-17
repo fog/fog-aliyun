@@ -48,37 +48,24 @@ module Fog
 
         def all(options = {})
           requires :directory
-          bucket_name, directory_key = check_directory_key(directory.key)
-          remap_attributes(options, {
-              :delimiter  => 'delimiter',
-              :marker     => 'marker',
-              :max_keys   => 'max-keys',
-              :prefix     => 'prefix'
-          })
-          prefix_value = options['prefix']
-          prefix_value = directory_key + '/' + prefix if directory_key != '' && directory_key != '.' && !directory_key.nil?
-          options['prefix'] = prefix_value
-          options['bucket'] = bucket_name
-          files = service.list_objects(options)['Contents']
-          return if files.nil?
-          data = []
-          i = 0
-          files.each do |file|
-            next unless file['Key'][0][-1] != '/'
-            content_length = file['Size'][0].to_i
-            key = file['Key'][0]
-            lastModified = file['LastModified'][0]
-            last_modified = (Time.parse(lastModified).localtime if !lastModified.nil? && lastModified != '')
-            type = file['Type'][0]
-            data[i] = { content_length: content_length,
-                        key: key,
-                        last_modified: last_modified,
-                        etag: file['ETag'][0],
-                        object_type: type }
-            i += 1
+          options = {
+              'delimiter'   => delimiter,
+              'marker'      => marker,
+              'max-keys'    => max_keys.to_i,
+              'prefix'      => prefix
+          }.merge!(options)
+          options = options.reject {|key,value| value.nil? || value.to_s.empty?}
+          merge_attributes(options)
+          parent = directory.collection.get(
+              directory.key,
+              options
+          )
+          if parent
+            merge_attributes(parent.files.attributes)
+            load(parent.files.map {|file| file.attributes})
+          else
+            nil
           end
-
-          load(data)
         end
 
         alias each_file_this_page each
