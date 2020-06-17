@@ -16,6 +16,34 @@ describe 'Integration tests', :integration => true do
     system("aliyun oss mb oss://#{@conn.aliyun_oss_bucket} > /dev/null")
   end
 
+  it 'Should get nested directories and files in nested directory' do
+    # nested directories
+    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir/dir1/dir2/dir3 > /dev/null")
+    directory = @conn.directories.get(@conn.aliyun_oss_bucket)
+    files = directory.files
+    expect(files.length).to eq(1)
+    expect(files.empty?).to eq(false)
+    file=files.get('test_dir/dir1/dir2/dir3/')
+    expect(file.key).to eq("test_dir/dir1/dir2/dir3/")
+    file.destroy
+    # nested files in nested directory
+    file = Tempfile.new('fog-upload-file')
+    file.write("Hello World!")
+    begin
+      system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir/dir1/dir2 > /dev/null")
+      system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/test_dir/dir1/dir2/test_file > /dev/null")
+      files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+      expect(files.length).to eq(2)
+      expect(files.empty?).to eq(false)
+      expect(files.get("test_dir/dir1/dir2/").key).to eq("test_dir/dir1/dir2/")
+      expect(files.get("test_dir/dir1/dir2/test_file").key).to eq("test_dir/dir1/dir2/test_file")
+      files.get("test_dir/dir1/dir2/").destroy
+      files.get("test_dir/dir1/dir2/test_file").destroy
+    ensure
+      file.close
+      file.unlink
+    end
+  end
   it 'test get file that not exists' do
     directory = @conn.directories.get(@conn.aliyun_oss_bucket)
     files = directory.files
