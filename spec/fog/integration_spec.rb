@@ -44,6 +44,26 @@ describe 'Integration tests', :integration => true do
       file.unlink
     end
   end
+
+  it 'Should file copy operations' do
+    file = Tempfile.new('fog-upload-file')
+    file.write("Hello World!")
+    begin
+      system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/test_file > /dev/null")
+      files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+      expect(files.length).to eq(1)
+      files[0].copy("#{@conn.aliyun_oss_bucket}","trip")
+      files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+      expect(files.length).to eq(2)
+      expect(files.get("trip").key).to eq("trip")
+      files[0].destroy
+      files[1].destroy
+    ensure
+      file.close
+      file.unlink
+    end
+  end
+
   it 'test get file that not exists' do
     directory = @conn.directories.get(@conn.aliyun_oss_bucket)
     files = directory.files
