@@ -441,6 +441,15 @@ describe 'Integration tests', :integration => true do
    end
  end
 
+  it 'Should error is thrown when trying to destroy non-existing bucket' do
+    bucket_name='test-bucket'+rand(36**16).to_s(36)
+    begin
+      resp=@conn.delete_bucket bucket_name
+    rescue Exception => e
+      p e.class
+    end
+  end
+
   # Test region is selected according to provider configuration
   # check default region is used if no region provided explicitly
   # There is need to set a env variable to support setting oss default bucket
