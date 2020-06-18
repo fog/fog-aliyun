@@ -493,6 +493,36 @@ describe 'Integration tests', :integration => true do
     @conn.delete_bucket bucket_name
   end
 
+  it 'Should possible to list all buckets' do
+    b1=rand(36**16).to_s(36)
+    b2=rand(36**16).to_s(36)
+    b3=rand(36**16).to_s(36)
+    b4=rand(36**16).to_s(36)
+    b5=rand(36**16).to_s(36)
+    b6=rand(36**16).to_s(36)
+    @conn.put_bucket('bucket-test'+b1)
+    @conn.put_bucket('bucket-test2'+b2)
+    @conn.put_bucket('file-test'+b3)
+    @conn.put_bucket('file-test2'+b4)
+    @conn.put_bucket('directory-test'+b5)
+    @conn.put_bucket('directory-test2'+b6)
+    buckets=@conn.list_buckets['Bucket']
+    expect(buckets.length).to be >= 6
+    buckets=(@conn.list_buckets :prefix=>"bucket")['Bucket']
+    expect(buckets.length).to be >=2
+    buckets=(@conn.list_buckets :marker=>"file-t")['Bucket']
+    expect(buckets.length).to be >=4
+    buckets=(@conn.list_buckets :maxKeys=>"6")['Bucket']
+    expect(buckets.length).to be(6)
+    #delete created bucket
+    @conn.delete_bucket('bucket-test'+b1)
+    @conn.delete_bucket('bucket-test2'+b2)
+    @conn.delete_bucket('file-test'+b3)
+    @conn.delete_bucket('file-test2'+b4)
+    @conn.delete_bucket('directory-test'+b5)
+    @conn.delete_bucket('directory-test2'+b6)
+  end
+
   # Test region is selected according to provider configuration
   # check default region is used if no region provided explicitly
   # There is need to set a env variable to support setting oss default bucket
