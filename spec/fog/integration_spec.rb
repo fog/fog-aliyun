@@ -16,10 +16,6 @@ describe 'Integration tests', :integration => true do
     system("aliyun oss mb oss://#{@conn.aliyun_oss_bucket} > /dev/null")
   end
 
-  it 'my test' do
-    p @conn.directories.class
-  end
-
   it 'Should get nested directories and files in nested directory' do
     # nested directories
     system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir/dir1/dir2/dir3 > /dev/null")
@@ -444,6 +440,15 @@ describe 'Integration tests', :integration => true do
      file.unlink
    end
  end
+
+  it 'Should possible to get single bucket' do
+    bucket_name='test-single-bucket'+rand(36**16).to_s(36)
+    @conn.put_bucket bucket_name
+    names=(@conn.get_bucket bucket_name)['Name']
+    expect(names.length).to eq(1)
+    expect(names[0]).to eq(bucket_name)
+    @conn.delete_bucket bucket_name
+  end
 
   # Test region is selected according to provider configuration
   # check default region is used if no region provided explicitly
