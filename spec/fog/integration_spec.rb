@@ -445,6 +445,15 @@ describe 'Integration tests', :integration => true do
    end
  end
 
+  it 'Should possible to get single bucket' do
+    @conn.delete_bucket 'test-single-bucket'
+    @conn.put_bucket 'test-single-bucket'
+    names=(@conn.get_bucket 'test-single-bucket')['Name']
+    expect(names.length).to eq(1)
+    expect(names[0]).to eq('test-single-bucket')
+    @conn.delete_bucket 'test-single-bucket'
+  end
+
   # Test region is selected according to provider configuration
   # check default region is used if no region provided explicitly
   # There is need to set a env variable to support setting oss default bucket
