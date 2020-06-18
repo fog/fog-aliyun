@@ -467,6 +467,18 @@ describe 'Integration tests', :integration => true do
     expect(resp['Code']).to include('NoSuchBucket')
   end
 
+  it 'Should error is thrown when trying to create already existing bucket' do
+    bucket_name="test-bucket"+rand(36**16).to_s(36)
+    begin
+    @conn.put_bucket bucket_name
+    @conn.put_bucket bucket_name
+    rescue Exception => e
+      expect(XmlSimple.xml_in(e.response.body)['Code']).to include('BucketAlreadyExists')
+    ensure
+      @conn.delete_bucket bucket_name
+    end
+  end
+
   # Test region is selected according to provider configuration
   # check default region is used if no region provided explicitly
   # There is need to set a env variable to support setting oss default bucket
