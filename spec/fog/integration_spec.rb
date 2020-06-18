@@ -16,6 +16,10 @@ describe 'Integration tests', :integration => true do
     system("aliyun oss mb oss://#{@conn.aliyun_oss_bucket} > /dev/null")
   end
 
+  it 'my test' do
+    p @conn.directories.class
+  end
+
   it 'Should get nested directories and files in nested directory' do
     # nested directories
     system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir/dir1/dir2/dir3 > /dev/null")
