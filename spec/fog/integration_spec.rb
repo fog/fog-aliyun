@@ -444,9 +444,9 @@ describe 'Integration tests', :integration => true do
   it 'Should error is thrown when trying to destroy non-existing bucket' do
     bucket_name='test-bucket'+rand(36**16).to_s(36)
     begin
-      resp=@conn.delete_bucket bucket_name
+      @conn.delete_bucket bucket_name
     rescue Exception => e
-      p e.class
+      expect(e.class.to_s.to_sym).to eq("Fog::Aliyun::Storage::NotFound".to_sym)
     end
   end
 
