@@ -441,6 +441,12 @@ describe 'Integration tests', :integration => true do
    end
  end
 
+  it 'Should error is thrown when trying to access non-existing bucket' do
+    bucket_name='test-bucket'+rand(36**16).to_s(36)
+    resp=@conn.get_bucket bucket_name
+    expect(resp['Code']).to include('NoSuchBucket')
+  end
+
   # Test region is selected according to provider configuration
   # check default region is used if no region provided explicitly
   # There is need to set a env variable to support setting oss default bucket
