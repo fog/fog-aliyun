@@ -486,6 +486,13 @@ describe 'Integration tests', :integration => true do
     expect(resp.status).to be(204)
   end
 
+  it 'Should possible to create a new bucket' do
+    bucket_name='test-bucket'+rand(36**16).to_s(36)
+    resp=@conn.put_bucket bucket_name
+    expect(resp.status).to eq(200)
+    @conn.delete_bucket bucket_name
+  end
+
   # Test region is selected according to provider configuration
   # check default region is used if no region provided explicitly
   # There is need to set a env variable to support setting oss default bucket
