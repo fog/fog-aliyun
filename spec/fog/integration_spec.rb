@@ -479,6 +479,13 @@ describe 'Integration tests', :integration => true do
     end
   end
 
+  it 'Should possible to destroy a bucket' do
+    bucket_name='test-bucket'+rand(36**16).to_s(36)
+    @conn.put_bucket bucket_name
+    resp=@conn.delete_bucket bucket_name
+    expect(resp.status).to be(204)
+  end
+
   # Test region is selected according to provider configuration
   # check default region is used if no region provided explicitly
   # There is need to set a env variable to support setting oss default bucket
