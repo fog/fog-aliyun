@@ -535,6 +535,20 @@ describe 'Integration tests', :integration => true do
     expect(@conn.list_objects['Name']).to include(@conn.aliyun_oss_bucket)
   end
 
+  it 'Should cannot be accessed using incorrect credentials' do
+    @conn = Fog::Storage.new({
+                               :aliyun_accesskey_id => rand(36**16).to_s(36),
+                               :aliyun_accesskey_secret => rand(36**16).to_s(36),
+                               :provider => "Aliyun",
+                               :aliyun_oss_bucket => @conn.aliyun_oss_bucket
+                           })
+    begin
+      @conn.list_objects
+    rescue  Exception => e
+      expect(XmlSimple.xml_in(e.response.body)["Code"]).to include("InvalidAccessKeyId")
+    end
+  end
+
   # Test region is selected according to provider configuration
   # check default region is used if no region provided explicitly
   # There is need to set a env variable to support setting oss default bucket
