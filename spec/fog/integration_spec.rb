@@ -45,6 +45,21 @@ describe 'Integration tests', :integration => true do
     end
   end
 
+  it 'Should get file details in the root of bucket' do
+    file = Tempfile.new('fog-upload-file')
+    file.write("Hello World!")
+    begin
+      system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/test_file > /dev/null")
+      files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+      expect(files.length).to eq(1)
+      expect(files.empty?).to eq(false)
+      expect(files.get("test_file").public_url).not_to eq(nil)
+    ensure
+      file.close
+      file.unlink
+    end
+  end
+
   it 'Should file copy operations' do
     file = Tempfile.new('fog-upload-file')
     file.write("Hello World!")
