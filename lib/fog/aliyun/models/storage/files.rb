@@ -114,7 +114,11 @@ module Fog
                 object_type: data['headers'][:x_oss_object_type]
             }
 
-            new(file_data)
+            d=new(file_data)
+            d.directory.files.each do |file|
+              d.directory.files.delete(file) unless file.key.include? key
+            end
+            d
           rescue AliyunOssSdk::ServerError => error
             case error.error_code
             when %r{NoSuchKey},%r{SymlinkTargetNotExist}

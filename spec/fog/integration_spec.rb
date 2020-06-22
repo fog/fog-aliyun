@@ -531,6 +531,24 @@ describe 'Integration tests', :integration => true do
     @conn.delete_bucket('directory-test2'+b6)
   end
 
+  it 'Should not list files of root directory' do
+    file = Tempfile.new('fog-upload-file')
+    file.write("Hello World!")
+    begin
+      system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir > /dev/null")
+      system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/test_file1 > /dev/null")
+      system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/test_dir/test_file2 > /dev/null")
+      bucket = @conn.directories.get(@conn.aliyun_oss_bucket)
+      dir = bucket.files.get("test_dir/").directory
+      files = dir.files
+      # fails because files also contains "test_file1"
+      expect(files.length).to eq(2)
+    ensure
+      file.close
+      file.unlink
+    end
+  end
+
   # Test region is selected according to provider configuration
   # check default region is used if no region provided explicitly
   # There is need to set a env variable to support setting oss default bucket
