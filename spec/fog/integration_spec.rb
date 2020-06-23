@@ -531,6 +531,10 @@ describe 'Integration tests', :integration => true do
     @conn.delete_bucket('directory-test2'+b6)
   end
 
+  it 'Should can be accessed using valid credentials' do
+    expect(@conn.list_objects['Name']).to include(@conn.aliyun_oss_bucket)
+  end
+
   # Test region is selected according to provider configuration
   # check default region is used if no region provided explicitly
   # There is need to set a env variable to support setting oss default bucket
