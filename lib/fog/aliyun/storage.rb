@@ -74,6 +74,7 @@ module Fog
         attr_reader :aliyun_oss_endpoint
         attr_reader :aliyun_region_id
         attr_reader :aliyun_oss_bucket
+        attr_reader :aliyun_oss_sdk_log_path
 
         def initialize(options = {})
           # initialize the parameters
@@ -82,6 +83,12 @@ module Fog
           @aliyun_accesskey_id = options[:aliyun_accesskey_id]
           @aliyun_accesskey_secret = options[:aliyun_accesskey_secret]
           @aliyun_oss_bucket = options[:aliyun_oss_bucket]
+          p '++++++++++++++++++++++++++++'
+          if options[:aliyun_oss_sdk_log_path]!=""
+            p "****************************"
+            File.new(options[:aliyun_oss_sdk_log_path]) unless File.exist?(options[:aliyun_oss_sdk_log_path])
+          end
+          p '---------------------------'
           ENV["ALIYUN_OSS_SDK_LOG_PATH"] = options[:aliyun_oss_sdk_log_path]
           # check for the parameters
           missing_credentials = []
