@@ -87,7 +87,8 @@ module Fog
           puts "++++++++++++ #{log_file}"
           puts "--------------------- #{::File.exist?(log_file)}"
           if !::File.exist?(log_file)
-            ::File.new(log_file)
+            f=::File.new(log_file,"w+")
+            f.close
             p "create success"
           end
           ENV["ALIYUN_OSS_SDK_LOG_PATH"] = options[:aliyun_oss_sdk_log_path]
