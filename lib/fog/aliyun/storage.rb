@@ -84,10 +84,10 @@ module Fog
           @aliyun_accesskey_secret = options[:aliyun_accesskey_secret]
           @aliyun_oss_bucket = options[:aliyun_oss_bucket]
           log_file = options[:aliyun_oss_sdk_log_path]
-          puts "++++++++++++ #{log_file}"
-          puts "--------------------- #{::File.exist?(log_file)}"
+          puts "ddddddddddddd #{log_file}"
+          puts "lllllllllll #{::File.exist?(log_file)}"
           if !::File.exist?(log_file)
-            f=::File.new(log_file,"w+")
+            f=::File.new(log_file,"w")
             f.close
             p "create success"
           end
