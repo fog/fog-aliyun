@@ -84,7 +84,12 @@ module Fog
           @aliyun_accesskey_secret = options[:aliyun_accesskey_secret]
           @aliyun_oss_bucket = options[:aliyun_oss_bucket]
           log_file = options[:aliyun_oss_sdk_log_path]
-          p "++++++++++++++#{log_file}"
+          p "aaaaa#{log_file}"
+          p "bbbb #{::File.exist?(log_file)}"
+          if !::File.exist?(log_file)
+            ::File.new(log_file,::File::CREAT|::File::TRUNC|::File::RDWR,0777)
+            p 'success'
+          end
           ENV["ALIYUN_OSS_SDK_LOG_PATH"] = options[:aliyun_oss_sdk_log_path]
           # check for the parameters
           missing_credentials = []
