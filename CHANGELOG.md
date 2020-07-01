@@ -1,4 +1,17 @@
 ## 0.3.17 (Unreleased)
+
+IMPROVEMENTS:
+- [Enhance tests][Auth & Connectivity scenarios] Test that API cannot be accessed using incorrect credentials [GH-117](https://github.com/fog/fog-aliyun/pull/117)
+- [Enhance tests][Auth & Connectivity scenarios] Test that API can be accessed using valid credentials [GH-116](https://github.com/fog/fog-aliyun/pull/116)
+- adapter custom log environment variable [GH-114](https://github.com/fog/fog-aliyun/pull/114)
+- [Enhance tests][Buckets scenarios] (NEGATIVE TEST) Test that error is thrown when trying to access non-existing bucket [GH-110](https://github.com/fog/fog-aliyun/pull/110)
+- [Enhance tests][Buckets scenarios] (NEGATIVE TEST) Test that error is thrown when trying to create already existing bucket [GH-109](https://github.com/fog/fog-aliyun/pull/109)
+- [Enhance tests][Buckets scenarios] Test that it is possible to destroy a bucket [GH-108](https://github.com/fog/fog-aliyun/pull/108)
+- [Enhance tests][Buckets scenarios] Test that it is possible to create a new bucket [GH-107](https://github.com/fog/fog-aliyun/pull/107)
+- [Enhance tests][Buckets scenarios] Test that it is possible to list all buckets [GH-105](https://github.com/fog/fog-aliyun/pull/105)
+- [Enhance tests][Files & Directory scenarios] Test getting bucket when directory exists named with the same name as a bucket [GH-101](https://github.com/fog/fog-aliyun/pull/101)
+- [Enhance tests][Files & Directory scenarios] Test file copy operations [GH-100](https://github.com/fog/fog-aliyun/pull/100)
+
 ## 0.3.16 (June 18, 2020)
 
 IMPROVEMENTS:
