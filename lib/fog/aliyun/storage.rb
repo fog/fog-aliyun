@@ -74,6 +74,7 @@ module Fog
         attr_reader :aliyun_oss_endpoint
         attr_reader :aliyun_region_id
         attr_reader :aliyun_oss_bucket
+        attr_reader :aliyun_oss_sdk_log_path
 
         def initialize(options = {})
           # initialize the parameters
