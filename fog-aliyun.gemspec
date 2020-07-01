@@ -28,9 +28,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop'
   spec.add_development_dependency 'simplecov'
   spec.add_development_dependency 'memory_profiler'
-  spec.add_development_dependency 'aliyun-sdk', '~> 0.7.2'
+  spec.add_development_dependency 'aliyun-sdk', '~> 0.7.3'
 
-  spec.add_dependency 'aliyun-sdk', '~> 0.7.2'
+  spec.add_dependency 'aliyun-sdk', '~> 0.7.3'
   spec.add_dependency 'fog-core'
   spec.add_dependency 'fog-json'
   spec.add_dependency 'ipaddress', '~> 0.8'
