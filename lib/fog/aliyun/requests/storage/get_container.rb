@@ -12,8 +12,8 @@ module Fog
 
           marker = options[:marker]
           maxKeys = options[:maxKeys]||1000
+          maxKeys = maxKeys.to_i
           maxKeys = [maxKeys,1000].min
-          raise "max-keys must be an integer between 1 and 1000" if maxKeys<1
           delimiter = '/'
 
           path = ''
