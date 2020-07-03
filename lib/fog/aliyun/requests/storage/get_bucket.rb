@@ -14,22 +14,22 @@ module Fog
           # Set the GetBucket max limitation to 1000
           maxKeys = options['max-keys'] || 1000
           maxKeys = maxKeys.to_i
-          maxKeys = [maxKeys, 1000].min
+          maxKeys = [maxKeys, 1000].min.to_s
           delimiter = options['delimiter']
           path = ''
           if prefix
             path += '/?prefix=' + prefix
             path += '&marker=' + marker if marker
-            path += '&max-keys=' + maxKeys.to_s if maxKeys
+            path += '&max-keys=' + maxKeys if maxKeys
             path += '&delimiter=' + delimiter if delimiter
 
           elsif marker
             path += '/?marker=' + marker
-            path += '&max-keys=' + maxKeys.to_s if maxKeys
+            path += '&max-keys=' + maxKeys if maxKeys
             path += '&delimiter=' + delimiter if delimiter
 
           elsif maxKeys
-            path += '/?max-keys=' + maxKeys.to_s
+            path += '/?max-keys=' + maxKeys
             path += '&delimiter=' + delimiter if delimiter
           elsif delimiter
             path += '/?delimiter=' + delimiter

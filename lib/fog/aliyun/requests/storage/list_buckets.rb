@@ -9,7 +9,7 @@ module Fog
           marker = options[:marker]
           maxKeys = options[:maxKeys] || 1000
           maxKeys = maxKeys.to_i
-          maxKeys =[maxKeys,1000].min
+          maxKeys =[maxKeys,1000].min.to_s
 
           path = ''
           if prefix
