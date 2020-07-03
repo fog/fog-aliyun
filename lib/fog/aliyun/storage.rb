@@ -113,6 +113,14 @@ module Fog
                                      :access_key_id => @aliyun_accesskey_id,
                                      :access_key_secret => @aliyun_accesskey_secret
           )
+
+          # initiate a aliyun oss ruby sdk config and using sdk http to invoke the OSS openapi
+          @oss_config = AliyunOssSdk::Config.new(
+              :endpoint => @aliyun_oss_endpoint,
+              :access_key_id => @aliyun_accesskey_id,
+              :access_key_secret => @aliyun_accesskey_secret
+          )
+          @oss_http = AliyunOssSdk::HTTP.new(@oss_config)
         end
 
         def reload

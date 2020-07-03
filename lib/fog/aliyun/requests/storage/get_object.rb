@@ -9,19 +9,29 @@ module Fog
         # ==== Parameters
         # * object<~String> - Name of object to look for
         #
-        def get_object(object, range = nil, options = {})
+        def get_object(object, options = {}, &block)
           options = options.reject { |_key, value| value.nil? }
           bucket_name = options[:bucket]
           bucket_name ||= @aliyun_oss_bucket
+          options.delete(:bucket)
           # Using OSS ruby SDK to fix performance issue
-          bucket = @oss_client.get_bucket(bucket_name)
-          body = Array.new
-          obj = bucket.get_object(object) do |chunk|
-            body << chunk
+          params = { :headers => {} }
+          params[:query] = options.delete('query') || {}
+
+          params[:headers].merge!(options)
+          if options['If-Modified-Since']
+            params[:headers]['If-Modified-Since'] = Fog::Time.at(options['If-Modified-Since'].to_i).to_date_header
           end
-          response = {}
-          obj.instance_variables.each {|var| response[var.to_s.delete("@")] = obj.instance_variable_get(var) }
-          response.merge({:body => body.join('')})
+          if options['If-Unmodified-Since']
+            params[:headers]['If-Unmodified-Since'] = Fog::Time.at(options['If-Unmodified-Since'].to_i).to_date_header
+          end
+
+          if block_given?
+            params[:response_block] = Proc.new
+          end
+
+          @oss_http.get({:bucket => bucket_name, :object => object}, params, &block)
+
         end
       end
     end
