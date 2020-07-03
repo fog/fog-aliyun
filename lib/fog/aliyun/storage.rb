@@ -83,7 +83,11 @@ module Fog
           @aliyun_accesskey_id = options[:aliyun_accesskey_id]
           @aliyun_accesskey_secret = options[:aliyun_accesskey_secret]
           @aliyun_oss_bucket = options[:aliyun_oss_bucket]
-          ENV["ALIYUN_OSS_SDK_LOG_PATH"] = options[:aliyun_oss_sdk_log_path]
+          @aliyun_oss_sdk_log_path=options[:aliyun_oss_sdk_log_path]
+          if !::File.exist?(@aliyun_oss_sdk_log_path)
+            `touch #{@aliyun_oss_sdk_log_path}`
+          end
+          ENV["ALIYUN_OSS_SDK_LOG_PATH"] = @aliyun_oss_sdk_log_path
           # check for the parameters
           missing_credentials = []
           missing_credentials << :aliyun_oss_bucket unless @aliyun_oss_bucket
