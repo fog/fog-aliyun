@@ -19,7 +19,9 @@ module Fog
           bucket ||= @aliyun_oss_bucket
           prefix = options[:prefix]
           marker = options[:marker]
-          maxKeys = options[:maxKeys]
+          maxKeys = options[:maxKeys]||1000
+          maxKeys = maxKeys.to_i
+          maxKeys = [maxKeys,1000].min.to_s
           delimiter = '/'
 
           path = ''
