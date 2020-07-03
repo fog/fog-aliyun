@@ -85,7 +85,7 @@ module Fog
           end
         end
 
-        def get(key)
+        def get(key, options = {}, &block)
           requires :directory
           bucket_name, directory_key = check_directory_key(directory.key)
           object = if directory_key == ''
@@ -94,24 +94,25 @@ module Fog
                      directory_key + '/' + key
                    end
           begin
-            data = service.get_object(object, nil, bucket: bucket_name)
-            lastModified = data['headers'][:last_modified]
+            data = service.get_object(object, options.merge({bucket: bucket_name}), &block)
+            headers = data.headers
+            lastModified = headers[:last_modified]
             last_modified = (Time.parse(lastModified).localtime if !lastModified.nil? && lastModified != '')
 
-            date = data['headers'][:date]
+            date = headers[:date]
             date = (Time.parse(date).localtime if !date.nil? && date != '')
             file_data = {
-                body: data[:body],
-                content_length: data['headers'][:content_length].to_i,
+                body: data.body,
+                content_length: headers[:content_length].to_i,
                 key: key,
                 last_modified: last_modified,
-                content_type: data['headers'][:content_type],
-                etag: data['headers'][:etag],
+                content_type: headers[:content_type],
+                etag: headers[:etag],
                 date: date,
-                connection: data['headers'][:connection],
-                accept_ranges: data['headers'][:accept_ranges],
-                server: data['headers'][:server],
-                object_type: data['headers'][:x_oss_object_type]
+                connection: headers[:connection],
+                accept_ranges: headers[:accept_ranges],
+                server: headers[:server],
+                object_type: headers[:x_oss_object_type]
             }
 
             new(file_data)
