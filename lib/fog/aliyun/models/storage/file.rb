@@ -121,12 +121,12 @@ module Fog
                    end
           if body.is_a?(::File)
             service.put_object(object, body, options.merge(bucket: bucket_name))
-            data = service.head_object(object, bucket: bucket_name)
           elsif body.is_a?(String)
-            data = service.put_object_with_body(object, body, options.merge(bucket: bucket_name)).data
+            service.put_object_with_body(object, body, options.merge(bucket: bucket_name))
           else
             raise Fog::Aliyun::Storage::Error, " Forbidden: Invalid body type: #{body.class}!"
           end
+          data = service.head_object(object, bucket: bucket_name)
           update_attributes_from(data)
           refresh_metadata
 
@@ -199,7 +199,7 @@ module Fog
         end
 
         def update_attributes_from(data)
-          merge_attributes(data[:headers].reject { |key, _value| ['Content-Length', 'Content-Type'].include?(key) })
+          merge_attributes(data.headers.reject { |key, _value| ['Content-Length', 'Content-Type'].include?(key) })
         end
       end
     end
