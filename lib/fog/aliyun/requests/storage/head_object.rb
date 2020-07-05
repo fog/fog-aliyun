@@ -10,17 +10,10 @@ module Fog
         # * object<~String> - Name of object to look for
         #
         def head_object(object, options = {})
-          bucket = options[:bucket]
-          bucket ||= @aliyun_oss_bucket
-          resource = bucket + '/' + object
-          ret = request(
-            expects: [200, 404],
-            method: 'HEAD',
-            path: object,
-            bucket: bucket,
-            resource: resource
-          )
-          ret
+          bucket_name = options[:bucket]
+          bucket_name ||= @aliyun_oss_bucket
+          # Using OSS ruby SDK to fix performance issue
+          @oss_http.head({:bucket => bucket_name, :object => object}, {})
         end
       end
     end
