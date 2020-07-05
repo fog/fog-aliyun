@@ -84,7 +84,7 @@ module Fog
           @aliyun_accesskey_secret = options[:aliyun_accesskey_secret]
           @aliyun_oss_bucket = options[:aliyun_oss_bucket]
           @aliyun_oss_sdk_log_path=options[:aliyun_oss_sdk_log_path]
-          if !::File.exist?(@aliyun_oss_sdk_log_path)
+          if @aliyun_oss_sdk_log_path && !::File.exist?(@aliyun_oss_sdk_log_path)
             `touch #{@aliyun_oss_sdk_log_path}`
           end
           ENV["ALIYUN_OSS_SDK_LOG_PATH"] = @aliyun_oss_sdk_log_path
