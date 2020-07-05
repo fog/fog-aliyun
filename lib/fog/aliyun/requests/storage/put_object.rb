@@ -24,8 +24,16 @@ module Fog
         def put_object_with_body(object, body, options = {})
           bucket_name = options[:bucket]
           bucket_name ||= @aliyun_oss_bucket
-          # Using OSS ruby SDK to fix performance issue
-          @oss_http.put({:bucket => bucket_name, :object => object}, {:body => body})
+
+          resource = bucket_name + '/' + object
+          request(
+            expects: [200, 203],
+            method: 'PUT',
+            path: object,
+            bucket: bucket_name,
+            resource: resource,
+            body: body
+          )
         end
 
         def put_folder(bucket, folder)
