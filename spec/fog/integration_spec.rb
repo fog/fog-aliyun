@@ -23,6 +23,7 @@ describe 'Integration tests', :integration => true do
     files = directory.files
     expect(files.length).to eq(1)
     expect(files.empty?).to eq(false)
+    expect(files.head('test_dir/dir1/notExistFile')).to eq(nil)
     file=files.get('test_dir/dir1/dir2/dir3/')
     expect(file.key).to eq("test_dir/dir1/dir2/dir3/")
     file.destroy
