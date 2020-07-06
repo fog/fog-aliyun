@@ -1,4 +1,5 @@
 ## 0.3.17 (Unreleased)
+## 0.3.17 (July 06, 2020)
 
 IMPROVEMENTS:
 - adater oss_sdk_log_path [GH-125](https://github.com/fog/fog-aliyun/pull/125)
