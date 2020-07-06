@@ -37,8 +37,17 @@ module Fog
             key = key.chomp('/')
             if key.include? '/'
               dir = key + '/'
-              ret = service.head_object(dir, options)
-              new(key: key) if ret.data[:status] == 200
+              begin
+                ret = service.head_object(dir, options)
+                new(key: key) if ret.data.code.to_i == 200
+              rescue Exception => error
+                case error.http_code.to_i
+                  when 404
+                    nil
+                  else
+                    raise(error)
+                end
+              end
             else
               remap_attributes(options, {
                   :delimiter  => 'delimiter',

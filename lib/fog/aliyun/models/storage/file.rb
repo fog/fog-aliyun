@@ -121,18 +121,28 @@ module Fog
                    end
           if body.is_a?(::File)
             service.put_object(object, body, options.merge(bucket: bucket_name))
-            data = service.head_object(object, bucket: bucket_name)
           elsif body.is_a?(String)
-            data = service.put_object_with_body(object, body, options.merge(bucket: bucket_name)).data
+            service.put_object_with_body(object, body, options.merge(bucket: bucket_name))
           else
             raise Fog::Aliyun::Storage::Error, " Forbidden: Invalid body type: #{body.class}!"
           end
-          update_attributes_from(data)
-          refresh_metadata
 
-          self.content_length = Fog::Storage.get_body_size(body)
-          self.content_type ||= Fog::Storage.get_content_type(body)
-          true
+          begin
+            data = service.head_object(object, bucket: bucket_name)
+            update_attributes_from(data)
+            refresh_metadata
+
+            self.content_length = Fog::Storage.get_body_size(body)
+            self.content_type ||= Fog::Storage.get_content_type(body)
+            true
+          rescue Exception => error
+            case error.http_code.to_i
+              when 404
+                nil
+              else
+                raise(error)
+            end
+          end
         end
 
         private
@@ -180,10 +190,20 @@ module Fog
                        directory_key + '/' + key
                      end
 
-            data = service.head_object(object, bucket: bucket_name).data
-            if data[:status] == 200
-              headers = data[:headers]
-              headers.select! { |k, _v| metadata_attribute?(k) }
+
+            begin
+              data = service.head_object(object, bucket: bucket_name)
+              if data.code.to_i == 200
+                headers = data.headers
+                headers.select! { |k, _v| metadata_attribute?(k) }
+              end
+            rescue Exception => error
+              case error.http_code.to_i
+                when 404
+                  {}
+                else
+                  raise(error)
+              end
             end
           else
             {}
@@ -195,11 +215,11 @@ module Fog
         end
 
         def metadata_prefix
-          'X-Object-Meta-'
+          'x_oss_meta_'
         end
 
         def update_attributes_from(data)
-          merge_attributes(data[:headers].reject { |key, _value| ['Content-Length', 'Content-Type'].include?(key) })
+          merge_attributes(data.headers.reject { |key, _value| [:content_length, :content_type].include?(key) })
         end
       end
     end

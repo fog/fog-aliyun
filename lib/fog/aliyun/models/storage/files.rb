@@ -161,7 +161,7 @@ module Fog
           service.get_object_https_url_public(object, expires, options.merge(bucket: bucket_name))
         end
 
-        def head(key, _options = {})
+        def head(key, options = {})
           requires :directory
           bucket_name, directory_key = check_directory_key(directory.key)
           object = if directory_key == ''
@@ -169,29 +169,22 @@ module Fog
                    else
                      directory_key + '/' + key
                    end
-          data = service.head_object(object, bucket: bucket_name).data
-          return nil if data[:status] == 404
-          lastModified = data[:headers]['Last-Modified']
-          last_modified = (Time.parse(lastModified).localtime if !lastModified.nil? && lastModified != '')
-
-          date = data[:headers]['Date']
-          date = (Time.parse(date).localtime if !date.nil? && date != '')
-
-          file_data = {
-            content_length: data[:headers]['Content-Length'].to_i,
-            key: key,
-            last_modified: last_modified,
-            content_type: data[:headers]['Content-Type'],
-            etag: data[:headers]['ETag'],
-            date: date,
-            connection: data[:headers]['Connection'],
-            accept_ranges: data[:headers]['Accept-Ranges'],
-            server: data[:headers]['Server'],
-            object_type: data[:headers]['x-oss-object-type']
-          }
-          new(file_data)
-        rescue Fog::Aliyun::Storage::NotFound
-          nil
+          options.merge!({bucket: bucket_name})
+          begin
+            data = service.head_object(object, options)
+            normalize_headers(data)
+            file_data = data.headers.merge({
+                                               :key => key
+                                           })
+            new(file_data)
+          rescue Exception => error
+            case error.http_code.to_i
+              when 404
+                nil
+              else
+                raise(error)
+            end
+          end
         end
 
         def new(attributes = {})
@@ -204,6 +197,11 @@ module Fog
             end
           end
           super({ directory: directory }.merge!(attributes))
+        end
+
+        def normalize_headers(data)
+          data.headers[:last_modified] = Time.parse(data.headers[:last_modified])
+          data.headers[:etag] = data.headers[:etag].gsub('"','')
         end
       end
     end
