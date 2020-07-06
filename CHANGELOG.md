@@ -1,4 +1,27 @@
-## 0.3.17 (Unreleased)
+## 0.3.19 (Unreleased)
+## 0.3.18 (August 03, 2020)
+
+IMPROVEMENTS:
+
+- reconstruct perform test [GH-148](https://github.com/fog/fog-aliyun/pull/148)
+- Reconstruct fog-aliyun by using oss [GH-147](https://github.com/fog/fog-aliyun/pull/147)
+- reconstruct cover case test [GH-146](https://github.com/fog/fog-aliyun/pull/146)
+- reconstruct case test [GH-144](https://github.com/fog/fog-aliyun/pull/144)
+- reconstruct parts two of file [GH-143](https://github.com/fog/fog-aliyun/pull/143)
+- implement blobstore for cloud_controller_ng [GH-142](https://github.com/fog/fog-aliyun/pull/142)
+- reconstruct parts of file [GH-141](https://github.com/fog/fog-aliyun/pull/141)
+- reconstruct the files [GH-140](https://github.com/fog/fog-aliyun/pull/140)
+- reconstruct the directory [GH-139](https://github.com/fog/fog-aliyun/pull/139)
+- reconstruct the directories [GH-138](https://github.com/fog/fog-aliyun/pull/138)
+- improve files.get code [GH-137](https://github.com/fog/fog-aliyun/pull/137)
+- add testcase for testing head notexistfile [GH-136](https://github.com/fog/fog-aliyun/pull/136)
+- improve head_object using oss sdk [GH-135](https://github.com/fog/fog-aliyun/pull/135)
+
+BUG FIXES:
+
+- fix files all options problem [GH-149](https://github.com/fog/fog-aliyun/pull/149)
+
+## 0.3.17 (July 06, 2020)
 
 IMPROVEMENTS:
 - adater oss_sdk_log_path [GH-125](https://github.com/fog/fog-aliyun/pull/125)
