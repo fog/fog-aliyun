@@ -1,4 +1,5 @@
-## 0.3.19 (Unreleased)
+## 0.3.20 (Unreleased)
+## 0.3.19 (August 17, 2020)
 
 IMPROVEMENTS:
 
