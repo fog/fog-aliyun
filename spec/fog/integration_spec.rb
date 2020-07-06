@@ -552,6 +552,47 @@ describe 'Integration tests', :integration => true do
     end
   end
 
+  it 'Should key is a existing bucket' do
+    expect(@conn.directories.get(@conn.aliyun_oss_bucket).save).to eq(true)
+    bucket=@conn.directories.get(@conn.aliyun_oss_bucket)
+    expect(bucket.destroy).to eq(false)
+    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir1/test_sub_dir > /dev/null")
+    bucket=@conn.directories.get(@conn.aliyun_oss_bucket)
+    expect(bucket.destroy).to eq(true)
+  end
+
+  it 'Should get bucket operation' do
+    expect(@conn.get_bucket_acl(@conn.aliyun_oss_bucket)).to eq("private")
+    expect(@conn.get_bucket_CORSRules(@conn.aliyun_oss_bucket)).to eq(nil)
+    expect(@conn.get_bucket_lifecycle(@conn.aliyun_oss_bucket)).to eq(nil)
+    expect(@conn.get_bucket_referer(@conn.aliyun_oss_bucket)["AllowEmptyReferer"]).to eq(["true"])
+    expect(@conn.get_bucket_website(@conn.aliyun_oss_bucket)).to eq(nil)
+    expect(@conn.get_bucket_logging(@conn.aliyun_oss_bucket)).to eq(nil)
+  end
+
+  it 'Should list object operation' do
+    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir1/test_sub_dir > /dev/null")
+    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir2/test_sub_dir > /dev/null")
+    expect(@conn.list_objects('prefix'=>"test_dir1")["Contents"].size).to eq(1)
+    expect(@conn.list_objects('marker'=>"test_dir1")["Contents"].size).to eq(2)
+    p @conn.list_multipart_uploads(@conn.aliyun_oss_bucket)
+
+  end
+
+  it 'Should put object operation' do
+    @conn.put_folder(@conn.aliyun_oss_bucket,"test_dir1")
+    expect(@conn.directories.get(@conn.aliyun_oss_bucket).files.size).to eq(1)
+    @conn.put_multipart_object(@conn.aliyun_oss_bucket,"test_file",File.open('./spec/fog/lorem.txt'))
+    expect(@conn.directories.get(@conn.aliyun_oss_bucket).files.size).to eq(2)
+    @conn.put_object("test_file2",File.open('./spec/fog/lorem.txt'))
+    expect(@conn.directories.get(@conn.aliyun_oss_bucket).files.size).to eq(3)
+    content=""
+    File.open('./spec/fog/lorem.txt') do |aFile|
+      aFile.readlines.each { |cc|content+=cc  }
+    end
+    @conn.put_object_with_body("test_file3",content)
+    expect(@conn.directories.get(@conn.aliyun_oss_bucket).files.size).to eq(4)
+  end
   # Test region is selected according to provider configuration
   # check default region is used if no region provided explicitly
   # There is need to set a env variable to support setting oss default bucket

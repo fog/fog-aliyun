@@ -60,12 +60,16 @@ module Fog
               directory.key,
               options
           )
-          if parent
+          if parent && parent.files.loaded
             merge_attributes(parent.files.attributes)
             load(parent.files.map {|file| file.attributes})
           else
             nil
           end
+        end
+
+        def loaded
+          @loaded
         end
 
         alias each_file_this_page each
