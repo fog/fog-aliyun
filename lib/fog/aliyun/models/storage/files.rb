@@ -95,33 +95,18 @@ module Fog
                    end
           begin
             data = service.get_object(object, options.merge({bucket: bucket_name}), &block)
-            headers = data.headers
-            lastModified = headers[:last_modified]
-            last_modified = (Time.parse(lastModified).localtime if !lastModified.nil? && lastModified != '')
-
-            date = headers[:date]
-            date = (Time.parse(date).localtime if !date.nil? && date != '')
-            file_data = {
-                body: data.body,
-                content_length: headers[:content_length].to_i,
-                key: key,
-                last_modified: last_modified,
-                content_type: headers[:content_type],
-                etag: headers[:etag],
-                date: date,
-                connection: headers[:connection],
-                accept_ranges: headers[:accept_ranges],
-                server: headers[:server],
-                object_type: headers[:x_oss_object_type]
-            }
-
+            normalize_headers(data)
+            file_data = data.headers.merge({
+                                               :body => data.body,
+                                               :key  => key
+                                           })
             new(file_data)
-          rescue AliyunOssSdk::ServerError => error
-            case error.error_code
-            when %r{NoSuchKey},%r{SymlinkTargetNotExist}
-              nil
-            else
-              raise(error)
+          rescue Exception => error
+            case error.http_code.to_i
+              when 404
+                nil
+              else
+                raise(error)
             end
           end
         end
