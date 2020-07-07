@@ -16,7 +16,7 @@ module Fog
         attribute :last_modified, aliases: 'Last-Modified', type: :time
         attribute :accept_ranges, aliases: 'Accept-Ranges'
         attribute :server, aliases: 'Server'
-        attribute :object_type, aliases: 'x-oss-object-type'
+        attribute :object_type, aliases: ['x-oss-object-type', 'x_oss_object_type']
 
         def body
           attributes[:body] ||=
