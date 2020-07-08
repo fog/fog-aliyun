@@ -7,16 +7,10 @@ module Fog
         # Delete an existing bucket
         #
         # ==== Parameters
-        # * bucket<~String> - Name of bucket to delete
+        # * bucket_name<~String> - Name of bucket to delete
         #
-        def delete_bucket(bucket)
-          resource = bucket + '/'
-          request(
-            expects: 204,
-            method: 'DELETE',
-            bucket: bucket,
-            resource: resource
-          )
+        def delete_bucket(bucket_name)
+          @oss_protocol.delete_bucket(bucket_name)
         end
       end
     end
