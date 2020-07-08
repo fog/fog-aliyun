@@ -9,11 +9,14 @@ module Fog
         # ==== Parameters
         # * object_name<~String> - Name of object to look for
         #
-        def get_object(object_name, options = {}, &block)
+        def get_object(bucket_name, object_name, options = {}, &block)
           options = options.reject { |_key, value| value.nil? }
-          bucket_name = options[:bucket]
-          bucket_name ||= @aliyun_oss_bucket
-          options.delete(:bucket)
+          unless bucket_name
+            raise ArgumentError.new('bucket_name is required')
+          end
+          unless object_name
+            raise ArgumentError.new('object_name is required')
+          end
           # Using OSS ruby SDK to fix performance issue
           http_options = { :headers => {} }
           http_options[:query] = options.delete('query') || {}
