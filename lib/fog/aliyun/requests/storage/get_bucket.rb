@@ -8,43 +8,20 @@ module Fog
           @oss_client.bucket_exists?(bucket_name)
         end
 
-        def get_bucket(bucket, options = {})
-          prefix = options['prefix']
-          marker = options['marker']
-          # Set the GetBucket max limitation to 1000
-          maxKeys = options['max-keys'] || 1000
-          maxKeys = maxKeys.to_i
-          maxKeys = [maxKeys, 1000].min.to_s
-          delimiter = options['delimiter']
-          path = ''
-          if prefix
-            path += '/?prefix=' + prefix
-            path += '&marker=' + marker if marker
-            path += '&max-keys=' + maxKeys if maxKeys
-            path += '&delimiter=' + delimiter if delimiter
-
-          elsif marker
-            path += '/?marker=' + marker
-            path += '&max-keys=' + maxKeys if maxKeys
-            path += '&delimiter=' + delimiter if delimiter
-
-          elsif maxKeys
-            path += '/?max-keys=' + maxKeys
-            path += '&delimiter=' + delimiter if delimiter
-          elsif delimiter
-            path += '/?delimiter=' + delimiter
+        def get_bucket(bucket_name, options = {})
+          unless bucket_name
+            raise ArgumentError.new('bucket_name is required')
           end
 
-          resource = bucket + '/'
-          ret = request(
-            expects: [200, 203, 404],
-            method: 'GET',
-            bucket: bucket,
-            resource: resource,
-            path: path
-          )
-          xml = ret.data[:body]
-          XmlSimple.xml_in(xml)
+          # Set the GetBucket max limitation to 1000
+          maxKeys = options[:max_keys] || 1000
+          maxKeys = maxKeys.to_i
+          maxKeys = [maxKeys, 1000].min
+
+          options[:limit] = maxKeys
+          options.delete(:max_keys)
+
+          @oss_protocol.list_objects(bucket_name, options)
         end
 
         def get_bucket_acl(bucket)

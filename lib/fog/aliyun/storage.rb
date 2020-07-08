@@ -43,6 +43,7 @@ module Fog
       request :head_object
       request :put_bucket
       request :put_object
+      request :get_service
       request :list_buckets
       request :list_objects
       request :get_containers
@@ -121,6 +122,7 @@ module Fog
               :access_key_secret => @aliyun_accesskey_secret
           )
           @oss_http = AliyunOssSdk::HTTP.new(@oss_config)
+          @oss_protocol = AliyunOssSdk::Protocol.new(@oss_config)
         end
 
         def reload
