@@ -384,7 +384,7 @@ describe 'Integration tests', :integration => true do
       bucket = @conn.directories.get(@conn.aliyun_oss_bucket, prefix: 'test_dir1/')
       expect(bucket.files.size).to eq(3)
       bucket = @conn.directories.get(@conn.aliyun_oss_bucket, prefix: 'test_dir1', delimiter: '/')
-      expect(bucket.files.size).to eq(2)
+      expect(bucket.files.size).to eq(0)
       bucket = @conn.directories.get(@conn.aliyun_oss_bucket, prefix: 'test_dir1/', delimiter: '/')
       expect(bucket.files.size).to eq(1)
     ensure
@@ -412,12 +412,14 @@ describe 'Integration tests', :integration => true do
       expect(files[1].key).to eq("b_test_file2")
 
       # filtered by marker
+      files = @conn.directories.get(@conn.aliyun_oss_bucket).files
       expect(files.all(marker:'b_test').length).to eq(4)
       expect(files.empty?).to eq(false)
       expect(files[0].key).to eq("b_test_file1")
       expect(files[2].key).to eq("c_test_file1")
 
       # filtered by max_keys
+      files = @conn.directories.get(@conn.aliyun_oss_bucket).files
       expect(files.all(max_keys:2).length).to eq(2)
       expect(files.empty?).to eq(false)
       expect(files[0].key).to eq("a_test_file1")
@@ -429,9 +431,9 @@ describe 'Integration tests', :integration => true do
       system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/test_dir1/test_file1 > /dev/null")
       system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/test_dir1/test_sub_dir/test_file2 > /dev/null")
       files = @conn.directories.get(@conn.aliyun_oss_bucket).files
-      expect(files.all(prefix:'test_dir1').length).to eq(2)
-      expect(files.all(prefix:'test_dir1/').length).to eq(2)
-      expect(files.all(prefix:'test_dir1', delimiter: '/')).to eq(nil)
+      expect(files.all(prefix:'test_dir1').length).to eq(3)
+      expect(files.all(prefix:'test_dir1/').length).to eq(3)
+      expect(files.all(prefix:'test_dir1', delimiter: '/')).to eq([])
       expect(files.all(prefix:'test_dir1/', delimiter: '/').length).to eq(1)
       expect(files.empty?).to eq(false)
       expect(files[0].key).to eq("test_dir1/test_file1")

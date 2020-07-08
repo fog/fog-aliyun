@@ -75,6 +75,8 @@ module Fog
               directory.files.merge_attributes(options)
               if data.key?('Contents') && !data['Contents'].nil?
                 directory.files.load(data['Contents'])
+              else
+                directory.files.load([])
               end
               directory
             end
