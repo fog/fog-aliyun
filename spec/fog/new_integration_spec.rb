@@ -80,4 +80,87 @@ describe 'Integration tests', :integration => true do
     directory = @conn.directories.get(new_directory)
     expect(directory).to eq(nil)
   end
+
+  it 'Should get all of files: test files.all' do
+    directory_key = @conn.aliyun_oss_bucket
+    file = Tempfile.new('fog-upload-file')
+    file.write("Hello World!")
+    begin
+      system("aliyun oss mb oss://#{directory_key} > /dev/null")
+      system("aliyun oss mkdir oss://#{directory_key}/test_dir1 > /dev/null")
+      system("aliyun oss cp #{file.path} oss://#{directory_key}/test_dir1/test_file1 > /dev/null")
+      system("aliyun oss mkdir oss://#{directory_key}/test_dir2 > /dev/null")
+      system("aliyun oss cp #{file.path} oss://#{directory_key}/test_dir2/test_file2 > /dev/null")
+      system("aliyun oss cp #{file.path} oss://#{directory_key}/test_file3 > /dev/null")
+      files = @conn.directories.get(directory_key).files
+      expect(files.length).to eq(5)
+      expect(files.all.length).to eq(5)
+      # TODO support more filter, like delimiter，marker，prefix, max-keys
+    ensure
+      file.close
+      file.unlink
+    end
+  end
+
+  it 'Should iteration all files: test files.each' do
+    directory_key = @conn.aliyun_oss_bucket
+    file = Tempfile.new('fog-upload-file')
+    file.write("Hello World!")
+    begin
+      system("aliyun oss mb oss://#{directory_key} > /dev/null")
+      system("aliyun oss mkdir oss://#{directory_key}/test_dir1 > /dev/null")
+      system("aliyun oss cp #{file.path} oss://#{directory_key}/test_dir1/test_file1 > /dev/null")
+      system("aliyun oss mkdir oss://#{directory_key}/test_dir2 > /dev/null")
+      system("aliyun oss cp #{file.path} oss://#{directory_key}/test_dir2/test_file2 > /dev/null")
+      system("aliyun oss cp #{file.path} oss://#{directory_key}/test_file3 > /dev/null")
+      files = @conn.directories.get(directory_key).files
+      puts files.each
+      # TODO test block
+    ensure
+      file.close
+      file.unlink
+    end
+  end
+
+  it 'Should get the specified file: test files.get' do
+    directory_key = @conn.aliyun_oss_bucket
+    file = Tempfile.new('fog-upload-file')
+    file.write("Hello World!")
+    begin
+      system("aliyun oss mb oss://#{directory_key} > /dev/null")
+      system("aliyun oss mkdir oss://#{directory_key}/test_dir1 > /dev/null")
+      system("aliyun oss cp #{file.path} oss://#{directory_key}/test_dir1/test_file1 > /dev/null")
+      system("aliyun oss mkdir oss://#{directory_key}/test_dir2 > /dev/null")
+      system("aliyun oss cp #{file.path} oss://#{directory_key}/test_dir2/test_file2 > /dev/null")
+      system("aliyun oss cp #{file.path} oss://#{directory_key}/test_file3 > /dev/null")
+      files = @conn.directories.get(directory_key).files
+      get_file = files.get("test_file3")
+      expect(get_file.key).to eq("test_file3")
+      # TODO checking all of file attributes and more files
+    ensure
+      file.close
+      file.unlink
+    end
+  end
+
+  it 'Should head the specified file: test files.head' do
+    directory_key = @conn.aliyun_oss_bucket
+    file = Tempfile.new('fog-upload-file')
+    file.write("Hello World!")
+    begin
+      system("aliyun oss mb oss://#{directory_key} > /dev/null")
+      system("aliyun oss mkdir oss://#{directory_key}/test_dir1 > /dev/null")
+      system("aliyun oss cp #{file.path} oss://#{directory_key}/test_dir1/test_file1 > /dev/null")
+      system("aliyun oss mkdir oss://#{directory_key}/test_dir2 > /dev/null")
+      system("aliyun oss cp #{file.path} oss://#{directory_key}/test_dir2/test_file2 > /dev/null")
+      system("aliyun oss cp #{file.path} oss://#{directory_key}/test_file3 > /dev/null")
+      files = @conn.directories.get(directory_key).files
+      head_file = files.head("test_file3")
+      expect(head_file.key).to eq("test_file3")
+        # TODO checking all of file attributes and more files
+    ensure
+      file.close
+      file.unlink
+    end
+  end
 end

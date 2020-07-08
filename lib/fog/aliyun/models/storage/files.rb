@@ -68,7 +68,8 @@ module Fog
           end
         end
 
-        alias each_file_this_page each
+        alias_method :each_file_this_page, :each
+
         def each
           if !block_given?
             self
@@ -76,7 +77,7 @@ module Fog
             subset = dup.all
 
             subset.each_file_this_page { |f| yield f }
-            while subset.length == (subset.limit || 10_000)
+            while subset.is_truncated
               subset = subset.all(marker: subset.last.key)
               subset.each_file_this_page { |f| yield f }
             end
@@ -87,14 +88,8 @@ module Fog
 
         def get(key, options = {}, &block)
           requires :directory
-          bucket_name, directory_key = check_directory_key(directory.key)
-          object = if directory_key == ''
-                     key
-                   else
-                     directory_key + '/' + key
-                   end
           begin
-            data = service.get_object(object, options.merge({bucket: bucket_name}), &block)
+            data = service.get_object(directory.key, key, options, &block)
             normalize_headers(data)
             file_data = data.headers.merge({
                                                :body => data.body,
@@ -148,15 +143,8 @@ module Fog
 
         def head(key, options = {})
           requires :directory
-          bucket_name, directory_key = check_directory_key(directory.key)
-          object = if directory_key == ''
-                     key
-                   else
-                     directory_key + '/' + key
-                   end
-          options.merge!({bucket: bucket_name})
           begin
-            data = service.head_object(object, options)
+            data = service.head_object(directory.key, key, options)
             normalize_headers(data)
             file_data = data.headers.merge({
                                                :key => key
@@ -174,14 +162,7 @@ module Fog
 
         def new(attributes = {})
           requires :directory
-          # Sometimes, the v will be a Array, like "Prefix"=>[{}], "Marker"=>[xxxx], "MaxKeys"=>["100"], "IsTruncated"=>["false"]
-          # and there needs to parse them
-          for k, v in attributes
-            if !v.nil? && (v.is_a? Array) && (v.size > 0)
-              attributes[k] = v[0]
-            end
-          end
-          super({ directory: directory }.merge!(attributes))
+          super({ :directory => directory }.merge!(attributes))
         end
 
         def normalize_headers(data)
