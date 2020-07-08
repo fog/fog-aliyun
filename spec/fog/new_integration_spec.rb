@@ -38,46 +38,46 @@ describe 'Integration tests', :integration => true do
   end
 
   it 'Should create a new directory' do
-    new_directory = DIRECTORY_TEST_PREFIX + 'create-' + rand(100).to_s
-    @conn.directories.create :key => new_directory
-    # TODO support parameter :location : @conn.directories.create :key => new_directory, :location => "oss-eu-central-1"
-    directory = @conn.directories.get(new_directory)
-    expect(directory.key).to eq(new_directory)
+    directory_key = DIRECTORY_TEST_PREFIX + 'create-' + rand(100).to_s
+    @conn.directories.create :key => directory_key
+    # TODO support parameter :location : @conn.directories.create :key => directory_key, :location => "oss-eu-central-1"
+    directory = @conn.directories.get(directory_key)
+    expect(directory.key).to eq(directory_key)
     # TODO checking other attributes of directory
     expect(directory.location).to eq('oss-' + @conn.aliyun_region_id)
     # TODO checking other methods of directory
     files = directory.files
     expect(files.length).to eq(0)
     directory.destroy!
-    directory = @conn.directories.get(new_directory)
+    directory = @conn.directories.get(directory_key)
     expect(directory).to eq(nil)
   end
 
   it 'Should delete directory' do
-    new_directory = @conn.aliyun_oss_bucket + '-delete'
-    system("aliyun oss mb oss://#{new_directory} > /dev/null")
-    directory = @conn.directories.get(new_directory)
-    expect(directory.key).to eq(new_directory)
+    directory_key = @conn.aliyun_oss_bucket + '-delete'
+    system("aliyun oss mb oss://#{directory_key} > /dev/null")
+    directory = @conn.directories.get(directory_key)
+    expect(directory.key).to eq(directory_key)
     # TODO checking other attributes of directory
     files = directory.files
     expect(files.length).to eq(0)
     directory.destroy
-    directory = @conn.directories.get(new_directory)
+    directory = @conn.directories.get(directory_key)
     expect(directory).to eq(nil)
   end
 
   it 'Should delete! directory' do
-    new_directory = @conn.aliyun_oss_bucket + '-delete-2'
-    system("aliyun oss mb oss://#{new_directory} > /dev/null")
-    system("aliyun oss mkdir oss://#{new_directory}/test_dir/dir1/dir2/dir3 > /dev/null")
-    system("aliyun oss mkdir oss://#{new_directory}/test_dir2/dir1 > /dev/null")
-    directory = @conn.directories.get(new_directory)
-    expect(directory.key).to eq(new_directory)
+    directory_key = @conn.aliyun_oss_bucket + '-delete-2'
+    system("aliyun oss mb oss://#{directory_key} > /dev/null")
+    system("aliyun oss mkdir oss://#{directory_key}/test_dir/dir1/dir2/dir3 > /dev/null")
+    system("aliyun oss mkdir oss://#{directory_key}/test_dir2/dir1 > /dev/null")
+    directory = @conn.directories.get(directory_key)
+    expect(directory.key).to eq(directory_key)
     # TODO checking other attributes of directory
     files = directory.files
     expect(files.length).to eq(2)
     directory.destroy!
-    directory = @conn.directories.get(new_directory)
+    directory = @conn.directories.get(directory_key)
     expect(directory).to eq(nil)
   end
 
@@ -86,7 +86,6 @@ describe 'Integration tests', :integration => true do
     file = Tempfile.new('fog-upload-file')
     file.write("Hello World!")
     begin
-      system("aliyun oss mb oss://#{directory_key} > /dev/null")
       system("aliyun oss mkdir oss://#{directory_key}/test_dir1 > /dev/null")
       system("aliyun oss cp #{file.path} oss://#{directory_key}/test_dir1/test_file1 > /dev/null")
       system("aliyun oss mkdir oss://#{directory_key}/test_dir2 > /dev/null")
@@ -107,7 +106,6 @@ describe 'Integration tests', :integration => true do
     file = Tempfile.new('fog-upload-file')
     file.write("Hello World!")
     begin
-      system("aliyun oss mb oss://#{directory_key} > /dev/null")
       system("aliyun oss mkdir oss://#{directory_key}/test_dir1 > /dev/null")
       system("aliyun oss cp #{file.path} oss://#{directory_key}/test_dir1/test_file1 > /dev/null")
       system("aliyun oss mkdir oss://#{directory_key}/test_dir2 > /dev/null")
@@ -127,7 +125,6 @@ describe 'Integration tests', :integration => true do
     file = Tempfile.new('fog-upload-file')
     file.write("Hello World!")
     begin
-      system("aliyun oss mb oss://#{directory_key} > /dev/null")
       system("aliyun oss mkdir oss://#{directory_key}/test_dir1 > /dev/null")
       system("aliyun oss cp #{file.path} oss://#{directory_key}/test_dir1/test_file1 > /dev/null")
       system("aliyun oss mkdir oss://#{directory_key}/test_dir2 > /dev/null")
@@ -148,7 +145,6 @@ describe 'Integration tests', :integration => true do
     file = Tempfile.new('fog-upload-file')
     file.write("Hello World!")
     begin
-      system("aliyun oss mb oss://#{directory_key} > /dev/null")
       system("aliyun oss mkdir oss://#{directory_key}/test_dir1 > /dev/null")
       system("aliyun oss cp #{file.path} oss://#{directory_key}/test_dir1/test_file1 > /dev/null")
       system("aliyun oss mkdir oss://#{directory_key}/test_dir2 > /dev/null")
@@ -158,6 +154,60 @@ describe 'Integration tests', :integration => true do
       head_file = files.head("test_file3")
       expect(head_file.key).to eq("test_file3")
         # TODO checking all of file attributes and more files
+    ensure
+      file.close
+      file.unlink
+    end
+  end
+
+  it 'Should get the specified file acl: test file.acl' do
+    directory_key = @conn.aliyun_oss_bucket
+    file = Tempfile.new('fog-upload-file')
+    file.write("Hello World!")
+    begin
+      system("aliyun oss cp #{file.path} oss://#{directory_key}/test_file > /dev/null")
+      files = @conn.directories.get(directory_key).files
+      expect(files[0].acl).to eq("default")
+        # TODO checking other acl and set acl
+    ensure
+      file.close
+      file.unlink
+    end
+  end
+
+  it 'Should copy a new directory: test file.copy' do
+    source_directory_key = @conn.aliyun_oss_bucket
+    target_directory_key = DIRECTORY_TEST_PREFIX + 'create-' + rand(100).to_s
+    file = Tempfile.new('fog-upload-file')
+    file.write("Hello World!")
+    begin
+      system("aliyun oss mb oss://#{target_directory_key} > /dev/null")
+      system("aliyun oss cp #{file.path} oss://#{source_directory_key}/test_file > /dev/null")
+      files = @conn.directories.get(source_directory_key).files
+      files[0].copy(target_directory_key, "target_test_file")
+      files = @conn.directories.get(target_directory_key).files
+      expect(files[0].key).to eq("target_test_file")
+        # TODO checking other acl and set acl
+      directory = @conn.directories.get(target_directory_key)
+      directory.destroy!
+    ensure
+      file.close
+      file.unlink
+    end
+  end
+
+  it 'Should delete the specified file: test file.destroy' do
+    directory_key = @conn.aliyun_oss_bucket
+    file = Tempfile.new('fog-upload-file')
+    file.write("Hello World!")
+    begin
+      system("aliyun oss cp #{file.path} oss://#{directory_key}/test_file > /dev/null")
+      files = @conn.directories.get(directory_key).files
+      expect(files[0].key).to eq("test_file")
+      files[0].destroy
+      files = @conn.directories.get(directory_key).files
+      expect(files.size).to eq(0)
+      # TODO checking more files
     ensure
       file.close
       file.unlink
