@@ -45,8 +45,12 @@ module Fog
           end
           directory.files.load(objects)
           directory
-        rescue Excon::Errors::NotFound
-          nil
+        rescue AliyunOssSdk::ServerError => error
+          if error.error_code == "NoSuchBucket"
+            nil
+          else
+            raise(error)
+          end
         end
       end
     end

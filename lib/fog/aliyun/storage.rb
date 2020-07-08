@@ -36,7 +36,9 @@ module Fog
       request :copy_object
       request :delete_bucket
       request :delete_object
+      request :delete_multiple_objects
       request :get_bucket
+      request :get_bucket_location
       request :get_object
       request :get_object_http_url
       request :get_object_https_url
