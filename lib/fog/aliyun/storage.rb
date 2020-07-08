@@ -40,6 +40,7 @@ module Fog
       request :get_bucket
       request :get_bucket_location
       request :get_object
+      request :get_object_acl
       request :get_object_http_url
       request :get_object_https_url
       request :head_object
@@ -138,6 +139,16 @@ module Fog
           else
             "oss-#{region}.aliyuncs.com"
           end
+        end
+
+        def object_to_path(object_name=nil)
+          '/' + escape(object_name.to_s).gsub('%2F','/')
+        end
+
+        def escape(string)
+          string.gsub(/([^a-zA-Z0-9_.\-~\/]+)/) {
+            "%" + $1.unpack("H2" * $1.bytesize).join("%").upcase
+          }
         end
 
         def request(params)

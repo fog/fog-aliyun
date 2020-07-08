@@ -7,25 +7,21 @@ module Fog
         # Copy object
         #
         # ==== Parameters
-        # * source_bucket<~String> - Name of source bucket
-        # * source_object<~String> - Name of source object
-        # * target_bucket<~String> - Name of bucket to create copy in
-        # * target_object<~String> - Name for new copy of object
+        # * source_bucket_name<~String> - Name of source bucket
+        # * source_object_name<~String> - Name of source object
+        # * target_bucket_name<~String> - Name of bucket to create copy in
+        # * target_object_name<~String> - Name for new copy of object
         # * options<~Hash> - Additional headers options={}
-        def copy_object(source_bucket, source_object, target_bucket, target_object, options = {})
-          options = options.reject { |_key, value| value.nil? }
-          bucket = options[:bucket]
-          bucket ||= @aliyun_oss_bucket
-          source_bucket ||= bucket
-          target_bucket ||= bucket
-          headers = { 'x-oss-copy-source' => "/#{source_bucket}/#{source_object}" }
-          resource = target_bucket + '/' + target_object
-          request(expects: [200, 203],
-                  headers: headers,
-                  method: 'PUT',
-                  path: target_object,
-                  bucket: target_bucket,
-                  resource: resource)
+        def copy_object(source_bucket_name, source_object_name, target_bucket_name, target_object_name, options = {})
+          headers = { 'x-oss-copy-source' => "/#{source_bucket_name}#{object_to_path(source_object_name)}" }.merge!(options)
+          resources = {
+              :bucket => target_bucket_name,
+              :object => target_object_name
+          }
+          http_options = {
+              :headers => headers
+          }
+          @oss_http.put(resources, http_options)
         end
       end
     end

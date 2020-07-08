@@ -7,72 +7,106 @@ module Fog
     class Storage
       class File < Fog::Model
         identity :key, aliases: ['Key', 'Name', 'name']
+
+        attr_writer :body
+        attribute :cache_control, aliases: 'Cache-Control'
+        attribute :content_encoding, aliases: 'Content-Encoding'
         attribute :date, aliases: 'Date'
         attribute :content_length, aliases: ['Content-Length', 'Size'], type: :integer
+        attribute :content_md5, aliases: 'Content-MD5'
         attribute :content_type, aliases: 'Content-Type'
         attribute :connection, aliases: 'Connection'
         attribute :content_disposition, aliases: 'Content-Disposition'
-        attribute :etag, aliases: 'Etag'
+        attribute :etag, aliases: ['Etag', 'ETag']
+        attribute :expires, aliases: 'Expires'
+        attribute :metadata
+        attribute :owner, aliases: 'Owner'
         attribute :last_modified, aliases: 'Last-Modified', type: :time
         attribute :accept_ranges, aliases: 'Accept-Ranges'
         attribute :server, aliases: 'Server'
         attribute :object_type, aliases: ['x-oss-object-type', 'x_oss_object_type']
 
+        # @note Chunk size to use for multipart uploads.
+        #     Use small chunk sizes to minimize memory. E.g. 5242880 = 5mb
+        attr_reader :multipart_chunk_size
+        def multipart_chunk_size=(mp_chunk_size)
+          raise ArgumentError.new("minimum multipart_chunk_size is 5242880") if mp_chunk_size < 5242880
+          @multipart_chunk_size = mp_chunk_size
+        end
+
+        def acl
+          requires :directory, :key
+          service.get_object_acl(directory.key, key)
+        end
+
+        def acl=(new_acl)
+          valid_acls = ['private', 'public-read', 'public-read-write', 'default']
+          unless valid_acls.include?(new_acl)
+            raise ArgumentError.new("acl must be one of [#{valid_acls.join(', ')}]")
+          end
+          @acl = new_acl
+        end
+
         def body
-          attributes[:body] ||=
-            if last_modified
-              collection.get(identity).body
-            else
-              ''
-            end
+          return attributes[:body] if attributes[:body]
+          return '' unless last_modified
+
+          file = collection.get(identity)
+          if file
+            attributes[:body] = file.body
+          else
+            attributes[:body] = ''
+          end
         end
 
         def body=(new_body)
           attributes[:body] = new_body
         end
 
-        attr_reader :directory
-
-        def copy(target_directory_key, target_file_key, options = {})
-          requires :directory, :key
-          source_bucket, directory_key = collection.check_directory_key(directory.key)
-          source_object = if directory_key == ''
-                            key
-                          else
-                            directory_key + '/' + key
-                          end
-          target_bucket, target_directory_key = collection.check_directory_key(target_directory_key)
-          target_object = if target_directory_key == ''
-                            target_file_key
-                          else
-                            target_directory_key + '/' + target_file_key
-                          end
-          service.copy_object(source_bucket, source_object, target_bucket, target_object, options)
-          target_directory = service.directories.new(key: target_directory_key)
-          target_directory.files.get(target_file_key)
+        def directory
+          @directory
         end
 
-        def destroy
+        # Copy object from one bucket to other bucket.
+        #
+        #     required attributes: directory, key
+        #
+        # @param target_directory_key [String]
+        # @param target_file_key [String]
+        # @param options [Hash] options for copy_object method
+        # @return [String] Fog::Aliyun::Files#head status of directory contents
+        #
+        def copy(target_directory_key, target_file_key, options = {})
           requires :directory, :key
-          bucket_name, directory_key = collection.check_directory_key(directory.key)
-          object = if directory_key == ''
-                     key
-                   else
-                     directory_key + '/' + key
-                   end
-          service.delete_object(object, bucket: bucket_name)
+          service.copy_object(directory.key, key, target_directory_key, target_file_key, options)
+          target_directory = service.directories.new(:key => target_directory_key)
+          target_directory.files.head(target_file_key)
+        end
+
+        def destroy(options = {})
+          requires :directory, :key
+          # TODO support versionId
+          # attributes[:body] = nil if options['versionId'] == version
+          service.delete_object(directory.key, key, options)
           true
         end
 
+        remove_method :metadata
         def metadata
-          attributes[:metadata] ||= headers_to_metadata
+          attributes.reject {|key, value| !(key.to_s =~ /^x-oss-/)}
         end
 
+        remove_method :metadata=
+        def metadata=(new_metadata)
+          merge_attributes(new_metadata)
+        end
+
+        remove_method :owner=
         def owner=(new_owner)
           if new_owner
             attributes[:owner] = {
-              display_name: new_owner['DisplayName'],
-              id: new_owner['ID']
+                :display_name => new_owner['DisplayName'] || new_owner[:display_name],
+                :id           => new_owner['ID'] || new_owner[:id]
             }
           end
         end
