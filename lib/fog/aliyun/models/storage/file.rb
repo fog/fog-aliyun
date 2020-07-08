@@ -8,7 +8,7 @@ module Fog
       class File < Fog::Model
         identity :key, aliases: ['Key', 'Name', 'name']
         attribute :date, aliases: 'Date'
-        attribute :content_length, aliases: 'Content-Length', type: :integer
+        attribute :content_length, aliases: ['Content-Length', 'Size'], type: :integer
         attribute :content_type, aliases: 'Content-Type'
         attribute :connection, aliases: 'Connection'
         attribute :content_disposition, aliases: 'Content-Disposition'
