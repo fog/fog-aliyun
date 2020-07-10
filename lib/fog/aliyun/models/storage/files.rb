@@ -106,39 +106,22 @@ module Fog
           end
         end
 
-        def get_url(key)
+        # @param options[Hash] No need to use
+        def get_url(key, options = {})
           requires :directory
-          bucket_name, directory_key = check_directory_key(directory.key)
-          object = if directory_key == ''
-                     key
-                   else
-                     directory_key + '/' + key
-                   end
-          service.get_object_http_url_public(object, 3600, bucket: bucket_name)
+          service.get_object_http_url_public(directory.key, key, 3600)
         end
 
+        # @param options[Hash] No need to use
         def get_http_url(key, expires, options = {})
           requires :directory
-          bucket_name, directory_key = check_directory_key(directory.key)
-          object = if directory_key == ''
-                     key
-                   else
-                     directory_key + '/' + key
-                   end
-          expires = expires.nil? ? 0 : expires.to_i
-          service.get_object_http_url_public(object, expires, options.merge(bucket: bucket_name))
+          service.get_object_http_url_public(directory.key, key, expires)
         end
 
+        # @param options[Hash] No need to use
         def get_https_url(key, expires, options = {})
           requires :directory
-          bucket_name, directory_key = check_directory_key(directory.key)
-          object = if directory_key == ''
-                     key
-                   else
-                     directory_key + '/' + key
-                   end
-          expires = expires.nil? ? 0 : expires.to_i
-          service.get_object_https_url_public(object, expires, options.merge(bucket: bucket_name))
+          service.get_object_https_url_public(directory.key, key, expires)
         end
 
         def head(key, options = {})
