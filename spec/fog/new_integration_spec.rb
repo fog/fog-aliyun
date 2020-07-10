@@ -213,4 +213,24 @@ describe 'Integration tests', :integration => true do
       file.unlink
     end
   end
+
+  it 'Should create the specified file: test file.save' do
+    files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+    expect(files.size).to eq(0)
+    files.create :key=> "file1" ,:body=> File.open("spec/fog/lorem.txt","r")
+    files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+    expect(files.size).to eq(1)
+    if !File.exist?("morethan100m")
+      system("wget https://bosh.oss-cn-hangzhou.aliyuncs.com/fog/morethan100m -O morethan100m --show-progress")
+    end
+    files.create :key=> "file2", :body=> File.open("morethan100m","r")
+    files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+    expect(files.size).to eq(2)
+  end
+
+  it 'Should get the specified file: test file.url' do
+    files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+    files.create :key=> "file1" ,:body=> File.open("spec/fog/lorem.txt","r")
+    expect(files.get("file1").url(3600)).not_to eq(nil)
+  end
 end

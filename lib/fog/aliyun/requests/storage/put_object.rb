@@ -4,21 +4,29 @@ module Fog
   module Aliyun
     class Storage
       class Real
+
+        def self.conforming_to_us_ascii!(keys, hash)
+          keys.each do |k|
+            v = hash[k]
+            if !v.encode(::Encoding::US_ASCII, :undef => :replace).eql?(v)
+              raise Excon::Errors::BadRequest.new("invalid #{k} header: value must be us-ascii")
+            end
+          end
+        end
         # Put details for object
         #
         # ==== Parameters
-        # * object<~String> - Name of object to look for
+        # * bucket_name<~String> - Name of bucket to look for
+        # * object_name<~String> - Object of object to look for
+        # * data<~File>
+        # * options<~Hash>
         #
-        def put_object(object, file = nil, options = {})
-          bucket_name = options[:bucket]
-          bucket_name ||= @aliyun_oss_bucket
-          bucket = @oss_client.get_bucket(bucket_name)
-          return bucket.put_object(object) if file.nil?
-          # With a single PUT operation you can upload objects up to 5 GB in size.
-          if file.size > 5_368_709_120
-            bucket.resumable_upload(object, file.path)
+        def put_object(bucket_name, object_name, data, options = {})
+          @oss_protocol.put_object(bucket_name, object_name, options)do |sw|
+            while line = data.gets
+              sw.write(line)
+            end
           end
-          bucket.put_object(object, :file => file.path)
         end
 
         def put_object_with_body(object, body, options = {})

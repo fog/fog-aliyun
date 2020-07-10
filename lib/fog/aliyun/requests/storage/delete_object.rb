@@ -7,6 +7,7 @@ module Fog
         # Delete an existing object
         #
         # ==== Parameters
+        # * bucket_name<~String> - Name of bucket to delete
         # * object_name<~String> - Name of object to delete
         #
         def delete_object(bucket_name, object_name, options = {})
@@ -16,14 +17,7 @@ module Fog
           # else
           #   query = {}
           # end
-
           @oss_http.delete({:bucket => bucket_name, :object => object_name}, {:headers => options})
-
-        end
-
-        def abort_multipart_upload(bucket_name, object, upload_id)
-          bucket = @oss_client.get_bucket(bucket_name)
-          bucket.abort_upload(upload_id, object)
         end
       end
     end

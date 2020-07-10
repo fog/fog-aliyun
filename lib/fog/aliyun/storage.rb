@@ -9,6 +9,7 @@ AliyunOssSdk= Aliyun::OSS
 module Fog
   module Aliyun
     class Storage < Fog::Service
+      COMPLIANT_BUCKET_NAMES = /^(?:[a-z]|\d(?!\d{0,2}(?:\.\d{1,3}){3}$))(?:[a-z0-9]|\.(?![\.\-])|\-(?![\.])){1,61}[a-z0-9]$/
       DEFAULT_REGION = 'cn-hangzhou'
 
       DEFAULT_SCHEME = 'https'
@@ -53,6 +54,10 @@ module Fog
       request :get_container
       request :delete_container
       request :put_container
+      request :initiate_multipart_upload
+      request :upload_part
+      request :complete_multipart_upload
+      request :abort_multipart_upload
 
       class Real
         # Initialize connection to OSS

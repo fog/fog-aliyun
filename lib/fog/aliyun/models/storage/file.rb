@@ -111,7 +111,19 @@ module Fog
           end
         end
 
+        # Set Access-Control-List permissions.
+        #
+        #     valid new_publics: public_read, private
+        #
+        # @param [String] new_public
+        # @return [String] new_public
+        #
         def public=(new_public)
+          if new_public
+            @acl = 'public-read'
+          else
+            @acl = 'private'
+          end
           new_public
         end
 
@@ -120,141 +132,76 @@ module Fog
         #     required attributes: directory, key
         #
         # @param expires [String] number of seconds (since 1970-01-01 00:00) before url expires
-        # @param options [Hash]
+        # @param options[Hash] No need to use
         # @return [String] url
         #
         def url(expires, options = {})
-
-          expires = expires.nil? ? 0 : expires.to_i
-
-          requires :directory, :key
-          bucket_name, directory_key = collection.check_directory_key(directory.key)
-          object = if directory_key == ''
-                     key
-                   else
-                     directory_key + '/' + key
-                   end
-          service.get_object_http_url_public(object, expires, options.merge(bucket: bucket_name))
-        end
-
-        def public_url
           requires :key
-          collection.get_url(key)
+          service.get_object_http_url_public(directory.key, key, expires)
         end
 
         def save(options = {})
           requires :body, :directory, :key
-          options['Content-Type'] = content_type if content_type
+          options['x-oss-object-acl'] ||= @acl if @acl
+          options['Cache-Control'] = cache_control if cache_control
           options['Content-Disposition'] = content_disposition if content_disposition
-          options.merge!(metadata_to_headers)
-          bucket_name, directory_key = collection.check_directory_key(directory.key)
-          object = if directory_key == ''
-                     key
-                   else
-                     directory_key + '/' + key
-                   end
-          if body.is_a?(::File)
-            service.put_object(object, body, options.merge(bucket: bucket_name))
-          elsif body.is_a?(String)
-            service.put_object_with_body(object, body, options.merge(bucket: bucket_name))
+          options['Content-Encoding'] = content_encoding if content_encoding
+          options['Content-MD5'] = content_md5 if content_md5
+          options['Content-Type'] = content_type if content_type
+          options['Expires'] = expires if expires
+          options.merge!(metadata)
+
+          self.multipart_chunk_size = 5242880 if !multipart_chunk_size && Fog::Storage.get_body_size(body) > 5368709120
+          if multipart_chunk_size && Fog::Storage.get_body_size(body) >= multipart_chunk_size && body.respond_to?(:read)
+            multipart_save(options)
           else
-            raise Fog::Aliyun::Storage::Error, " Forbidden: Invalid body type: #{body.class}!"
+            service.put_object(directory.key, key, body, options)
           end
-
-          begin
-            data = service.head_object(object, bucket: bucket_name)
-            update_attributes_from(data)
-            refresh_metadata
-
-            self.content_length = Fog::Storage.get_body_size(body)
-            self.content_type ||= Fog::Storage.get_content_type(body)
-            true
-          rescue Exception => error
-            case error.http_code.to_i
-              when 404
-                nil
-              else
-                raise(error)
-            end
-          end
+          self.etag = self.etag.gsub('"','') if self.etag
+          self.content_length = Fog::Storage.get_body_size(body)
+          self.content_type ||= Fog::Storage.get_content_type(body)
+          true
         end
 
         private
 
-        attr_writer :directory
-
-        def refresh_metadata
-          metadata.reject! { |_k, v| v.nil? }
+        def directory=(new_directory)
+          @directory = new_directory
         end
 
-        def headers_to_metadata
-          key_map = key_mapping
-          Hash[metadata_attributes.map { |k, v| [key_map[k], v] }]
-        end
+        def multipart_save(options)
+          # Initiate the upload
+          upload_id = service.initiate_multipart_upload(directory.key, key, options)
 
-        def key_mapping
-          key_map = metadata_attributes
-          key_map.each_pair { |k, _v| key_map[k] = header_to_key(k) }
-        end
+          # Store ETags of upload parts
+          part_tags = []
 
-        def header_to_key(opt)
-          opt.gsub(metadata_prefix, '').split('-').map { |k| k[0, 1].downcase + k[1..-1] }.join('_').to_sym
-        end
-
-        def metadata_to_headers
-          header_map = header_mapping
-          Hash[metadata.map { |k, v| [header_map[k], v] }]
-        end
-
-        def header_mapping
-          header_map = metadata.dup
-          header_map.each_pair { |k, _v| header_map[k] = key_to_header(k) }
-        end
-
-        def key_to_header(key)
-          metadata_prefix + key.to_s.split(/[-_]/).map(&:capitalize).join('-')
-        end
-
-        def metadata_attributes
-          if last_modified
-            bucket_name, directory_key = collection.check_directory_key(directory.key)
-            object = if directory_key == ''
-                       key
-                     else
-                       directory_key + '/' + key
-                     end
-
-
-            begin
-              data = service.head_object(object, bucket: bucket_name)
-              if data.code.to_i == 200
-                headers = data.headers
-                headers.select! { |k, _v| metadata_attribute?(k) }
-              end
-            rescue Exception => error
-              case error.http_code.to_i
-                when 404
-                  {}
-                else
-                  raise(error)
-              end
-            end
-          else
-            {}
+          # Upload each part
+          # TODO: optionally upload chunks in parallel using threads
+          # (may cause network performance problems with many small chunks)
+          # TODO: Support large chunk sizes without reading the chunk into memory
+          if body.respond_to?(:rewind)
+            body.rewind  rescue nil
           end
+          while (chunk = body.read(multipart_chunk_size)) do
+            part_upload = service.upload_part(directory.key, key, upload_id, part_tags.size + 1, chunk)
+            part_tags << part_upload
+          end
+
+          if part_tags.empty? #it is an error to have a multipart upload with no parts
+            part_upload = service.upload_part(directory.key, key, upload_id, 1, '')
+            part_tags << part_upload
+          end
+
+        rescue
+          # Abort the upload & reraise
+          service.abort_multipart_upload(directory.key, key, upload_id) if upload_id
+          raise
+        else
+          # Complete the upload
+          service.complete_multipart_upload(directory.key, key, upload_id, part_tags)
         end
 
-        def metadata_attribute?(key)
-          key.to_s =~ /^#{metadata_prefix}/
-        end
-
-        def metadata_prefix
-          'x_oss_meta_'
-        end
-
-        def update_attributes_from(data)
-          merge_attributes(data.headers.reject { |key, _value| [:content_length, :content_type].include?(key) })
-        end
       end
     end
   end
