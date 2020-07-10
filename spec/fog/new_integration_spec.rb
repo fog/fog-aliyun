@@ -34,7 +34,19 @@ describe 'Integration tests', :integration => true do
     # TODO checking other methods of directory
     files = directory.files
     expect(files.length).to eq(2)
-    # TODO test directories.get options, like prefix, max-keys and so on
+    # TODO test directories.get options, like prefix, max_keys and so on
+    files = @conn.directories.get(@conn.aliyun_oss_bucket,prefix:"test_dir2").files
+    expect(files.length).to eq(1)
+    files = @conn.directories.get(@conn.aliyun_oss_bucket,max_keys:"1").files
+    expect(files.length).to eq(1)
+    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir3/dir1 > /dev/null")
+    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir4/dir1 > /dev/null")
+    files = @conn.directories.get(@conn.aliyun_oss_bucket,marker:"test_dir2").files
+    expect(files.length).to eq(3)
+    files = @conn.directories.get(@conn.aliyun_oss_bucket,delimiter:"/").files
+    expect(files.length).to eq(0)
+    files = @conn.directories.get(@conn.aliyun_oss_bucket,prefix:"test_dir2/dir1/",delimiter:"/").files
+    expect(files.length).to eq(1)
   end
 
   it 'Should create a new directory' do
@@ -94,7 +106,13 @@ describe 'Integration tests', :integration => true do
       files = @conn.directories.get(directory_key).files
       expect(files.length).to eq(5)
       expect(files.all.length).to eq(5)
-      # TODO support more filter, like delimiter，marker，prefix, max-keys
+      # TODO support more filter, like delimiter，marker，prefix, max_keys
+      expect(files.all(delimiter:"/").length).to eq(1)
+      expect(files.all(marker:"test_dir2").length).to eq(3)
+      expect(files.all(prefix:"test_dir1").length).to eq(2)
+      expect(files.all(max_keys:"3").length).to eq(3)
+      expect(files.all(prefix:"test_dir1",max_keys:"1").length).to eq(1)
+      expect(files.all(prefix:"test_dir1/",delimiter:"/").length).to eq(2)
     ensure
       file.close
       file.unlink
@@ -112,8 +130,8 @@ describe 'Integration tests', :integration => true do
       system("aliyun oss cp #{file.path} oss://#{directory_key}/test_dir2/test_file2 > /dev/null")
       system("aliyun oss cp #{file.path} oss://#{directory_key}/test_file3 > /dev/null")
       files = @conn.directories.get(directory_key).files
-      puts files.each
       # TODO test block
+      files.each { |f| expect(f.key).not_to eq(nil) }
     ensure
       file.close
       file.unlink
@@ -134,6 +152,16 @@ describe 'Integration tests', :integration => true do
       get_file = files.get("test_file3")
       expect(get_file.key).to eq("test_file3")
       # TODO checking all of file attributes and more files
+      get_file=files.get('test_dir1/test_file1')
+      expect(get_file.key).to eq("test_dir1/test_file1")
+      expect(get_file.date).not_to eq(nil)
+      expect(get_file.etag).not_to eq(nil)
+      expect(get_file.last_modified).not_to eq(nil)
+      get_file=files.get('test_dir1/')
+      expect(get_file.key).to eq("test_dir1/")
+      expect(get_file.date).not_to eq(nil)
+      expect(get_file.etag).not_to eq(nil)
+      expect(get_file.last_modified).not_to eq(nil)
     ensure
       file.close
       file.unlink
@@ -153,7 +181,17 @@ describe 'Integration tests', :integration => true do
       files = @conn.directories.get(directory_key).files
       head_file = files.head("test_file3")
       expect(head_file.key).to eq("test_file3")
-        # TODO checking all of file attributes and more files
+      # TODO checking all of file attributes and more files
+      head_file=files.head('test_dir1/test_file1')
+      expect(head_file.key).to eq("test_dir1/test_file1")
+      expect(head_file.date).not_to eq(nil)
+      expect(head_file.etag).not_to eq(nil)
+      expect(head_file.last_modified).not_to eq(nil)
+      head_file=files.head('test_dir1/')
+      expect(head_file.key).to eq("test_dir1/")
+      expect(head_file.date).not_to eq(nil)
+      expect(head_file.etag).not_to eq(nil)
+      expect(head_file.last_modified).not_to eq(nil)
     ensure
       file.close
       file.unlink
@@ -169,6 +207,7 @@ describe 'Integration tests', :integration => true do
       files = @conn.directories.get(directory_key).files
       expect(files[0].acl).to eq("default")
         # TODO checking other acl and set acl
+      files[0].acl='public-read'
     ensure
       file.close
       file.unlink
@@ -189,7 +228,8 @@ describe 'Integration tests', :integration => true do
       expect(files[0].key).to eq("target_test_file")
         # TODO checking other acl and set acl
       directory = @conn.directories.get(target_directory_key)
-      directory.destroy!
+      directory.acl='public-read-write'
+      expect(directory.acl).to eq('public-read-write')
     ensure
       file.close
       file.unlink
@@ -208,6 +248,14 @@ describe 'Integration tests', :integration => true do
       files = @conn.directories.get(directory_key).files
       expect(files.size).to eq(0)
       # TODO checking more files
+      system("aliyun oss cp #{file.path} oss://#{directory_key}/test_file1 > /dev/null")
+      system("aliyun oss cp #{file.path} oss://#{directory_key}/test_file2 > /dev/null")
+      system("aliyun oss cp #{file.path} oss://#{directory_key}/test_file3 > /dev/null")
+      files = @conn.directories.get(directory_key).files
+      files[0].destroy
+      files[1].destroy
+      files = @conn.directories.get(directory_key).files
+      expect(files.size).to eq(1)
     ensure
       file.close
       file.unlink

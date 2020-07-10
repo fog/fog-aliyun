@@ -22,9 +22,15 @@ module Fog
         # * options<~Hash>
         #
         def put_object(bucket_name, object_name, data, options = {})
-          @oss_protocol.put_object(bucket_name, object_name, options)do |sw|
-            while line = data.gets
-              sw.write(line)
+          if data.is_a? ::File
+            @oss_protocol.put_object(bucket_name, object_name, options)do |sw|
+              while line = data.gets
+                sw.write(line)
+              end
+            end
+          else
+            @oss_protocol.put_object(bucket_name, object_name, options)do |sw|
+              sw.write(data.dup)
             end
           end
         end
