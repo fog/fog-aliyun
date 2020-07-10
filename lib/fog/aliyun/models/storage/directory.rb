@@ -59,7 +59,7 @@ module Fog
 
         # NOTE: you can't change the region once the bucket is created
         def location=(new_location)
-          new_location = 'oss-' + new_location unless endpoint.start_with?('oss-')
+          new_location = 'oss-' + new_location unless new_location.start_with?('oss-')
           @location = new_location
         end
 

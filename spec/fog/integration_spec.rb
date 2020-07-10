@@ -80,28 +80,9 @@ describe 'Integration tests', :integration => true do
     expect(file).to eq(nil)
   end
 
-  it 'Should get all directories in bucket' do
-    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir1 > /dev/null")
-    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir2 > /dev/null")
-    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir3 > /dev/null")
-    expect(@conn.directories.all.length).to eq(3)
-  end
-
   it 'Should get container in bucket' do
     system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir > /dev/null")
     expect(@conn.get_container('').length).to eq(1)
-  end
-
-  it 'Should delete 2 directories in bucket' do
-    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir1 > /dev/null")
-    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir2 > /dev/null")
-    expect(@conn.directories.all.length).to eq(2)
-    file = @conn.directories.get(@conn.aliyun_oss_bucket, prefix:'test_dir1').files[0]
-    file.destroy
-    expect(@conn.directories.all.length).to eq(1)
-    file = @conn.directories.get(@conn.aliyun_oss_bucket, prefix:'test_dir').files[0]
-    file.destroy
-    expect(@conn.directories.all).to eq(nil)
   end
 
   it 'Should find test file in the root of bucket' do
@@ -384,7 +365,7 @@ describe 'Integration tests', :integration => true do
       bucket = @conn.directories.get(@conn.aliyun_oss_bucket, prefix: 'test_dir1/')
       expect(bucket.files.size).to eq(3)
       bucket = @conn.directories.get(@conn.aliyun_oss_bucket, prefix: 'test_dir1', delimiter: '/')
-      expect(bucket.files.size).to eq(2)
+      expect(bucket.files.size).to eq(0)
       bucket = @conn.directories.get(@conn.aliyun_oss_bucket, prefix: 'test_dir1/', delimiter: '/')
       expect(bucket.files.size).to eq(1)
     ensure
@@ -429,9 +410,9 @@ describe 'Integration tests', :integration => true do
       system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/test_dir1/test_file1 > /dev/null")
       system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/test_dir1/test_sub_dir/test_file2 > /dev/null")
       files = @conn.directories.get(@conn.aliyun_oss_bucket).files
-      expect(files.all(prefix:'test_dir1').length).to eq(2)
-      expect(files.all(prefix:'test_dir1/').length).to eq(2)
-      expect(files.all(prefix:'test_dir1', delimiter: '/')).to eq(nil)
+      expect(files.all(prefix:'test_dir1').length).to eq(3)
+      expect(files.all(prefix:'test_dir1/').length).to eq(3)
+      expect(files.all(prefix:'test_dir1', delimiter: '/')).to eq([])
       expect(files.all(prefix:'test_dir1/', delimiter: '/').length).to eq(1)
       expect(files.empty?).to eq(false)
       expect(files[0].key).to eq("test_dir1/test_file1")
@@ -472,8 +453,11 @@ describe 'Integration tests', :integration => true do
 
   it 'Should error is thrown when trying to access non-existing bucket' do
     bucket_name='test-bucket'+rand(36**16).to_s(36)
-    resp=@conn.get_bucket bucket_name
-    expect(resp['Code']).to include('NoSuchBucket')
+    begin
+      @conn.get_bucket bucket_name
+    rescue Exception => e
+      expect(e.error_code).to eq("NoSuchBucket")
+    end
   end
 
   it 'Should error is thrown when trying to create already existing bucket' do
@@ -482,7 +466,7 @@ describe 'Integration tests', :integration => true do
     @conn.put_bucket bucket_name
     @conn.put_bucket bucket_name
     rescue Exception => e
-      expect(XmlSimple.xml_in(e.response.body)['Code']).to include('BucketAlreadyExists')
+      expect(e.error_code).to eq("BucketAlreadyExists")
     ensure
       @conn.delete_bucket bucket_name
     end
@@ -491,14 +475,12 @@ describe 'Integration tests', :integration => true do
   it 'Should possible to destroy a bucket' do
     bucket_name='test-bucket'+rand(36**16).to_s(36)
     @conn.put_bucket bucket_name
-    resp=@conn.delete_bucket bucket_name
-    expect(resp.status).to be(204)
+    expect(@conn.delete_bucket bucket_name).to be(true)
   end
 
   it 'Should possible to create a new bucket' do
     bucket_name='test-bucket'+rand(36**16).to_s(36)
-    resp=@conn.put_bucket bucket_name
-    expect(resp.status).to eq(200)
+    expect(@conn.put_bucket bucket_name).to eq(true)
     @conn.delete_bucket bucket_name
   end
 
@@ -548,6 +530,22 @@ describe 'Integration tests', :integration => true do
     rescue  Exception => e
       expect(XmlSimple.xml_in(e.response.body)["Code"]).to include("InvalidAccessKeyId")
     end
+  end
+
+  it 'Should get bucket operation' do
+    expect(@conn.get_bucket_acl(@conn.aliyun_oss_bucket)).to eq("private")
+    expect(@conn.get_bucket_CORSRules(@conn.aliyun_oss_bucket)).to eq(nil)
+    expect(@conn.get_bucket_lifecycle(@conn.aliyun_oss_bucket)).to eq(nil)
+    expect(@conn.get_bucket_referer(@conn.aliyun_oss_bucket)["AllowEmptyReferer"]).to eq(["true"])
+    expect(@conn.get_bucket_website(@conn.aliyun_oss_bucket)).to eq(nil)
+    expect(@conn.get_bucket_logging(@conn.aliyun_oss_bucket)).to eq(nil)
+  end
+
+  it 'Should list object operation' do
+    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir1/test_sub_dir > /dev/null")
+    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir2/test_sub_dir > /dev/null")
+    expect(@conn.list_objects('prefix'=>"test_dir1")["Contents"].size).to eq(1)
+    expect(@conn.list_objects('marker'=>"test_dir1")["Contents"].size).to eq(2)
   end
 
   # Test region is selected according to provider configuration
