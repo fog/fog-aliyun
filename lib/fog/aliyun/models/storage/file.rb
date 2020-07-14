@@ -151,7 +151,7 @@ module Fog
           options['Expires'] = expires if expires
           options.merge!(metadata)
 
-          self.multipart_chunk_size = 5242880 if !multipart_chunk_size && Fog::Storage.get_body_size(body) > 5368709120
+          self.multipart_chunk_size = 5242880 if !multipart_chunk_size && Fog::Storage.get_body_size(body) > 53687091
           if multipart_chunk_size && Fog::Storage.get_body_size(body) >= multipart_chunk_size && body.respond_to?(:read)
             multipart_save(options)
           else

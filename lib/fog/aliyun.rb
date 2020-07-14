@@ -9,10 +9,10 @@ module Fog
     extend Fog::Provider
 
     # Services
-    autoload :Compute,          File.expand_path('../aliyun/compute', __FILE__)
+    #autoload :Compute,          File.expand_path('../aliyun/compute', __FILE__)
     autoload :Storage,          File.expand_path('../aliyun/storage', __FILE__)
 
-    service(:compute, 'Compute')
+    #service(:compute, 'Compute')
     service(:storage, 'Storage')
   end
 end

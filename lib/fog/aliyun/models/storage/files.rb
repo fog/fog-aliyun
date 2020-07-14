@@ -20,32 +20,6 @@ module Fog
 
         model Fog::Aliyun::Storage::File
 
-        # check_directory_key have two functions:
-        # 1. trim the directory_key suffix '/'
-        # 2. checking whether the directory_key is a bucket.
-        #    If so, it will return directly to avoid to create a new redundant folder named with directory_key.
-        #    This point will be applied to multi-bucket and make bucket as a directory scenario.
-        def check_directory_key(directory_key)
-          bucket_name = nil
-          if directory_key.is_a? Array
-            directory_key = directory_key[0]
-          end
-          if directory_key != ''
-            # trim the suffix '/'
-            directory_key = directory_key.chomp('/')
-            # The bucket name can not contain '/', so if directory_key, return directory.
-            if directory_key.include? '/'
-              directory_key
-            elsif service.bucket_exists?(directory_key)
-              bucket_name = directory_key
-              directory_key = ''
-            else
-              directory_key
-            end
-          end
-          return bucket_name, directory_key
-        end
-
         def all(options = {})
           requires :directory
           options = {

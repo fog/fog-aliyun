@@ -131,6 +131,7 @@ describe 'Integration tests', :integration => true do
       system("aliyun oss cp #{file.path} oss://#{directory_key}/test_file3 > /dev/null")
       files = @conn.directories.get(directory_key).files
       # TODO test block
+      expect(files.each.size).to eq(5)
       files.each { |f| expect(f.key).not_to eq(nil) }
     ensure
       file.close
@@ -166,6 +167,16 @@ describe 'Integration tests', :integration => true do
       file.close
       file.unlink
     end
+  end
+
+  it 'Should get specified file: test files.get_https_url' do
+    files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+    expect(files.size).to eq(0)
+    files.create :key=> "file1" ,:body=> File.open("spec/fog/lorem.txt","r")
+    files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+    expect(files.get_https_url("file1",3600)).not_to eq(nil)
+    expect(files.get_url("file1")).not_to eq(nil)
+    expect(files.get_http_url("file1",3600)).not_to eq(nil)
   end
 
   it 'Should head the specified file: test files.head' do
@@ -233,6 +244,9 @@ describe 'Integration tests', :integration => true do
     ensure
       file.close
       file.unlink
+      files = @conn.directories.get(target_directory_key).files
+      files.each { |f| f.destroy }
+      @conn.delete_bucket (target_directory_key)
     end
   end
 
@@ -280,5 +294,321 @@ describe 'Integration tests', :integration => true do
     files = @conn.directories.get(@conn.aliyun_oss_bucket).files
     files.create :key=> "file1" ,:body=> File.open("spec/fog/lorem.txt","r")
     expect(files.get("file1").url(3600)).not_to eq(nil)
+  end
+
+  it 'Should get nested directories and files in nested directory' do
+    # nested directories
+    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir/dir1/dir2/dir3 > /dev/null")
+    directory = @conn.directories.get(@conn.aliyun_oss_bucket)
+    files = directory.files
+    expect(files.length).to eq(1)
+    expect(files.empty?).to eq(false)
+    expect(files.head('test_dir/dir1/notExistFile')).to eq(nil)
+    file=files.get('test_dir/dir1/dir2/dir3/')
+    expect(file.key).to eq("test_dir/dir1/dir2/dir3/")
+    file.destroy
+    # nested files in nested directory
+    file = Tempfile.new('fog-upload-file')
+    file.write("Hello World!")
+    begin
+      system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir/dir1/dir2 > /dev/null")
+      system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/test_dir/dir1/dir2/test_file > /dev/null")
+      files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+      expect(files.length).to eq(2)
+      expect(files.empty?).to eq(false)
+      expect(files.get("test_dir/dir1/dir2/").key).to eq("test_dir/dir1/dir2/")
+      expect(files.get("test_dir/dir1/dir2/test_file").key).to eq("test_dir/dir1/dir2/test_file")
+      files.get("test_dir/dir1/dir2/").destroy
+      files.get("test_dir/dir1/dir2/test_file").destroy
+    ensure
+      file.close
+      file.unlink
+    end
+  end
+
+  it 'Should getting bucket when directory exists named with the same name as a bucket' do
+    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/#{@conn.aliyun_oss_bucket} > /dev/null")
+    files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+    expect(files.length).to eq(1)
+    expect(files.get(@conn.aliyun_oss_bucket+"/").key).to eq(@conn.aliyun_oss_bucket+"/")
+    files[0].destroy
+  end
+
+  it 'test get file that not exists' do
+    directory = @conn.directories.get(@conn.aliyun_oss_bucket)
+    files = directory.files
+    file = files.get('test_dir/test_file_not_exists')
+    expect(file).to eq(nil)
+  end
+
+  it 'Should find 2 tests file in the root of bucket' do
+    file = Tempfile.new('fog-upload-file')
+    file.write("Hello World!")
+    begin
+      system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/test_file1 > /dev/null")
+      system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/test_file2 > /dev/null")
+      files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+      expect(files.length).to eq(2)
+      expect(files.all.length).to eq(2)
+      expect(files.empty?).to eq(false)
+      expect(files[0].key).to eq("test_file1")
+      expect(files[1].key).to eq("test_file2")
+      expect(files.get("test_file1").key).to eq("test_file1")
+      expect(files.get("test_file2").key).to eq("test_file2")
+    ensure
+      file.close
+      file.unlink
+    end
+  end
+
+  it 'Should delete 2 tests file in the root of bucket' do
+    file = Tempfile.new('fog-upload-file')
+    file.write("Hello World!")
+    begin
+      system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/test_file1 > /dev/null")
+      system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/test_file2 > /dev/null")
+      files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+      expect(files.length).to eq(2)
+      expect(files.all.length).to eq(2)
+      expect(files.empty?).to eq(false)
+      files[0].destroy
+      expect(@conn.directories.get(@conn.aliyun_oss_bucket).files.length).to eq(1)
+      files[1].destroy
+      expect(@conn.directories.get(@conn.aliyun_oss_bucket).files.length).to eq(0)
+    ensure
+      file.close
+      file.unlink
+    end
+  end
+
+  it 'Should create a file and update in-place when putting string content to an object.' do
+    # Ensure there is no any file
+    files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+    expect(files.length).to eq(0)
+
+    # Create a new file
+    files.create :key => 'test_file_save', :body => "Hello World!"
+    files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+    expect(files.length).to eq(1)
+    expect(files[0].key).to eq("test_file_save")
+    expect(files.get("test_file_save").content_length).to eq(12)
+
+    # Update the file in-place
+    files.create :key => 'test_file_save', :body => 'Hello World!Hello World!'
+    files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+    expect(files.length).to eq(1)
+    expect(files[0].key).to eq("test_file_save")
+    expect(files.get("test_file_save").content_length).to eq(24)
+
+    # Delete the file in-place
+    files[0].destroy
+    expect(@conn.directories.get(@conn.aliyun_oss_bucket).files.length).to eq(0)
+  end
+
+  it 'Should create a file and update in-place when putting a file to an object.' do
+    # Ensure there is no any file
+    files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+    expect(files.length).to eq(0)
+
+    # Create a new file
+    files.create :key => 'test_file_save', :body => File.open('./spec/fog/lorem.txt')
+    files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+    expect(files.length).to eq(1)
+    expect(files[0].key).to eq("test_file_save")
+    expect(files.get("test_file_save").content_length).to eq(446)
+
+    # Update the file in-place
+    files.create :key => 'test_file_save', :body => File.open('./spec/fog/lorem2.txt')
+    files = @conn.directories.get(@conn.aliyun_oss_bucket).files
+    expect(files.length).to eq(1)
+    expect(files[0].key).to eq("test_file_save")
+    expect(files.get("test_file_save").content_length).to eq(14)
+
+    # Delete the file in-place
+    files[0].destroy
+    expect(@conn.directories.get(@conn.aliyun_oss_bucket).files.length).to eq(0)
+  end
+
+  it 'Should find 1000 tests file in the test directory' do
+    file = Tempfile.new('fog-upload-file')
+    file.write("Hello World!")
+    begin
+      system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir > /dev/null")
+      files_count=1000
+      files_count.times do |n|
+        system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/test_dir/test_file#{n} > /dev/null")
+      end
+      bucket = @conn.directories.get(@conn.aliyun_oss_bucket)
+      dir = bucket.files.get("test_dir/").directory
+      files = dir.files
+      expect(files.length).to eq(files_count)
+      expect(files.empty?).to eq(false)
+      # In AWS the first item is directory, so result will have directory + 999 files
+      (files_count - 1).times do |n|
+        expect(files.get("test_dir/test_file#{n}").key).to eq("test_dir/test_file#{n}")
+      end
+    ensure
+      file.close
+      file.unlink
+    end
+  end
+
+  it 'Should find directory using bucket name and prefix when bucket with the same name as directory exists' do
+    file = Tempfile.new('fog-upload-file')
+    file.write("Hello World!")
+    begin
+      dir_name=rand(36**16).to_s(36)
+      system("aliyun oss mb oss://#{dir_name} > /dev/null")
+      system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/#{dir_name} > /dev/null")
+      system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/#{dir_name}/test_file > /dev/null")
+      bucket = @conn.directories.get(@conn.aliyun_oss_bucket, prefix: dir_name)
+      expect(bucket.files.size).to eq(2) # test dir + test file
+    ensure
+      file.close
+      file.unlink
+    end
+  end
+
+  it 'Should find directory using bucket name and prefix when bucket with the same name as directory exists without prefix' do
+    file = Tempfile.new('fog-upload-file')
+    file.write("Hello World!")
+    begin
+      dir_name=rand(36**16).to_s(36)
+      system("aliyun oss mb oss://#{dir_name} > /dev/null")
+      system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/#{dir_name} > /dev/null")
+      system("aliyun oss appendfromfile #{file.path} oss://#{@conn.aliyun_oss_bucket}/#{dir_name}/test_file > /dev/null")
+      directory = @conn.directories.get(dir_name)
+      expect(directory.files.size).to eq(0) # test file
+    ensure
+      file.close
+      file.unlink
+    end
+  end
+
+  it 'Should error is thrown when trying to access non-existing bucket' do
+    bucket_name='test-bucket'+rand(36**16).to_s(36)
+    begin
+      @conn.get_bucket bucket_name
+    rescue Exception => e
+      expect(e.error_code).to eq("NoSuchBucket")
+    end
+  end
+
+  it 'Should error is thrown when trying to create already existing bucket' do
+    bucket_name="test-bucket"+rand(36**16).to_s(36)
+    begin
+      @conn.put_bucket bucket_name
+      @conn.put_bucket bucket_name
+    rescue Exception => e
+      expect(e.error_code).to eq("BucketAlreadyExists")
+    ensure
+      @conn.delete_bucket bucket_name
+    end
+  end
+
+  it 'Should possible to list all buckets' do
+    b1=rand(36**16).to_s(36)
+    b2=rand(36**16).to_s(36)
+    b3=rand(36**16).to_s(36)
+    b4=rand(36**16).to_s(36)
+    b5=rand(36**16).to_s(36)
+    b6=rand(36**16).to_s(36)
+    @conn.put_bucket('bucket-test'+b1)
+    @conn.put_bucket('bucket-test2'+b2)
+    @conn.put_bucket('file-test'+b3)
+    @conn.put_bucket('file-test2'+b4)
+    @conn.put_bucket('directory-test'+b5)
+    @conn.put_bucket('directory-test2'+b6)
+    buckets=@conn.list_buckets[0]
+    expect(buckets.length).to be >= 6
+    buckets=(@conn.list_buckets :prefix=>"bucket")[0]
+    expect(buckets.length).to be >=2
+    buckets=(@conn.list_buckets :marker=>"file-t")[0]
+    expect(buckets.length).to be >=4
+    buckets=(@conn.list_buckets :max_keys=>"6")[0]
+    expect(buckets.length).to be(6)
+    #delete created bucket
+    @conn.delete_bucket('bucket-test'+b1)
+    @conn.delete_bucket('bucket-test2'+b2)
+    @conn.delete_bucket('file-test'+b3)
+    @conn.delete_bucket('file-test2'+b4)
+    @conn.delete_bucket('directory-test'+b5)
+    @conn.delete_bucket('directory-test2'+b6)
+  end
+
+  it 'Should can be accessed using valid credentials' do
+    expect(@conn.list_objects(@conn.aliyun_oss_bucket)).not_to eq(nil)
+  end
+
+  it 'Should cannot be accessed using incorrect credentials' do
+    @conn = Fog::Storage.new({
+                                 :aliyun_accesskey_id => rand(36**16).to_s(36),
+                                 :aliyun_accesskey_secret => rand(36**16).to_s(36),
+                                 :provider => "Aliyun",
+                                 :aliyun_oss_bucket => @conn.aliyun_oss_bucket
+                             })
+    begin
+      @conn.list_objects(@conn.aliyun_oss_bucket)
+    rescue  Exception => e
+      expect(e.error_code).to include("InvalidAccessKeyId")
+    end
+  end
+
+  it 'Should get bucket operation' do
+    expect(@conn.get_bucket_acl(@conn.aliyun_oss_bucket)).to eq("private")
+    begin
+      @conn.get_bucket_CORSRules(@conn.aliyun_oss_bucket)
+    rescue Exception => e
+      expect(e.error_code).to eq("NoSuchCORSConfiguration")
+    end
+    begin
+      @conn.get_bucket_lifecycle(@conn.aliyun_oss_bucket)
+    rescue Exception => e
+      expect(e.error_code).to eq("NoSuchLifecycle")
+    end
+    expect(@conn.get_bucket_referer(@conn.aliyun_oss_bucket).allow_empty).to eq(true)
+    begin
+      @conn.get_bucket_website(@conn.aliyun_oss_bucket)
+    rescue Exception => e
+      expect(e.error_code).to eq("NoSuchWebsiteConfiguration")
+    end
+    expect(@conn.get_bucket_logging(@conn.aliyun_oss_bucket)).not_to eq(nil)
+  end
+
+  it 'Should list object operation' do
+    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir1/test_sub_dir > /dev/null")
+    system("aliyun oss mkdir oss://#{@conn.aliyun_oss_bucket}/test_dir2/test_sub_dir > /dev/null")
+    expect(@conn.list_objects(@conn.aliyun_oss_bucket,:prefix=>"test_dir1")[0].size).to eq(1)
+    expect(@conn.list_objects(@conn.aliyun_oss_bucket,:marker=>"test_dir1")[0].size).to eq(2)
+    upload_id=@conn.initiate_multipart_upload(@conn.aliyun_oss_bucket,"test_file1")
+    expect(@conn.list_multipart_uploads(@conn.aliyun_oss_bucket)).not_to eq(nil)
+    f=File.open("spec/fog/lorem.txt","r")
+    @conn.upload_part(@conn.aliyun_oss_bucket, "test_file1", upload_id, 1, f.read)
+    f.close
+    expect(@conn.list_parts(@conn.aliyun_oss_bucket,"test_file1",upload_id)[0].size).to eq(1)
+    @conn.abort_multipart_upload(@conn.aliyun_oss_bucket,"test_file1",upload_id)
+  end
+
+  # Test region is selected according to provider configuration
+  # check default region is used if no region provided explicitly
+  # There is need to set a env variable to support setting oss default bucket
+  if ENV['ALIYUN_OSS_DEFAULT_BUCKET']
+    default_bucket = ENV['ALIYUN_OSS_DEFAULT_BUCKET']
+    it 'Should create a new directory' do
+      bucket = @conn.directories.get(@conn.aliyun_oss_bucket)
+      bucket.files.create :key => 'test_dir/'
+      expect(bucket.files.get("test_dir/").key).to eq("test_dir/")
+      expect(bucket.key[0]).to eq(@conn.aliyun_oss_bucket)
+      @conn = Fog::Storage.new({
+                                   :aliyun_accesskey_id => @conn.aliyun_accesskey_id,
+                                   :aliyun_accesskey_secret => @conn.aliyun_accesskey_secret,
+                                   :provider => "Aliyun",
+                                   :aliyun_oss_bucket => default_bucket
+                               })
+      bucket = @conn.directories.get(@conn.aliyun_oss_bucket)
+      bucket.files.create :key => 'test_dir/'
+      expect(bucket.files.get("test_dir/").key).to eq("test_dir/")
+      expect(bucket.key[0]).to eq(default_bucket)
+    end
   end
 end
