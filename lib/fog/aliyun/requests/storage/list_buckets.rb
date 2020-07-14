@@ -5,33 +5,13 @@ module Fog
     class Storage
       class Real
         def list_buckets(options = {})
-          prefix = options[:prefix]
-          marker = options[:marker]
-          maxKeys = options[:maxKeys] || 1000
+          maxKeys = options[:max_keys] || 1000
           maxKeys = maxKeys.to_i
-          maxKeys =[maxKeys,1000].min.to_s
+          maxKeys = [maxKeys, 1000].min
 
-          path = ''
-          if prefix
-            path += '?prefix=' + prefix
-            path += '&marker=' + marker if marker
-            path += '&max-keys=' + maxKeys if maxKeys
-
-          elsif marker
-            path += '?marker=' + marker
-            path += '&max-keys=' + maxKeys if maxKeys
-
-          elsif maxKeys
-            path += '?max-keys=' + maxKeys
-          end
-
-          ret = request(
-            expects: [200, 203],
-            method: 'GET',
-            path: path
-          )
-          xml = ret.data[:body]
-          XmlSimple.xml_in(xml)['Buckets'][0]
+          options[:limit] = maxKeys
+          options.delete(:max_keys)
+          @oss_protocol.list_buckets(options)
         end
       end
     end
