@@ -24,82 +24,28 @@ module Fog
           @oss_protocol.list_objects(bucket_name, options)
         end
 
-        def get_bucket_acl(bucket)
-          attribute = '?acl'
-          resource = bucket + '/' + attribute
-          ret = request(
-            expects: [200, 203],
-            method: 'GET',
-            path: attribute,
-            bucket: bucket,
-            resource: resource
-          )
-          XmlSimple.xml_in(ret.data[:body])['AccessControlList'][0]['Grant'][0]
+        def get_bucket_acl(bucket_name)
+          @oss_protocol.get_bucket_acl(bucket_name)
         end
 
-        def get_bucket_CORSRules(bucket)
-          attribute = '?cors'
-          resource = bucket + '/' + attribute
-          ret = request(
-            expects: [200, 203, 404],
-            method: 'GET',
-            path: attribute,
-            bucket: bucket,
-            resource: resource
-          )
-          XmlSimple.xml_in(ret.data[:body])['CORSRule'][0] if ret.data[:status] != 404
+        def get_bucket_CORSRules(bucket_name)
+          @oss_protocol.get_bucket_cors(bucket_name)
         end
 
-        def get_bucket_lifecycle(bucket)
-          attribute = '?lifecycle'
-          resource = bucket + '/' + attribute
-          ret = request(
-            expects: [200, 203, 404],
-            method: 'GET',
-            path: attribute,
-            bucket: bucket,
-            resource: resource
-          )
-          XmlSimple.xml_in(ret.data[:body])['Rule'][0] if ret.data[:status] != 404
+        def get_bucket_lifecycle(bucket_name)
+          @oss_protocol.get_bucket_lifecycle(bucket_name)
         end
 
-        def get_bucket_logging(bucket)
-          attribute = '?logging'
-          resource = bucket + '/' + attribute
-          ret = request(
-            expects: [200, 203],
-            method: 'GET',
-            path: attribute,
-            bucket: bucket,
-            resource: resource
-          )
-          XmlSimple.xml_in(ret.data[:body])['LoggingEnabled'][0]['TargetPrefix']
+        def get_bucket_logging(bucket_name)
+          @oss_protocol.get_bucket_logging(bucket_name)
         end
 
-        def get_bucket_referer(bucket)
-          attribute = '?referer'
-          resource = bucket + '/' + attribute
-          ret = request(
-            expects: [200, 203],
-            method: 'GET',
-            path: attribute,
-            bucket: bucket,
-            resource: resource
-          )
-          XmlSimple.xml_in(ret.data[:body])
+        def get_bucket_referer(bucket_name)
+          @oss_protocol.get_bucket_referer(bucket_name)
         end
 
-        def get_bucket_website(bucket)
-          attribute = '?website'
-          resource = bucket + '/' + attribute
-          ret = request(
-            expects: [200, 203, 404],
-            method: 'GET',
-            path: attribute,
-            bucket: bucket,
-            resource: resource
-          )
-          XmlSimple.xml_in(ret.data[:body]) if ret.data[:status] != 404
+        def get_bucket_website(bucket_name)
+          @oss_protocol.get_bucket_website(bucket_name)
         end
       end
     end

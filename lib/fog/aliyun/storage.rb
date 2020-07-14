@@ -50,10 +50,6 @@ module Fog
       request :get_service
       request :list_buckets
       request :list_objects
-      request :get_containers
-      request :get_container
-      request :delete_container
-      request :put_container
       request :initiate_multipart_upload
       request :upload_part
       request :complete_multipart_upload
