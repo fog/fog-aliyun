@@ -4,14 +4,8 @@ module Fog
   module Aliyun
     class Storage
       class Real
-        def put_bucket(bucketName)
-          resource = bucketName + '/'
-          request(
-            expects: [200, 203],
-            method: 'PUT',
-            resource: resource,
-            bucket: bucketName
-          )
+        def put_bucket(bucket_name, options = {})
+          @oss_protocol.create_bucket(bucket_name, options)
         end
       end
     end
