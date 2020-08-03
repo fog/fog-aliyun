@@ -9,6 +9,7 @@ AliyunOssSdk= Aliyun::OSS
 module Fog
   module Aliyun
     class Storage < Fog::Service
+      COMPLIANT_BUCKET_NAMES = /^(?:[a-z]|\d(?!\d{0,2}(?:\.\d{1,3}){3}$))(?:[a-z0-9]|\.(?![\.\-])|\-(?![\.])){1,61}[a-z0-9]$/
       DEFAULT_REGION = 'cn-hangzhou'
 
       DEFAULT_SCHEME = 'https'
@@ -36,19 +37,23 @@ module Fog
       request :copy_object
       request :delete_bucket
       request :delete_object
+      request :delete_multiple_objects
       request :get_bucket
+      request :get_bucket_location
       request :get_object
+      request :get_object_acl
       request :get_object_http_url
       request :get_object_https_url
       request :head_object
       request :put_bucket
       request :put_object
+      request :get_service
       request :list_buckets
       request :list_objects
-      request :get_containers
-      request :get_container
-      request :delete_container
-      request :put_container
+      request :initiate_multipart_upload
+      request :upload_part
+      request :complete_multipart_upload
+      request :abort_multipart_upload
 
       class Real
         # Initialize connection to OSS
@@ -121,6 +126,7 @@ module Fog
               :access_key_secret => @aliyun_accesskey_secret
           )
           @oss_http = AliyunOssSdk::HTTP.new(@oss_config)
+          @oss_protocol = AliyunOssSdk::Protocol.new(@oss_config)
         end
 
         def reload
@@ -134,6 +140,16 @@ module Fog
           else
             "oss-#{region}.aliyuncs.com"
           end
+        end
+
+        def object_to_path(object_name=nil)
+          '/' + escape(object_name.to_s).gsub('%2F','/')
+        end
+
+        def escape(string)
+          string.gsub(/([^a-zA-Z0-9_.\-~\/]+)/) {
+            "%" + $1.unpack("H2" * $1.bytesize).join("%").upcase
+          }
         end
 
         def request(params)

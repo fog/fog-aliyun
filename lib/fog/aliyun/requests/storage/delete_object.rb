@@ -7,18 +7,17 @@ module Fog
         # Delete an existing object
         #
         # ==== Parameters
-        # * object<~String> - Name of object to delete
+        # * bucket_name<~String> - Name of bucket to delete
+        # * object_name<~String> - Name of object to delete
         #
-        def delete_object(object, options = {})
-          bucket_name = options[:bucket]
-          bucket_name ||= @aliyun_oss_bucket
-          bucket = @oss_client.get_bucket(bucket_name)
-          bucket.delete_object(object)
-        end
-
-        def abort_multipart_upload(bucket_name, object, upload_id)
-          bucket = @oss_client.get_bucket(bucket_name)
-          bucket.abort_upload(upload_id, object)
+        def delete_object(bucket_name, object_name, options = {})
+          # TODO Support versionId
+          # if version_id = options.delete('versionId')
+          #   query = {'versionId' => version_id}
+          # else
+          #   query = {}
+          # end
+          @oss_http.delete({:bucket => bucket_name, :object => object_name}, {:headers => options})
         end
       end
     end
