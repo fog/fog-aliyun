@@ -2,7 +2,7 @@
 
 IMPROVEMENTS:
 
-- Cleanup after release 0.3.18 [GH-150](https://github.com/fog/fog-aliyun/pull/150)
+- Upgrade oss ruby sdk to support setting log level [GH-152](https://github.com/fog/fog-aliyun/pull/152)
 
 ## 0.3.18 (August 03, 2020)
 
