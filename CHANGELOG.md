@@ -1,4 +1,9 @@
 ## 0.3.19 (Unreleased)
+
+IMPROVEMENTS:
+
+- Cleanup after release 0.3.18 [GH-150](https://github.com/fog/fog-aliyun/pull/150)
+
 ## 0.3.18 (August 03, 2020)
 
 IMPROVEMENTS:
