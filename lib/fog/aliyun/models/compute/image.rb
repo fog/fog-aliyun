@@ -39,7 +39,7 @@ module Fog
           requires :snapshot_id
           options[:name] = name if name
           options[:description] = description if description
-          data = Fog::JSON.decode(service.create_image(snapshot_id, options).body)
+          data = service.create_image(snapshot_id, options).body
           merge_attributes(data)
           true
         end

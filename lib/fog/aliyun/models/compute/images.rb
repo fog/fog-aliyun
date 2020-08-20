@@ -14,7 +14,7 @@ module Fog
             Fog::Logger.deprecation("all with #{filters_arg.class} param is deprecated, use all('diskIds' => []) instead [light_black](#{caller.first})[/]")
             filters_arg = { imageId: filters_arg }
           end
-          data = Fog::JSON.decode(service.list_images(filters_arg).body)['Images']['Image']
+          data = service.list_images(filters_arg).body['Images']['Image']
           load(data)
         end
 

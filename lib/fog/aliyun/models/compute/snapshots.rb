@@ -24,7 +24,7 @@ module Fog
           volume_type = filters_arg[:volume_type]
           filters_arg[:diskId] = volume_id if volume_id
           filters_arg[:sourseDiskType] = volume_type if volume_type
-          data = Fog::JSON.decode(service.list_snapshots(filters_arg).body)['Snapshots']['Snapshot']
+          data = service.list_snapshots(filters_arg).body['Snapshots']['Snapshot']
           load(data)
         end
 

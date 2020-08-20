@@ -26,7 +26,7 @@ module Fog
           options[:vpcId] = vpc_id if vpc_id
           options[:name] = name if name
           options[:description] = description if description
-          Fog::JSON.decode(service.create_security_group(options).body)
+          service.create_security_group(options).body
           true
         end
 

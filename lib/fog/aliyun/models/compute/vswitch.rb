@@ -55,7 +55,7 @@ module Fog
           requires :vpc, :cidr_block
           options[:name] = name if name
           options[:description] = description if description
-          Fog::JSON.decode(service.create_vswitch(vpc.id, cidr_block, options).body)
+          service.create_vswitch(vpc.id, cidr_block, options).body
           true
         end
 
@@ -64,7 +64,7 @@ module Fog
         end
 
         def all
-          Fog::JSON.decode(service.list_vswitchs(vpc_id).body)['VSwitches']['VSwitch']
+          service.list_vswitchs(vpc_id).body['VSwitches']['VSwitch']
         end
       end
     end

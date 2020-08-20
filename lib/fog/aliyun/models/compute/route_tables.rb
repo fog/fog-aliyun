@@ -13,7 +13,7 @@ module Fog
 
         def all(options = {})
           requires :v_router
-          data = Fog::JSON.decode(service.list_route_tables(v_router.id, options).body)['RouteTables']['RouteTable']
+          data = service.list_route_tables(v_router.id, options).body['RouteTables']['RouteTable']
           load(data)
         end
 

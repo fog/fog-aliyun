@@ -63,10 +63,10 @@ module Fog
           options[:name] = name if name
           options[:description] = description if description
           if snapshot_id
-            data = Fog::JSON.decode(service.create_disk_by_snapshot(snapshot_id, options).body)
+            data = service.create_disk_by_snapshot(snapshot_id, options).body
             merge_attributes(data)
           elsif size
-            data = Fog::JSON.decode(service.create_disk(size, options).body)
+            data = service.create_disk(size, options).body
             merge_attributes(data)
           end
 
