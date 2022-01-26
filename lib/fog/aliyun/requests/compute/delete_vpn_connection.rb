@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class Real
         def delete_vpn_connection(vpn_connectionid)
           # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/vswitch&deletevswitch]

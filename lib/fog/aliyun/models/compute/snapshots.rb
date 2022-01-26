@@ -4,11 +4,11 @@ require 'fog/core/collection'
 require 'fog/aliyun/models/compute/snapshot'
 
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class Snapshots < Fog::Collection
         # attribute :filters
-        model Fog::Compute::Aliyun::Snapshot
+        model Fog::Aliyun::Compute::Snapshot
 
         # def initialize(attributes)
         #   self.filters ||= {}

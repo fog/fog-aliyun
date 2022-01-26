@@ -3,8 +3,8 @@
 require 'fog/core/model'
 
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class SecurityGroupRule < Fog::Model
         attribute :security_group_id, aliases: 'SecurityGroupId'
         attribute :source_cidr_ip, aliases: 'SourceCidrIp'

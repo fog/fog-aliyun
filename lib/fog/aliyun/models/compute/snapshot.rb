@@ -2,8 +2,8 @@
 
 require 'fog/core/model'
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class Snapshot < Fog::Model
         identity :id, aliases: 'SnapshotId'
         attribute :name, aliases: 'SnapshotName'
@@ -40,7 +40,7 @@ module Fog
 
         def volume
           requires :volume_id
-          Fog::Compute::Aliyun::Volumes.new(service: service).all(diskIds: [volume_id])[0]
+          Fog::Aliyun::Compute::Volumes.new(service: service).all(diskIds: [volume_id])[0]
         end
 
         private

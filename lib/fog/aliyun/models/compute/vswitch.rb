@@ -2,8 +2,8 @@
 
 require 'fog/core/model'
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class Vswitch < Fog::Model
         identity :id, aliases: 'VSwitchId'
         attribute :vpc_id, aliases: 'VpcId'

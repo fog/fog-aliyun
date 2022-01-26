@@ -3,8 +3,8 @@
 require 'fog/core/model'
 
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class SecurityGroup < Fog::Model
         identity :id, aliases: 'SecurityGroupId'
         attribute :name, aliases: 'SecurityGroupName'

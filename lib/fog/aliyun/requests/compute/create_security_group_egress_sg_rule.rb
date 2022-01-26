@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class Real
         # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/securitygroup&authorizesecuritygroup]
         def create_security_group_egress_sg_rule(securitygroup_id, dest_group_id, option = {})

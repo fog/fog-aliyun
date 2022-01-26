@@ -2,8 +2,8 @@
 
 require 'fog/core/model'
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class EipAddress < Fog::Model
         identity :id, aliases: 'AllocationId'
 

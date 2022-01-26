@@ -2,8 +2,8 @@
 
 require 'fog/core/model'
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class VPC < Fog::Model
         identity :id, aliases: 'VpcId'
         attribute :name, aliases: 'VpcName'
@@ -39,7 +39,7 @@ module Fog
 
         def vswitches
           @vswitches ||= begin
-            Fog::Compute::Aliyun::Vswitches.new(
+            Fog::Aliyun::Compute::Vswitches.new(
               vpc: self,
               service: service
             )
@@ -48,12 +48,12 @@ module Fog
 
         def vrouter
           requires :v_router_id
-          Fog::Compute::Aliyun::Vrouters.new(service: service).all('vRouterId' => v_router_id)[0]
+          Fog::Aliyun::Compute::Vrouters.new(service: service).all('vRouterId' => v_router_id)[0]
         end
 
         def security_groups
           requires :id
-          Fog::Compute::Aliyun::SecurityGroups.new(service: service).all(vpcId: id)
+          Fog::Aliyun::Compute::SecurityGroups.new(service: service).all(vpcId: id)
         end
         # Create a vpc
         #

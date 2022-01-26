@@ -1,8 +1,8 @@
 require 'fog/core/model'
 
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class Flavor < Fog::Model
         attribute :base_line_credit, aliases: 'BaseLineCredit'
         attribute :cpu_core_count, aliases: 'CpuCoreCount'
