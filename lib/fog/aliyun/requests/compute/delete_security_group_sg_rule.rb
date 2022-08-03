@@ -30,7 +30,7 @@ module Fog
           portRange ||= '-1/-1'
           parameters['PortRange'] = portRange
           pathUrl += '&PortRange='
-          pathUrl += URI.encode(portRange, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
+          pathUrl += URI.encode_www_form_component(portRange)
 
           protocol = option[:protocol]
           protocol ||= 'all'

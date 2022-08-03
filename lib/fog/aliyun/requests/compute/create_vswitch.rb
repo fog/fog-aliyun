@@ -19,7 +19,7 @@ module Fog
 
           parameters['CidrBlock'] = cidrBlock
           pathUrl += '&CidrBlock='
-          pathUrl += URI.encode(cidrBlock, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
+          pathUrl += URI.encode_www_form_component(cidrBlock)
 
           parameters['ZoneId'] = @aliyun_zone_id
           pathUrl += '&ZoneId='

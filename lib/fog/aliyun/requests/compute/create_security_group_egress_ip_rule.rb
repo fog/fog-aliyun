@@ -19,7 +19,7 @@ module Fog
 
           parameters['DestCidrIp'] = destCidrIp
           pathUrl += '&DestCidrIp='
-          pathUrl += URI.encode(destCidrIp, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
+          pathUrl += URI.encode_www_form_component(destCidrIp)
           nicType ||= 'intranet'
           parameters['NicType'] = nicType
           pathUrl += '&NicType='
@@ -29,7 +29,7 @@ module Fog
           portRange ||= '-1/-1'
           parameters['PortRange'] = portRange
           pathUrl += '&PortRange='
-          pathUrl += URI.encode(portRange, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
+          pathUrl += URI.encode_www_form_component(portRange)
 
           protocol = option[:protocol]
           protocol ||= 'all'

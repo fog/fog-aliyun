@@ -24,7 +24,7 @@ module Fog
             signature = sign('GET', expires_time, nil, resource)
             'http://' + bucket_name + '.' + @host + '/' + object_name +
               '?OSSAccessKeyId=' + @aliyun_accesskey_id + '&Expires=' + expires_time +
-              '&Signature=' + URI.encode(signature, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
+              '&Signature=' + URI.encode_www_form_component(signature)
           elsif acl == 'public-read' || acl == 'public-read-write'
             'http://' + bucket_name + '.' + @host + '/' + object_name
           else

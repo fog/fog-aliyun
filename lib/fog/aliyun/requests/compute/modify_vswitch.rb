@@ -15,7 +15,7 @@ module Fog
 
           parameters['VSwitchId'] = vSwitchId
           pathUrl += '&VSwitchId='
-          pathUrl += URI.encode(vpcId, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
+          pathUrl += URI.encode_www_form_component(vpcId)
           name = options[:name]
           desc = options[:description]
 
