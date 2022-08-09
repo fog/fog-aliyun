@@ -15,7 +15,7 @@ module Fog
 
           parameters['CidrBlock'] = cidrBlock
           pathUrl += '&CidrBlock='
-          pathUrl += URI.encode(cidrBlock, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
+          pathUrl += URI.encode_www_form_component(cidrBlock)
 
           name = options[:name]
           desc = options[:description]

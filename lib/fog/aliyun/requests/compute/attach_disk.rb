@@ -46,7 +46,7 @@ module Fog
           if device
             parameters['Device'] = device
             pathUrl += '&Device='
-            pathUrl += URI.encode(device, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
+            pathUrl += URI.encode_www_form_component(device)
           end
 
           signature = sign(@aliyun_accesskey_secret, parameters)

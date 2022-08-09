@@ -350,7 +350,7 @@ module Fog
         # operation compute-- default URL
         def defaultAliyunUri(action, sigNonce, time)
           parTimeFormat = time.strftime('%Y-%m-%dT%H:%M:%SZ')
-          urlTimeFormat = URI.encode(parTimeFormat, ':')
+          urlTimeFormat = URI.encode_www_form_component(parTimeFormat)
           '?Format=JSON&AccessKeyId=' + @aliyun_accesskey_id + '&Action=' + action + '&SignatureMethod=HMAC-SHA1&RegionId=' + @aliyun_region_id + '&SignatureNonce=' + sigNonce + '&SignatureVersion=1.0&Version=2014-05-26&Timestamp=' + urlTimeFormat
         end
 
@@ -370,7 +370,7 @@ module Fog
 
         def defaultAliyunVPCUri(action, sigNonce, time)
           parTimeFormat = time.strftime('%Y-%m-%dT%H:%M:%SZ')
-          urlTimeFormat = URI.encode(parTimeFormat, ':')
+          urlTimeFormat = URI.encode_www_form_component(parTimeFormat)
           '?Format=JSON&AccessKeyId=' + @aliyun_accesskey_id + '&Action=' + action + '&SignatureMethod=HMAC-SHA1&RegionId=' + @aliyun_region_id + '&SignatureNonce=' + sigNonce + '&SignatureVersion=1.0&Version=2016-04-28&Timestamp=' + urlTimeFormat
         end
 
@@ -420,18 +420,18 @@ module Fog
         # building querystrings with string concatination.
         def sign(accessKeySecret, parameters)
           signature = sign_without_encoding(accessKeySecret, parameters)
-          URI.encode(signature, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
+          URI.encode_www_form_component(signature)
         end
 
         def sign_without_encoding(accessKeySecret, parameters)
           sortedParameters = parameters.sort
           canonicalizedQueryString = ''
           sortedParameters.each do |k, v|
-            canonicalizedQueryString += '&' + URI.encode(k, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ') + '=' + URI.encode(v, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
+            canonicalizedQueryString += '&' + URI.encode_www_form_component(k) + '=' + URI.encode_www_form_component(v)
           end
 
           canonicalizedQueryString[0] = ''
-          stringToSign = 'GET&%2F&' + URI.encode(canonicalizedQueryString, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
+          stringToSign = 'GET&%2F&' + URI.encode_www_form_component(canonicalizedQueryString)
           key = accessKeySecret + '&'
 
           digVer = OpenSSL::Digest.new('sha1')
