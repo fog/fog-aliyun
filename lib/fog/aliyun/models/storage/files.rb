@@ -71,11 +71,10 @@ module Fog
                                            })
             new(file_data)
           rescue Exception => error
-            case error.http_code.to_i
-              when 404
-                nil
-              else
-                raise(error)
+            if error.respond_to?(:http_code) && error.http_code.to_i == 404
+              nil
+            else
+              raise(error)
             end
           end
         end
@@ -108,11 +107,10 @@ module Fog
                                            })
             new(file_data)
           rescue Exception => error
-            case error.http_code.to_i
-              when 404
-                nil
-              else
-                raise(error)
+            if error.respond_to?(:http_code) && error.http_code.to_i == 404
+              nil
+            else
+              raise(error)
             end
           end
         end
