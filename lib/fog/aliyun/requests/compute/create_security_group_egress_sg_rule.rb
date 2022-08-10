@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'addressable'
+
 module Fog
   module Compute
     class Aliyun
@@ -30,7 +32,7 @@ module Fog
           portRange ||= '-1/-1'
           parameters['PortRange'] = portRange
           pathUrl += '&PortRange='
-          pathUrl += URI.encode(portRange, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
+          pathUrl += Addressable::URI.encode_component(portRange, Addressable::URI::CharacterClasses::UNRESERVED + '|')
 
           protocol = option[:protocol]
           protocol ||= 'all'

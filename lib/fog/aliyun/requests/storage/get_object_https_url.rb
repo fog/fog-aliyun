@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'addressable'
+
 module Fog
   module Aliyun
     class Storage
@@ -24,7 +26,7 @@ module Fog
             signature = sign('GET', expires_time, nil, resource)
             'https://' + bucket_name + '.' + @host + '/' + object_name +
               '?OSSAccessKeyId=' + @aliyun_accesskey_id + '&Expires=' + expires_time +
-              '&Signature=' + URI.encode(signature, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
+              '&Signature=' + Addressable::URI.encode_component(signature, Addressable::URI::CharacterClasses::UNRESERVED + '|')
           elsif acl == 'public-read' || acl == 'public-read-write'
             'https://' + bucket_name + '.' + @host + '/' + object_name
           else

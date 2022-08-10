@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_development_dependency 'bundler'
-  spec.add_development_dependency 'mime-types', '~> 2.6', '>= 2.6.2'
+  spec.add_development_dependency 'mime-types', '~> 3.4'
   spec.add_development_dependency 'pry-nav'
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rspec'
@@ -30,6 +30,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'memory_profiler'
   spec.add_development_dependency 'aliyun-sdk', '~> 0.8.0'
 
+  spec.add_dependency 'addressable', '~> 2.8.0'
   spec.add_dependency 'aliyun-sdk', '~> 0.8.0'
   spec.add_dependency 'fog-core'
   spec.add_dependency 'fog-json'

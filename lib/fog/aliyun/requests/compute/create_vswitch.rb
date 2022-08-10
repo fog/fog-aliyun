@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'addressable'
+
 module Fog
   module Compute
     class Aliyun
@@ -19,7 +21,7 @@ module Fog
 
           parameters['CidrBlock'] = cidrBlock
           pathUrl += '&CidrBlock='
-          pathUrl += URI.encode(cidrBlock, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
+          pathUrl += Addressable::URI.encode_component(cidrBlock, Addressable::URI::CharacterClasses::UNRESERVED + '|')
 
           parameters['ZoneId'] = @aliyun_zone_id
           pathUrl += '&ZoneId='

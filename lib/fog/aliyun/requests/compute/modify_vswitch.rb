@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'addressable'
+
 module Fog
   module Compute
     class Aliyun
@@ -15,7 +17,7 @@ module Fog
 
           parameters['VSwitchId'] = vSwitchId
           pathUrl += '&VSwitchId='
-          pathUrl += URI.encode(vpcId, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
+          pathUrl += Addressable::URI.encode_component(vpcId, Addressable::URI::CharacterClasses::UNRESERVED + '|')
           name = options[:name]
           desc = options[:description]
 
