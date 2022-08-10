@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'addressable'
+
 module Fog
   module Compute
     class Aliyun
@@ -46,7 +48,7 @@ module Fog
           if device
             parameters['Device'] = device
             pathUrl += '&Device='
-            pathUrl += URI.encode(device, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
+            pathUrl += Addressable::URI.encode_component(device, Addressable::URI::CharacterClasses::UNRESERVED + '|')
           end
 
           signature = sign(@aliyun_accesskey_secret, parameters)

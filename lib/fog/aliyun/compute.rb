@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'addressable'
+
 module Fog
   module Compute
     class Aliyun < Fog::Service
@@ -350,7 +352,7 @@ module Fog
         # operation compute-- default URL
         def defaultAliyunUri(action, sigNonce, time)
           parTimeFormat = time.strftime('%Y-%m-%dT%H:%M:%SZ')
-          urlTimeFormat = URI.encode(parTimeFormat, ':')
+          urlTimeFormat = Addressable::URI.encode_component(parTimeFormat, Addressable::URI::CharacterClasses::UNRESERVED + '|')
           '?Format=JSON&AccessKeyId=' + @aliyun_accesskey_id + '&Action=' + action + '&SignatureMethod=HMAC-SHA1&RegionId=' + @aliyun_region_id + '&SignatureNonce=' + sigNonce + '&SignatureVersion=1.0&Version=2014-05-26&Timestamp=' + urlTimeFormat
         end
 
@@ -370,7 +372,7 @@ module Fog
 
         def defaultAliyunVPCUri(action, sigNonce, time)
           parTimeFormat = time.strftime('%Y-%m-%dT%H:%M:%SZ')
-          urlTimeFormat = URI.encode(parTimeFormat, ':')
+          urlTimeFormat = Addressable::URI.encode_component(parTimeFormat, Addressable::URI::CharacterClasses::UNRESERVED + '|')
           '?Format=JSON&AccessKeyId=' + @aliyun_accesskey_id + '&Action=' + action + '&SignatureMethod=HMAC-SHA1&RegionId=' + @aliyun_region_id + '&SignatureNonce=' + sigNonce + '&SignatureVersion=1.0&Version=2016-04-28&Timestamp=' + urlTimeFormat
         end
 
@@ -420,18 +422,18 @@ module Fog
         # building querystrings with string concatination.
         def sign(accessKeySecret, parameters)
           signature = sign_without_encoding(accessKeySecret, parameters)
-          URI.encode(signature, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
+          Addressable::URI.encode_component(signature, Addressable::URI::CharacterClasses::UNRESERVED + '|')
         end
 
         def sign_without_encoding(accessKeySecret, parameters)
           sortedParameters = parameters.sort
           canonicalizedQueryString = ''
           sortedParameters.each do |k, v|
-            canonicalizedQueryString += '&' + URI.encode(k, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ') + '=' + URI.encode(v, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
+            canonicalizedQueryString += '&' + Addressable::URI.encode_component(k, Addressable::URI::CharacterClasses::UNRESERVED + '|') + '=' + Addressable::URI.encode_component(v, Addressable::URI::CharacterClasses::UNRESERVED + '|')
           end
 
           canonicalizedQueryString[0] = ''
-          stringToSign = 'GET&%2F&' + URI.encode(canonicalizedQueryString, '/[^!*\'()\;?:@#&%=+$,{}[]<>`" ')
+          stringToSign = 'GET&%2F&' + Addressable::URI.encode_component(canonicalizedQueryString, Addressable::URI::CharacterClasses::UNRESERVED + '|')
           key = accessKeySecret + '&'
 
           digVer = OpenSSL::Digest.new('sha1')
