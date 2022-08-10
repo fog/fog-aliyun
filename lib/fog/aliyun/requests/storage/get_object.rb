@@ -30,7 +30,7 @@ module Fog
           end
 
           if block_given?
-            http_options[:response_block] = Proc.new
+            http_options[:response_block] = Proc.new {}
           end
 
           resources = {
