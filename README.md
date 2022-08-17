@@ -309,8 +309,6 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Testing
 
-
-
 To run test suite use the following command:
 
 ```
@@ -364,6 +362,19 @@ Performance tests are providing memory consumption report for download/upload op
 export PERFORMANCE=true
 rake spec
 ```
+
+## Publish a new release
+
+1. Update the next version in the file `lib/fog/aliyun/version`
+2. Update the `CHANGELOG.md`
+3. Build the next release by running command
+    ```shell
+    gem build fog-aliyun.gemspec 
+    ```
+4. Push the next release to the [https://rubygems.org/](https://rubygems.org/)
+    ```shell
+    gem push fog-aliyun-<version>.gem 
+    ```
 
 ## License
 
