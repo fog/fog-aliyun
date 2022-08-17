@@ -1,14 +1,10 @@
-## 0.3.20 (Unreleased)
-## 0.3.19 (August 17, 2020)
+## 0.3.19 (Unreleased)
+## 0.3.18 (August 17, 2022)
 
 IMPROVEMENTS:
 
+- Ruby 3 [GH-158](https://github.com/fog/fog-aliyun/pull/158)
 - Upgrade oss ruby sdk to support setting log level [GH-152](https://github.com/fog/fog-aliyun/pull/152)
-
-## 0.3.18 (August 03, 2020)
-
-IMPROVEMENTS:
-
 - reconstruct perform test [GH-148](https://github.com/fog/fog-aliyun/pull/148)
 - Reconstruct fog-aliyun by using oss [GH-147](https://github.com/fog/fog-aliyun/pull/147)
 - reconstruct cover case test [GH-146](https://github.com/fog/fog-aliyun/pull/146)
