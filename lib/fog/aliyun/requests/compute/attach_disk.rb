@@ -3,8 +3,8 @@
 require 'addressable'
 
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class Real
         # Mount a disk.
         #

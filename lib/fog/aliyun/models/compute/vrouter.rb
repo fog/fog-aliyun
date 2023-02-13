@@ -2,8 +2,8 @@
 
 require 'fog/core/model'
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class VRouter < Fog::Model
         identity :id, aliases: 'VRouterId'
 
@@ -16,12 +16,12 @@ module Fog
 
         def vpc
           requires :vpc_id
-          $vpc = Fog::Compute::Aliyun::Vpcs.new(service: service).all('vpcId' => vpc_id)[0]
+          $vpc = Fog::Aliyun::Compute::Vpcs.new(service: service).all('vpcId' => vpc_id)[0]
         end
 
         def route_tables
           @route_tables ||= begin
-            Fog::Compute::Aliyun::RouteTables.new(
+            Fog::Aliyun::Compute::RouteTables.new(
               v_router: self,
               service: service
             )

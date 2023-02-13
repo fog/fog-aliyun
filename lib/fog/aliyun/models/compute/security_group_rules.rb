@@ -4,10 +4,10 @@ require 'fog/core/collection'
 require 'fog/aliyun/models/compute/security_group_rule'
 
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class SecurityGroupRules < Fog::Collection
-        model Fog::Compute::Aliyun::SecurityGroupRule
+        model Fog::Aliyun::Compute::SecurityGroupRule
         attribute :security_group_id
 
         def get(security_group_id, options = {})

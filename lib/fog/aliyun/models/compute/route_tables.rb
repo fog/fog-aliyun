@@ -4,12 +4,12 @@ require 'fog/core/collection'
 require 'fog/aliyun/models/compute/route_table'
 
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class RouteTables < Fog::Collection
         attribute :v_router
 
-        model Fog::Compute::Aliyun::RouteTable
+        model Fog::Aliyun::Compute::RouteTable
 
         def all(options = {})
           requires :v_router

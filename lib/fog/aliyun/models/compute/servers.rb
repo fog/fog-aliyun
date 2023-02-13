@@ -4,10 +4,10 @@ require 'fog/core/collection'
 require 'fog/aliyun/models/compute/server'
 
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class Servers < Fog::Collection
-        model Fog::Compute::Aliyun::Server
+        model Fog::Aliyun::Compute::Server
 
         def all(options = {})
           data = Fog::JSON.decode(service.list_servers(options).body)['Instances']['Instance']
