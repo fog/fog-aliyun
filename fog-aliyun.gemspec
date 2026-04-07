@@ -30,7 +30,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'memory_profiler'
   spec.add_development_dependency 'aliyun-sdk', '~> 0.8.0'
 
-  spec.add_dependency 'addressable', '~> 2.8.0'
+  spec.add_dependency 'addressable', '>= 2.8', '< 2.10'
   spec.add_dependency 'aliyun-sdk', '~> 0.8.0'
   spec.add_dependency 'fog-core'
   spec.add_dependency 'fog-json'
