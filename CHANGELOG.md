@@ -1,4 +1,9 @@
-## 0.4.1 (Unreleased)
+## 0.4.1 (April 10, 2026)
+
+BUG FIXES:
+
+- bump addressable dependency [GH-159](https://github.com/fog/fog-aliyun/pull/159)
+
 ## 0.4.0 (August 17, 2022)
 
 IMPROVEMENTS:
