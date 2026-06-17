@@ -4,10 +4,10 @@ require 'fog/core/collection'
 require 'fog/aliyun/models/compute/vrouter'
 
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class Vrouters < Fog::Collection
-        model Fog::Compute::Aliyun::VRouter
+        model Fog::Aliyun::Compute::VRouter
 
         # Returns an array of all VPCs that have been created
         #

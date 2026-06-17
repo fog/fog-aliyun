@@ -2,8 +2,8 @@
 
 require 'fog/core/model'
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class Volume < Fog::Model
         # "ImageId": "",
         # "InstanceId": "",
@@ -75,17 +75,17 @@ module Fog
 
         def image
           requires :image_id
-          Fog::Compute::Aliyun::Images.new(service: service).all(imageId: image_id)[0]
+          Fog::Aliyun::Compute::Images.new(service: service).all(imageId: image_id)[0]
         end
 
         def snapshots
           requires :id
-          Fog::Compute::Aliyun::Snapshots.new(service: service).all(volume_id: id)
+          Fog::Aliyun::Compute::Snapshots.new(service: service).all(volume_id: id)
         end
 
         def source
           requires :snapshot_id
-          Fog::Compute::Aliyun::Snapshots.new(service: service).all(snapshotIds: [snapshot_id])[0]
+          Fog::Aliyun::Compute::Snapshots.new(service: service).all(snapshotIds: [snapshot_id])[0]
         end
 
         private

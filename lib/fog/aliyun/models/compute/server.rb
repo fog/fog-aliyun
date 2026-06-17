@@ -3,8 +3,8 @@
 require 'fog/compute/models/server'
 
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class Server < Fog::Compute::Server
         identity :id, aliases: 'InstanceId'
         attribute :image_id, aliases: 'ImageId'
@@ -40,12 +40,12 @@ module Fog
 
         def image
           requires :image_id
-          Fog::Compute::Aliyun::Image.new(service: service).all(imageId: image_id)[0]
+          Fog::Aliyun::Compute::Image.new(service: service).all(imageId: image_id)[0]
         end
 
         def vpc
           requires :vpc_id
-          $vpc = Fog::Compute::Aliyun::Vpcs.new(service: service).all('vpcId' => vpc_id)[0]
+          $vpc = Fog::Aliyun::Compute::Vpcs.new(service: service).all('vpcId' => vpc_id)[0]
         end
 
         def save(options = {})

@@ -2,8 +2,8 @@
 
 require 'fog/core/model'
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class RouteEntry < Fog::Model
         # "RouteTables"=>{"RouteTable"=>[
         #  {"CreationTime"=>"2015-08-03T11:23:35Z", "RouteEntrys"=>{"RouteEntry"=>[

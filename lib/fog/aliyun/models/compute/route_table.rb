@@ -2,8 +2,8 @@
 
 require 'fog/core/model'
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class RouteTable < Fog::Model
         # "RouteTables"=>{"RouteTable"=>[
         # {"CreationTime"=>"2015-08-03T11:23:35Z", "RouteEntrys"=>{"RouteEntry"=>[
@@ -17,10 +17,10 @@ module Fog
         attribute :created_at, aliases: 'CreationTime'
         attribute :type, aliases: 'RouteTableType'
         attribute :v_router_id, aliases: 'VRouterId'
-        # collection Fog::Compute::Aliyun::RouteEntrys
+        # collection Fog::Aliyun::Compute::RouteEntrys
         def route_entrys
           @route_entrys ||= begin
-            Fog::Compute::Aliyun::RouteEntrys.new(
+            Fog::Aliyun::Compute::RouteEntrys.new(
               route_table: self,
               service: service
             )

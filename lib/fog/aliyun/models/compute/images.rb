@@ -4,10 +4,10 @@ require 'fog/core/collection'
 require 'fog/aliyun/models/compute/image'
 
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class Images < Fog::Collection
-        model Fog::Compute::Aliyun::Image
+        model Fog::Aliyun::Compute::Image
 
         def all(filters_arg = {})
           unless filters_arg.is_a?(Hash)

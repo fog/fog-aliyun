@@ -3,8 +3,8 @@
 require 'addressable'
 
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class Real
         # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/securitygroup&authorizesecuritygroup]
         def delete_security_group_egress_ip_rule(securitygroup_id, destCidrIp, nicType, option = {})

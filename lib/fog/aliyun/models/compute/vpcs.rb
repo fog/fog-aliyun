@@ -4,10 +4,10 @@ require 'fog/core/collection'
 require 'fog/aliyun/models/compute/vpc'
 
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class Vpcs < Fog::Collection
-        model Fog::Compute::Aliyun::VPC
+        model Fog::Aliyun::Compute::VPC
 
         # Creates a new VPC
         #

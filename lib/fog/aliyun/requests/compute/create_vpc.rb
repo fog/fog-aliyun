@@ -3,8 +3,8 @@
 require 'addressable'
 
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class Real
         def create_vpc(cidrBlock, options = {})
           # {Aliyun API Reference}[https://docs.aliyun.com/?spm=5176.100054.3.1.DGkmH7#/pub/ecs/open-api/vpc&createvpc]

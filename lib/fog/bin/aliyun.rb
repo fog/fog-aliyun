@@ -7,7 +7,7 @@ class Aliyun < Fog::Bin
       when :storage
         Fog::Aliyun::Storage
       when :compute
-        Fog::Compute::Aliyun
+        Fog::Aliyun::Compute
       else
         raise ArgumentError, "Unrecognized service: #{key}"
       end

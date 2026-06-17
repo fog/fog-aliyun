@@ -3,8 +3,8 @@
 require 'addressable'
 
 module Fog
-  module Compute
-    class Aliyun < Fog::Service
+  module Aliyun
+    class Compute < Fog::Service
       recognizes :aliyun_url,
                  :aliyun_accesskey_id,
                  :aliyun_accesskey_secret,
@@ -315,7 +315,7 @@ module Fog
           rescue Excon::Errors::HTTPStatusError => error
             raise case error
                   when Excon::Errors::NotFound
-                    Fog::Compute::Aliyun::NotFound.slurp(error)
+                    Fog::Aliyun::Compute::NotFound.slurp(error)
                   else
                     error
                   end
@@ -338,7 +338,7 @@ module Fog
           rescue Excon::Errors::HTTPStatusError => error
             raise case error
                   when Excon::Errors::NotFound
-                    Fog::Compute::Aliyun::NotFound.slurp(error)
+                    Fog::Aliyun::Compute::NotFound.slurp(error)
                   else
                     error
                   end

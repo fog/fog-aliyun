@@ -4,10 +4,10 @@ require 'fog/core/collection'
 require 'fog/aliyun/models/compute/volume'
 
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class Volumes < Fog::Collection
-        model Fog::Compute::Aliyun::Volume
+        model Fog::Aliyun::Compute::Volume
 
         # Used to create a volume.  There are 3 arguments and availability_zone and size are required.  You can generate a new key_pair as follows:
         # Aliyun.volumes.create(:size => 10)
@@ -37,9 +37,9 @@ module Fog
         # ==== Returns
         #
         # >>Aliyun.volumes.all
-        # <Fog::Compute::Aliyun::Volumes
+        # <Fog::Aliyun::Compute::Volumes
         #   [
-        #                 <Fog::Compute::Aliyun::Volume
+        #                 <Fog::Aliyun::Compute::Volume
         #       id="d-25ohde62o",
         #       region_id="cn-beijing",
         #       zone_id="cn-beijing-a",
@@ -96,7 +96,7 @@ module Fog
         # ==== Returns
         #
         # >> Aliyun.volumes.get('d-25ohde62o')
-        #   <Fog::Compute::Aliyun::Volume
+        #   <Fog::Aliyun::Compute::Volume
         #       id="d-25ohde62o",
         #       region_id="cn-beijing",
         #       zone_id="cn-beijing-a",

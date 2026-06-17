@@ -4,12 +4,12 @@ require 'fog/core/collection'
 require 'fog/aliyun/models/compute/vswitch'
 
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class Vswitches < Fog::Collection
         attribute :vpc
 
-        model Fog::Compute::Aliyun::Vswitch
+        model Fog::Aliyun::Compute::Vswitch
 
         # Creates a new VPC
         #

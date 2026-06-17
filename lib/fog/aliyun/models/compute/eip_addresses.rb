@@ -4,10 +4,10 @@ require 'fog/core/collection'
 require 'fog/aliyun/models/compute/eip_address'
 
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class EipAddresses < Fog::Collection
-        model Fog::Compute::Aliyun::EipAddress
+        model Fog::Aliyun::Compute::EipAddress
 
         def all(filters_arg = {})
           data = Fog::JSON.decode(service.list_eip_addresses(filters_arg).body)['EipAddresses']['EipAddress']

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Fog
-  module Compute
-    class Aliyun
+  module Aliyun
+    class Compute
       class Real
         # Delete a disk By the given id.
         #
