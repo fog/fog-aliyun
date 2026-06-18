@@ -1,6 +1,7 @@
 # frozen_string_literal: true
+require 'aliyun/version'
 
-class Aliyun < Fog::Bin
+class Aliyun::Bin < Fog::Bin
   class << self
     def class_for(key)
       case key
