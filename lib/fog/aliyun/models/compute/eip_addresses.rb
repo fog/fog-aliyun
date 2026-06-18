@@ -10,7 +10,7 @@ module Fog
         model Fog::Compute::Aliyun::EipAddress
 
         def all(filters_arg = {})
-          data = Fog::JSON.decode(service.list_eip_addresses(filters_arg).body)['EipAddresses']['EipAddress']
+          data = service.list_eip_addresses(filters_arg).body['EipAddresses']['EipAddress']
           load(data)
           # load(data['volumeSet'])
           # if server

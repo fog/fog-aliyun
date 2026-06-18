@@ -305,13 +305,18 @@ module Fog
 
         def request(params)
           begin
-            response = @connection.request(params.merge(headers: {
+            headers = {
               'Content-Type' => 'application/json',
               'Accept' => 'application/json',
               'X-Auth-Token' => @auth_token
-            }.merge!(params[:headers] || {}),
-                                                        path: "#{@path}/#{params[:path]}",
-                                                        query: params[:query]))
+            }.merge!(params[:headers] || {})
+
+            request_params = params.merge(
+              headers: headers,
+              path: "#{@path}/#{params[:path]}",
+              query: params[:query])
+
+            response = @connection.request(request_params)
           rescue Excon::Errors::HTTPStatusError => error
             raise case error
                   when Excon::Errors::NotFound
@@ -321,7 +326,7 @@ module Fog
                   end
           end
 
-          response.body = Fog::JSON.decode(response.body) if !response.body.empty? && response.get_header('Content-Type') == 'application/json'
+          response.body = Fog::JSON.decode(response.body) if !response.body.empty? && response.get_header('Content-Type').start_with?('application/json')
 
           response
         end
@@ -344,7 +349,7 @@ module Fog
                   end
           end
 
-          response.body = Fog::JSON.decode(response.body) if !response.body.empty? && response.get_header('Content-Type') == 'application/json'
+          response.body = Fog::JSON.decode(response.body) if !response.body.empty? && response.get_header('Content-Type').start_with?('application/json')
 
           response
         end

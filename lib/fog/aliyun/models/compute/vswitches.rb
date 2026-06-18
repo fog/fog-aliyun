@@ -51,7 +51,7 @@ module Fog
 
         def all(options = {})
           requires :vpc
-          data = Fog::JSON.decode(service.list_vswitchs(vpc.id, options).body)['VSwitches']['VSwitch']
+          data = service.list_vswitchs(vpc.id, options).body['VSwitches']['VSwitch']
           load(data)
         end
 

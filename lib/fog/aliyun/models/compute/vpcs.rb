@@ -52,7 +52,7 @@ module Fog
             Fog::Logger.warning("all with #{filters_arg.class} param is deprecated, use all('vpcId' => []) instead [light_black](#{caller.first})[/]")
             filters_arg = { 'vpcId' => [*filters_arg] }
           end
-          data = Fog::JSON.decode(service.list_vpcs(filters_arg).body)['Vpcs']['Vpc']
+          data = service.list_vpcs(filters_arg).body['Vpcs']['Vpc']
           load(data)
         end
 
